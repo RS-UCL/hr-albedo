@@ -1,4 +1,4 @@
-# hr-albedo
+# HR-Albedo
 
 This github repo is the albedo retrieval module for the high-resolution 
 albedo map (HR-AlbedoMap) project. The overall HR-AlbedoMap processing chain
@@ -11,4 +11,9 @@ hr-albedo products that are produced for different end users from this project. 
 documents that are useful for understanding the algorithm (Algorithm Theoretical Basis Document and 
 verification Report) and guidance on how to interpret the data (Product User Guide) are
 also available from the project webpage.
+
+# Usage
+Basic configurations see here [config.yaml](./config.yaml)
+
+
 
