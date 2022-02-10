@@ -28,5 +28,8 @@ retrieval directly:
 
 **python main_albedo.py**
 
+# Sample data
+Sample data used in this example is available from: 
+https://gws-access.jasmin.ac.uk/public/qa4ecv/hr_albedo/sample_data/
 
 
