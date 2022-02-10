@@ -139,8 +139,8 @@ def cal_Sentinel2_NBAR(Sentinel2_file, MODIS_brdf_file, Sentinel2_band_ID):
     brdf2_nadir = brdf_f2(sza_angle, vza_nadir, phi_nadir)
 
     # get corresponding MODIS data
-    if Sentinel2_band_ID == '02':
-        modis_band_id = 'Band3'
+    if Sentinel2_band_ID == '04':
+        modis_band_id = 'Band1'
         # sentinel-2 band-02 equals MODIS band-03
         modis_brdf_data = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band3' % MODIS_brdf_file
 
@@ -169,14 +169,14 @@ def cal_Sentinel2_NBAR(Sentinel2_file, MODIS_brdf_file, Sentinel2_band_ID):
     my_cmap = mpl.colors.LinearSegmentedColormap('my_colormap', cdict, 256)
 
     fig, ax = plt.subplots()
-    im = ax.imshow(s2_brf_array, cmap=my_cmap, vmin=0, vmax=1)
+    im = ax.imshow(s2_brf_array, cmap='rainbow', vmin=0, vmax=.5)
     cbar = plt.colorbar(im)
     plt.axis('off')
     plt.savefig('./NBAR/sentinel_brf_band%s.png' % Sentinel2_band_ID, dpi=400)
     plt.close()
 
     fig, ax = plt.subplots()
-    im = ax.imshow(s2_NBAR, cmap=my_cmap, vmin=0, vmax=1)
+    im = ax.imshow(s2_NBAR, cmap='rainbow', vmin=0, vmax=.5)
     cbar = plt.colorbar(im)
     plt.axis('off')
     plt.savefig('./NBAR/sentinel_NBAR_band%s.png' % Sentinel2_band_ID, dpi=400)
@@ -185,10 +185,9 @@ def cal_Sentinel2_NBAR(Sentinel2_file, MODIS_brdf_file, Sentinel2_band_ID):
 
 
 
-Sentinel2_file = '/gws/nopw/j04/qa4ecv_vol2/HR_Alebdo/WheatBelt/30UXD/30UXD/' \
-                 'S2A_MSIL1C_20200725T110631_N0209_R137_T30UXD_20200725T114244.SAFE'
-MODIS_brdf_file = '/gws/nopw/j04/qa4ecv_vol2/HR_Alebdo/WheatBelt/30UXD/30UXD/' \
-                  'S2A_MSIL1C_20200725T110631_N0209_R137_T30UXD_20200725T114244.SAFE/' \
-                  'MCD43/MCD43A1.A2020207.h17v03.006.2020216042659.hdf'
+Sentinel2_file = '/gws/nopw/j04/qa4ecv_vol2/HR_Alebdo/Leipzig/32UQC/32UQC/' \
+                 'S2B_MSIL1C_20180507T102019_N0206_R065_T32UQC_20180507T123037.SAFE'
+MODIS_brdf_file = '/gws/nopw/j04/qa4ecv_vol2/HR_Alebdo/Leipzig/32UQC/32UQC/S2B_MSIL1C_20180507T102019_N0206_R065_T32UQC_20180507T123037.SAFE/' \
+                  'MCD43/MCD43A1.A2018127.h18v03.006.2018136033526.hdf'
 
-cal_Sentinel2_NBAR(Sentinel2_file, MODIS_brdf_file, '02')
+cal_Sentinel2_NBAR(Sentinel2_file, MODIS_brdf_file, '04')
