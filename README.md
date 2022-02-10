@@ -1,4 +1,8 @@
-# HR-Albedo
+# HR-Albedo: High-resolution albedo retrieval
+
+**Rui Song (rui.song@ucl.ac.uk)**
+
+**University College London, Mullard Space Science Laboratory**
 
 This github repo is the albedo retrieval module for the high-resolution 
 albedo map (HR-AlbedoMap) project. The overall HR-AlbedoMap processing chain
@@ -12,8 +16,17 @@ documents that are useful for understanding the algorithm (Algorithm Theoretical
 verification Report) and guidance on how to interpret the data (Product User Guide) are
 also available from the project webpage.
 
+# Install
+All required packages for this project is list here [requirements.txt](./requirements.txt)
+
 # Usage
 Basic configurations see here [config.yaml](./config.yaml)
+
+# how to run the hr-albedo retrieval
+Once the configuration file is ready, using the following command to run the albedo 
+retrieval directly:
+
+**python main_albedo.py**
 
 
 
