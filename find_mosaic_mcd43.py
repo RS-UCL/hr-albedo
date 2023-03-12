@@ -24,8 +24,8 @@ def coord2latlon(x, y, projection):
     # Create a transformation function between the two coordinate systems
     transform = osr.CoordinateTransformation(srs, srs_latlon)
     # Transform the projected coordinates to lat-lon
-    lon, lat, z = transform.TransformPoint(x, y)
-    return lon, lat
+    lat, lon, z = transform.TransformPoint(x, y)
+    return lat, lon
 
 def find_mcd43(s2_mosaic_band):
 
@@ -42,10 +42,10 @@ def find_mcd43(s2_mosaic_band):
     band = dataset.GetRasterBand(1)
     data = band.ReadAsArray(0, 0, cols, rows).astype(np.float)
 
-    for x in range(0, cols + 1, 1000):
-        for y in range(0, rows + 1, 1000):
+    for x in range(0, cols + 1, 5000):
+        for y in range(0, rows + 1, 5000):
             xp, yp = pixel2coord(x, y, geotransform)
-            lon, lat = coord2latlon(xp, yp, projection)
+            lat, lon = coord2latlon(xp, yp, projection)
             print(lat, lon, data[y][x])
 
 if __name__ == '__main__':
