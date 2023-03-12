@@ -8,10 +8,31 @@
 import numpy as np
 from osgeo import gdal, osr
 
+def pixel2coord(x, y):
+    """Returns global coordinates from pixel x, y coords"""
+    xp = geotransform[0] + geotransform[1] * x + geotransform[2] * y
+    yp = geotransform[3] + geotransform[4] * x + geotransform[5] * y
+    return xp, yp
+
+def coord2latlon(x, y):
+    """Returns lat, long from projected coordinates"""
+    # Define the projection and reference system used by the dataset
+    srs = osr.SpatialReference()
+    srs.ImportFromWkt(projection)
+    # Define the projection and reference system for lat-lon coordinates
+    srs_latlon = srs.CloneGeogCS()
+    # Create a transformation function between the two coordinate systems
+    transform = osr.CoordinateTransformation(srs, srs_latlon)
+    # Transform the projected coordinates to lat-lon
+    lon, lat, z = transform.TransformPoint(x, y)
+    return lat, lon
+
 def find_mcd43(s2_mosaic_band):
 
     # Open the GeoTIFF file
     ds = gdal.Open(s2_mosaic_band)
+    cols = ds.RasterXSize
+    rows = ds.RasterYSize
 
     # Get the geotransform information (affine transformation matrix)
     geotransform = ds.GetGeoTransform()
@@ -22,38 +43,11 @@ def find_mcd43(s2_mosaic_band):
     # Get the array of raster data
     data = band.ReadAsArray()
 
-    # Get the spatial reference of the UTM projection
-    utm_sr = osr.SpatialReference()
-    utm_sr.ImportFromWkt(ds.GetProjection())
-
-    # Create a spatial reference for the WGS84 coordinate system (latitude and longitude)
-    wgs84_sr = osr.SpatialReference()
-    wgs84_sr.SetWellKnownGeogCS('WGS84')
-
-    # Create a transformation object to convert from UTM to WGS84
-    transform = osr.CoordinateTransformation(utm_sr, wgs84_sr)
-
-    # Calculate the x and y coordinates of each pixel in UTM
-    rows, cols = data.shape
-    print('Number of rows:', rows)
-    print('Number of columns:', cols)
-    x_coords = np.arange(cols) * geotransform[1] + geotransform[0]
-    y_coords = np.arange(rows) * geotransform[5] + geotransform[3]
-    print('X coordinates shape:', x_coords)
-    print(np.arange(cols))
-    quit()
-    # Convert the UTM coordinates to latitude and longitude
-    coords = np.vstack((x_coords, y_coords))
-    print('Coordinates shape:', coords.shape)
-    lon, lat, _ = transform.TransformPoints(coords).T
-
-    # Create the 2D grid of longitude and latitude values
-    lon = lon.reshape((rows, cols))
-    lat = lat.reshape((rows, cols))
-
-    # Print the shape of the latitude and longitude grids
-    print('Latitude grid shape:', lat.shape)
-    print('Longitude grid shape:', lon.shape)
+    for x in range(cols):
+        for y in range(rows):
+            xp, yp = pixel2coord(x, y)
+            lat, lon = coord2latlon(xp, yp)
+            print(lat, lon, data[y][x])
 
 if __name__ == '__main__':
 
