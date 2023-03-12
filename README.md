@@ -1,5 +1,5 @@
 # HR-Albedo: High-resolution albedo retrieval
-
+# test s2gm
 **Rui Song (rui.song@ucl.ac.uk)**
 
 **University College London, Mullard Space Science Laboratory**
@@ -25,7 +25,7 @@ Basic configurations see here [config.yaml](./config.yaml)
 # how to run the hr-albedo retrieval
 Once the configuration file is ready, using the following command to run the albedo 
 retrieval directly:
-
+#
 **python main_albedo.py**
 
 # Sample data
