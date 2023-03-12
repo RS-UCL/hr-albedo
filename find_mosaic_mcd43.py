@@ -35,6 +35,8 @@ def find_mcd43(s2_mosaic_band):
 
     # Calculate the x and y coordinates of each pixel in UTM
     rows, cols = data.shape
+    print('Number of rows:', rows)
+    print('Number of columns:', cols)
     x_coords = np.arange(cols) * geotransform[1] + geotransform[0]
     y_coords = np.arange(rows) * geotransform[5] + geotransform[3]
 
