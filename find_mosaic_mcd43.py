@@ -39,7 +39,7 @@ def find_mcd43(s2_mosaic_band):
     geotransform = dataset.GetGeoTransform()
 
     # Get the raster band
-    band = ds.GetRasterBand(1)
+    band = dataset.GetRasterBand(1)
 
     # Get the array of raster data
     data = band.ReadAsArray()
