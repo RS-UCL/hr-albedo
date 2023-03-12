@@ -6,7 +6,7 @@
 # @Time:        12/03/2023 18:36
 
 import numpy as np
-from osgeo import gdal
+from osgeo import gdal, osr
 
 def find_mcd43(s2_mosaic_band):
 
