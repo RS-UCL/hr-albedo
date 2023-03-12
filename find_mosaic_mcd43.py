@@ -42,8 +42,8 @@ def find_mcd43(s2_mosaic_band):
     band = dataset.GetRasterBand(1)
     data = band.ReadAsArray(0, 0, cols, rows).astype(np.float)
 
-    for x in range((0, cols + 1, 1000)):
-        for y in range((0, rows + 1, 1000)):
+    for x in range(0, cols + 1, 1000):
+        for y in range(0, rows + 1, 1000):
             xp, yp = pixel2coord(x, y, geotransform)
             lat, lon = coord2latlon(xp, yp, projection)
             print(lat, lon, data[y][x])
