@@ -30,9 +30,9 @@ def coord2latlon(x, y):
 def find_mcd43(s2_mosaic_band):
 
     # Open the GeoTIFF file
-    ds = gdal.Open(s2_mosaic_band)
-    cols = ds.RasterXSize
-    rows = ds.RasterYSize
+    dataset = gdal.Open(s2_mosaic_band)
+    cols = dataset.RasterXSize
+    rows = dataset.RasterYSize
 
     # Get the geotransform information (affine transformation matrix)
     projection = dataset.GetProjection()
