@@ -27,6 +27,30 @@ def coord2latlon(x, y, projection):
     lat, lon, z = transform.TransformPoint(x, y)
     return lat, lon
 
+
+def get_modis_tile(lat, lon):
+    """
+    Given a latitude and longitude, returns the MODIS sinusoidal projection tile number
+    """
+    # Define the constants needed for the MODIS sinusoidal projection
+    R = 6371007.181  # Earth's radius in meters
+    MODIS_TILE_WIDTH = 1111950.51966667  # MODIS tile width in meters
+
+    # Convert the latitude and longitude to radians
+    lat_rad = lat * (3.141592653589793 / 180)
+    lon_rad = lon * (3.141592653589793 / 180)
+
+    # Calculate the x and y coordinates in the MODIS sinusoidal projection
+    x = R * lon_rad * math.cos(lat_rad)
+    y = R * lat_rad
+
+    # Calculate the tile number
+    tile_h = int((x + R * math.pi) / (MODIS_TILE_WIDTH))
+    tile_v = int((R * math.pi / 2 - y) / (MODIS_TILE_WIDTH))
+    tile_number = tile_v * 18 + tile_h + 1
+
+    return tile_number
+
 def find_mcd43(s2_mosaic_band):
 
     # Open the GeoTIFF file
@@ -46,7 +70,8 @@ def find_mcd43(s2_mosaic_band):
         for y in range(0, rows + 1, 5000):
             xp, yp = pixel2coord(x, y, geotransform)
             lat, lon = coord2latlon(xp, yp, projection)
-            print(lat, lon, data[y][x])
+            tile_number = get_modis_tile(lat, lon)
+            print(lat, lon, tile_number)
 
 if __name__ == '__main__':
 
