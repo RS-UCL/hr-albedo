@@ -5,6 +5,7 @@
 # @Email:       rui.song@physics.ox.ac.uk
 # @Time:        12/03/2023 18:36
 
+import math
 import numpy as np
 from osgeo import gdal, osr
 
@@ -30,7 +31,7 @@ def coord2latlon(x, y, projection):
 
 def get_modis_tile(lat, lon):
     """
-    Given a latitude and longitude, returns the MODIS sinusoidal projection tile number
+    Given a latitude and longitude, returns the MODIS sinusoidal projection tile number in string format (hXXvYY)
     """
     # Define the constants needed for the MODIS sinusoidal projection
     R = 6371007.181  # Earth's radius in meters
@@ -47,9 +48,10 @@ def get_modis_tile(lat, lon):
     # Calculate the tile number
     tile_h = int((x + R * math.pi) / (MODIS_TILE_WIDTH))
     tile_v = int((R * math.pi / 2 - y) / (MODIS_TILE_WIDTH))
-    tile_number = tile_v * 18 + tile_h + 1
+    tile_number = "h{:02d}v{:02d}".format(tile_h, tile_v)
 
     return tile_number
+
 
 def find_mcd43(s2_mosaic_band):
 
