@@ -35,7 +35,8 @@ def find_mcd43(s2_mosaic_band):
     rows = ds.RasterYSize
 
     # Get the geotransform information (affine transformation matrix)
-    geotransform = ds.GetGeoTransform()
+    projection = dataset.GetProjection()
+    geotransform = dataset.GetGeoTransform()
 
     # Get the raster band
     band = ds.GetRasterBand(1)
