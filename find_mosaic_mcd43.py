@@ -41,8 +41,11 @@ def find_mcd43(s2_mosaic_band):
     y_coords = np.arange(rows) * geotransform[5] + geotransform[3]
     print('X coordinates shape:', x_coords.shape)
     print('Y coordinates shape:', y_coords.shape)
+
     # Convert the UTM coordinates to latitude and longitude
-    lon, lat, _ = transform.TransformPoints(np.vstack((x_coords, y_coords)).T).T
+    coords = np.vstack((x_coords, y_coords)).T
+    print('Coordinates shape:', coords.shape)
+    lon, lat, _ = transform.TransformPoints(coords).T
 
     # Create the 2D grid of longitude and latitude values
     lon = lon.reshape((rows, cols))
