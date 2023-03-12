@@ -43,7 +43,7 @@ def find_mcd43(s2_mosaic_band):
     print('Y coordinates shape:', y_coords.shape)
 
     # Convert the UTM coordinates to latitude and longitude
-    coords = np.vstack((x_coords, y_coords)).T
+    coords = np.vstack((x_coords, y_coords))
     print('Coordinates shape:', coords.shape)
     lon, lat, _ = transform.TransformPoints(coords).T
 
