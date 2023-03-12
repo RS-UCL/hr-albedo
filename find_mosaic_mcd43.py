@@ -8,13 +8,13 @@
 import numpy as np
 from osgeo import gdal, osr
 
-def pixel2coord(x, y):
+def pixel2coord(x, y, geotransform):
     """Returns global coordinates from pixel x, y coords"""
     xp = geotransform[0] + geotransform[1] * x + geotransform[2] * y
     yp = geotransform[3] + geotransform[4] * x + geotransform[5] * y
     return xp, yp
 
-def coord2latlon(x, y):
+def coord2latlon(x, y, projection):
     """Returns lat, long from projected coordinates"""
     # Define the projection and reference system used by the dataset
     srs = osr.SpatialReference()
@@ -31,23 +31,20 @@ def find_mcd43(s2_mosaic_band):
 
     # Open the GeoTIFF file
     dataset = gdal.Open(s2_mosaic_band)
-    cols = dataset.RasterXSize
-    rows = dataset.RasterYSize
 
-    # Get the geotransform information (affine transformation matrix)
+    # Get the projection and geotransform information of the dataset
     projection = dataset.GetProjection()
     geotransform = dataset.GetGeoTransform()
 
-    # Get the raster band
+    # Loop through each pixel and convert its coordinates to lat-lon
+    cols = dataset.RasterXSize
+    rows = dataset.RasterYSize
     band = dataset.GetRasterBand(1)
-
-    # Get the array of raster data
-    data = band.ReadAsArray()
-
+    data = band.ReadAsArray(0, 0, cols, rows).astype(np.float)
     for x in range(cols):
         for y in range(rows):
-            xp, yp = pixel2coord(x, y)
-            lat, lon = coord2latlon(xp, yp)
+            xp, yp = pixel2coord(x, y, geotransform)
+            lat, lon = coord2latlon(xp, yp, projection)
             print(lat, lon, data[y][x])
 
 if __name__ == '__main__':
