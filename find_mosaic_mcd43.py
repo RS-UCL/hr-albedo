@@ -49,6 +49,6 @@ def find_mcd43(s2_mosaic_band):
     print('Latitude grid shape:', lat.shape)
     print('Longitude grid shape:', lon.shape)
 
-if main == '__main__':
+if __name__ == '__main__':
 
     find_mcd43('/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/S2GM_T10_20220711_20220720_s2gm-LaCrau-v2_STD_v2.0.1/tile_0/B8A.tif')
