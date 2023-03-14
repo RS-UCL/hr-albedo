@@ -49,9 +49,15 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     month_start = s2gm_part[13:15]
     day_start = s2gm_part[15:17]
 
+    year_end = s2gm_part[18:22]
+    month_end = s2gm_part[22:24]
+    day_end = s2gm_part[24:26]
+
     # convert datetime to day of year
     datetime_start_str = datetime.datetime.strptime('%s-%s-%s' % (year_start, month_start, day_start), '%Y-%m-%d')
+    datetime_end_str = datetime.datetime.strptime('%s-%s-%s' % (year_end, month_end, day_end), '%Y-%m-%d')
     print(datetime_start_str)
+    print(datetime_end_str)
     quit()
     datetime_start_str = datetime_start_str.timetuple()
     doy = datetime_str.tm_yday
