@@ -145,6 +145,7 @@ def cal_endmember(sentinel2_file, mcd43a1_file, sample_interval):
     modis_brdf_y_resolution = modis_brdf_geotransform[5]
     print(modis_brdf_band001)
     print(modis_brdf_x_resolution, modis_brdf_y_resolution)
+    quit()
     # load Sentinel-2 spectral surface reflectance, with masks on.
     tbd_directory = sentinel2_file + '/tbd'  # temporal directory, to be deleted in the end.
     if not os.path.exists(tbd_directory):
