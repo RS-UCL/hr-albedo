@@ -70,7 +70,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
 
     # extract MCD43 data from SIAC intermediate results
     try:
-        mcd43a1_file = glob.glob(sentinel2_directory + '/MCD43/*%s*%s*.nc' %
+        mcd43a1_file = glob.glob(sentinel2_directory + '/MCD43/*%s*%s*.hdf' %
                                  (doy, modis_tile))[0]
         print('-----------> MCD43A1 data found from SIAC intermediate results')
     except:
