@@ -56,7 +56,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     # convert datetime to day of year
     datetime_start = datetime.datetime(year_start, month_start, day_start)
     datetime_end = datetime.datetime(year_end, month_end, day_end)
-
+    print(datetime_end)
     # Calculate the time delta between the two dates
     delta = datetime_end - datetime_start
     # Calculate the half delta
