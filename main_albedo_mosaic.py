@@ -33,6 +33,8 @@ class LoadConfig:
         return sample_interval, patch_size, patch_overlap
 
 from find_mosaic_mcd43 import *
+import yaml
+
 S2GM_config = LoadConfig('./config_mosaic.yaml')
 sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 modis_tile = find_mcd43(sentinel2_directory)
