@@ -6,7 +6,7 @@ from pysptools.eea import NFINDR
 import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
-import gdal
+from osgeo import gdal
 import os
 
 def _plot_2d_abundance(abundane_array, fig_directory, colortablbe):
