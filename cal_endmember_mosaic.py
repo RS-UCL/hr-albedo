@@ -143,33 +143,31 @@ def cal_endmember(sentinel2_directory, mcd43a1_file):
 
     modis_brdf_x_resolution = modis_brdf_geotransform[1]
     modis_brdf_y_resolution = modis_brdf_geotransform[5]
-    print(modis_brdf_band001)
-    print(modis_brdf_x_resolution, modis_brdf_y_resolution)
-    quit()
+
     # load Sentinel-2 spectral surface reflectance, with masks on.
     tbd_directory = sentinel2_directory + '/tbd'  # temporal directory, to be deleted in the end.
     if not os.path.exists(tbd_directory):
         os.makedirs(tbd_directory)
 
-    for file in os.listdir(tbd_directory):
-        if file.endswith("band02_masked.tiff"):
-            s2_band02_masked = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_band02_masked_file = '%s/%s' % (tbd_directory, file)
-        if file.endswith("band03_masked.tiff"):
-            s2_band03_masked = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_band03_masked_file = '%s/%s' % (tbd_directory, file)
-        if file.endswith("band04_masked.tiff"):
-            s2_band04_masked = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_band04_masked_file = '%s/%s' % (tbd_directory, file)
-        if file.endswith("band8A_masked.tiff"):
-            s2_band8A_masked = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_band8A_masked_file = '%s/%s' % (tbd_directory, file)
-        if file.endswith("band11_masked.tiff"):
-            s2_band11_masked = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_band11_masked_file = '%s/%s' % (tbd_directory, file)
-        if file.endswith("band12_masked.tiff"):
-            s2_band12_masked = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_band12_masked_file = '%s/%s' % (tbd_directory, file)
+    for file in os.listdir(sentinel2_directory):
+        if file.endswith("B02.tif"):
+            s2_band02_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+            s2_band02_masked_file = '%s/%s' % (sentinel2_directory, file)
+        if file.endswith("B03.tif"):
+            s2_band03_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+            s2_band03_masked_file = '%s/%s' % (sentinel2_directory, file)
+        if file.endswith("B04.tif"):
+            s2_band04_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+            s2_band04_masked_file = '%s/%s' % (sentinel2_directory, file)
+        if file.endswith("B8A.tif"):
+            s2_band8A_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+            s2_band8A_masked_file = '%s/%s' % (sentinel2_directory, file)
+        if file.endswith("B11.tif"):
+            s2_band11_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+            s2_band11_masked_file = '%s/%s' % (sentinel2_directory, file)
+        if file.endswith("B12.tif"):
+            s2_band12_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+            s2_band12_masked_file = '%s/%s' % (sentinel2_directory, file)
 
     # load sentinel-2 20m geo-reference data
     s2_20m_geotransform = s2_band02_masked.GetGeoTransform()
@@ -186,7 +184,7 @@ def cal_endmember(sentinel2_directory, mcd43a1_file):
     boa_band8A = s2_band8A_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band11 = s2_band11_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band12 = s2_band12_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-
+    print(boa_band02.shape)
     # reproject Sentinel-2 spectral boa-brf to modis SIN projection
     os.system(
         'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
@@ -206,7 +204,7 @@ def cal_endmember(sentinel2_directory, mcd43a1_file):
     os.system(
         'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b12_SIN_500m.tiff' % (
         s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band12_masked_file, tbd_directory))
-
+    quit()
     # get Sentinel-2 at 500-m SIN projection
     s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
     s2_SIN_500m_geotransform = s2_band02_SIN_500m.GetGeoTransform()
