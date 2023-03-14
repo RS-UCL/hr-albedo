@@ -56,12 +56,18 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     # convert datetime to day of year
     datetime_start_str = datetime.datetime.strptime('%s-%s-%s' % (year_start, month_start, day_start), '%Y-%m-%d')
     datetime_end_str = datetime.datetime.strptime('%s-%s-%s' % (year_end, month_end, day_end), '%Y-%m-%d')
-    print(datetime_start_str)
-    print(datetime_end_str)
-    quit()
-    datetime_start_str = datetime_start_str.timetuple()
-    doy = datetime_str.tm_yday
+
+    # Calculate the time delta between the two dates
+    delta = datetime_end - datetime_start
+    # Calculate the half delta
+    half_delta = delta / 2
+    # Calculate the middle datetime
+    middle_datetime = datetime_start + half_delta
+
+    doy = middle_datetime.tm_yday
     doy = str(doy)
+    print(doy)
+    quit()
 
     # extract MCD43 data from SIAC intermediate results
     try:
