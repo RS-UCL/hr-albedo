@@ -172,9 +172,7 @@ def cal_endmember(sentinel2_directory, mcd43a1_file):
     # load sentinel-2 20m geo-reference data
     s2_20m_geotransform = s2_band02_masked.GetGeoTransform()
     s2_20m_proj = s2_band02_masked.GetProjection()
-    print(s2_20m_geotransform)
-    print(s2_20m_proj)
-    quit()
+
     # get sentinel-2 number of rows and cols
     s2_cols_20m = s2_band02_masked.RasterXSize
     s2_rows_20m = s2_band02_masked.RasterYSize
