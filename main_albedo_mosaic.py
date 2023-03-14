@@ -67,6 +67,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     middle_datetime_str = middle_datetime.strftime("%Y-%m-%d")
     # Extract the day of year from the middle datetime string
     doy = datetime.datetime.strptime(middle_datetime_str, "%Y-%m-%d").strftime("%j")
+    year = datetime.datetime.strptime(middle_datetime_str, "%Y-%m-%d").strftime("%Y")
 
     # extract MCD43 data from SIAC intermediate results
     try:
@@ -81,6 +82,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
 from cal_endmember_mosaic import *
 from find_mosaic_mcd43 import *
 import datetime
+import glob
 import yaml
 
 S2GM_config = LoadConfig('./config_mosaic.yaml')
