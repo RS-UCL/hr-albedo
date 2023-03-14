@@ -68,12 +68,14 @@ def find_mcd43(s2_mosaic_band):
     band = dataset.GetRasterBand(1)
     data = band.ReadAsArray(0, 0, cols, rows).astype(float)
 
+    tile_all = []
     for x in range(0, cols + 1, 5000):
         for y in range(0, rows + 1, 5000):
             xp, yp = pixel2coord(x, y, geotransform)
             lat, lon = coord2latlon(xp, yp, projection)
             tile_number = get_modis_tile(lat, lon)
-            print(lat, lon, tile_number)
+            tile_all.append(tile_number)
+    print(tile_all)
 
 if __name__ == '__main__':
 
