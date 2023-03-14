@@ -43,16 +43,17 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
         if part.startswith("S2GM_"):
             s2gm_part = part
             break
-    print(s2gm_part)
-    quit()
+
     # extract year, month, day from Sentinel-2 file name
-    year = sentinel2_filename[11:15]
-    month = sentinel2_filename[15:17]
-    day = sentinel2_filename[17:19]
+    year_start = sentinel2_filename[9:13]
+    month_start = sentinel2_filename[13:15]
+    day_start = sentinel2_filename[15:17]
 
     # convert datetime to day of year
-    datetime_str = datetime.datetime.strptime('%s-%s-%s' % (year, month, day), '%Y-%m-%d')
-    datetime_str = datetime_str.timetuple()
+    datetime_start_str = datetime.datetime.strptime('%s-%s-%s' % (year_start, month_start, day_start), '%Y-%m-%d')
+    print(datetime_start_str)
+    quit()
+    datetime_start_str = datetime_start_str.timetuple()
     doy = datetime_str.tm_yday
     doy = str(doy)
 
