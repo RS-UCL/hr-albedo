@@ -63,9 +63,11 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     half_delta = delta / 2
     # Calculate the middle datetime
     middle_datetime = datetime_start + half_delta
+    # Format the middle datetime as a string in the format "YYYY-MM-DD"
+    middle_datetime_str = middle_datetime.strftime("%Y-%m-%d")
+    # Extract the day of year from the middle datetime string
+    doy = datetime.datetime.strptime(middle_datetime_str, "%Y-%m-%d").strftime("%j")
 
-    doy = middle_datetime.tm_yday
-    doy = str(doy)
     print(doy)
     quit()
 
