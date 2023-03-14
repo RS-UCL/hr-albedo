@@ -66,7 +66,7 @@ def find_mcd43(s2_mosaic_band):
     cols = dataset.RasterXSize
     rows = dataset.RasterYSize
     band = dataset.GetRasterBand(1)
-    data = band.ReadAsArray(0, 0, cols, rows).astype(np.float)
+    data = band.ReadAsArray(0, 0, cols, rows).astype(float)
 
     for x in range(0, cols + 1, 5000):
         for y in range(0, rows + 1, 5000):
