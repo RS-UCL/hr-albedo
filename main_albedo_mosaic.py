@@ -68,16 +68,13 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     # Extract the day of year from the middle datetime string
     doy = datetime.datetime.strptime(middle_datetime_str, "%Y-%m-%d").strftime("%j")
 
-    print(doy)
-    quit()
-
     # extract MCD43 data from SIAC intermediate results
     try:
-        mcd43a1_file = glob.glob(sentinel2_directory + '/%s/MCD43/*%s%s*%s*.hdf' %
-                                 (sentinel2_filename, year, doy, modis_tile))[0]
+        mcd43a1_file = glob.glob(sentinel2_directory + '/MCD43/*%s%s*%s*.hdf' %
+                                 (year, doy, modis_tile))[0]
         print('-----------> MCD43A1 data found from SIAC intermediate results')
     except:
-        print('MCD43A1 data not found from SIAC intermediate results')
+        print('MCD43A1 data not found from SIAC intermediate results, please download *%s%s*%s*.hdf to %s/MCD43/' %(year, doy, modis_tile, sentinel2_directory))
 
     return mcd43a1_file
 
