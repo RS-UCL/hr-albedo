@@ -53,10 +53,10 @@ def get_modis_tile(lat, lon):
     return tile_number
 
 
-def find_mcd43(s2_mosaic_band):
+def find_mcd43(s2_mosaic_band_location):
 
     # Open the GeoTIFF file
-    dataset = gdal.Open(s2_mosaic_band)
+    dataset = gdal.Open(s2_mosaic_band_location + '/B8A.tif')
 
     # Get the projection and geotransform information of the dataset
     projection = dataset.GetProjection()
@@ -78,9 +78,7 @@ def find_mcd43(s2_mosaic_band):
 
     most_common_tile = max(set(tile_all), key=tile_all.count)
 
-    print(tile_all)
-    print(most_common_tile)
 
 if __name__ == '__main__':
 
-    find_mcd43('/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/S2GM_T10_20220711_20220720_s2gm-LaCrau-v2_STD_v2.0.1/tile_0/B8A.tif')
+    find_mcd43('/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/S2GM_T10_20220711_20220720_s2gm-LaCrau-v2_STD_v2.0.1/tile_0')
