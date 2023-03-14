@@ -40,7 +40,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     # Loop through the path parts and find the one that starts with "S2GM"
     s2gm_part = ""
     for part in path_parts:
-        if part.startswith("S2GM"):
+        if part.startswith("S2GM_"):
             s2gm_part = part
             break
     print(s2gm_part)
