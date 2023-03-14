@@ -87,7 +87,8 @@ import yaml
 S2GM_config = LoadConfig('./config_mosaic.yaml')
 sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 modis_tile = find_mcd43(sentinel2_directory)
-
+print(modis_tile)
+quit()
 # get modis MCD43A1 data for the same day of year
 mcd43a1_file = get_modis_jasmin(modis_tile, sentinel2_directory)
 
