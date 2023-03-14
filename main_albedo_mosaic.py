@@ -32,10 +32,50 @@ class LoadConfig:
         patch_overlap = self.eea_arg['Overlap']
         return sample_interval, patch_size, patch_overlap
 
+def get_modis_jasmin(modis_tile, sentinel2_directory):
+
+    # Split the path into a list of substrings using the "/" delimiter
+    path_parts = sentinel2_directory.split("/")
+
+    # Loop through the path parts and find the one that starts with "S2GM"
+    s2gm_part = ""
+    for part in path_parts:
+        if part.startswith("S2GM"):
+            s2gm_part = part
+            break
+    print(s2gm_part)
+    quit()
+    # extract year, month, day from Sentinel-2 file name
+    year = sentinel2_filename[11:15]
+    month = sentinel2_filename[15:17]
+    day = sentinel2_filename[17:19]
+
+    # convert datetime to day of year
+    datetime_str = datetime.datetime.strptime('%s-%s-%s' % (year, month, day), '%Y-%m-%d')
+    datetime_str = datetime_str.timetuple()
+    doy = datetime_str.tm_yday
+    doy = str(doy)
+
+    # extract MCD43 data from SIAC intermediate results
+    try:
+        mcd43a1_file = glob.glob(sentinel2_directory + '/%s/MCD43/*%s%s*%s*.hdf' %
+                                 (sentinel2_filename, year, doy, modis_tile))[0]
+        print('-----------> MCD43A1 data found from SIAC intermediate results')
+    except:
+        print('MCD43A1 data not found from SIAC intermediate results')
+
+    return mcd43a1_file
+
+from cal_endmember_mosaic import *
 from find_mosaic_mcd43 import *
 import yaml
 
 S2GM_config = LoadConfig('./config_mosaic.yaml')
 sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 modis_tile = find_mcd43(sentinel2_directory)
-print(modis_tile)
+
+# get modis MCD43A1 data for the same day of year
+mcd43a1_file = get_modis_jasmin(modis_tile, sentinel2_directory)
+
+# start calculating the endmembers
+cal_endmember(sentinel2_directory+'/%s'%sentinel2_filename, mcd43a1_file, sample_interval)
