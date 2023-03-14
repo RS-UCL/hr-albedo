@@ -92,4 +92,4 @@ modis_tile = find_mcd43(sentinel2_directory)
 mcd43a1_file = get_modis_jasmin(modis_tile, sentinel2_directory)
 
 # start calculating the endmembers
-cal_endmember(sentinel2_directory, mcd43a1_file, sample_interval)
+cal_endmember(sentinel2_directory, mcd43a1_file)

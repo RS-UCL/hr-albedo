@@ -123,7 +123,7 @@ def brdf_f2(sza, vza, phi):
     ci = np.arccos(np.cos(sza) * np.cos(vza) + np.sin(vza) * np.sin(sza) * np.cos(phi))
     return 4. / (3. * np.pi) / (np.cos(sza) + np.cos(vza)) * ((np.pi / 2. - ci) * np.cos(ci) + np.sin(ci)) - 1. / 3.
 
-def cal_endmember(sentinel2_directory, mcd43a1_file, sample_interval):
+def cal_endmember(sentinel2_directory, mcd43a1_file):
 
     modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1_f0_avr' % mcd43a1_file
     modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
