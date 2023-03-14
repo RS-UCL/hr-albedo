@@ -1,5 +1,5 @@
 # HR-Albedo: High-resolution albedo retrieval
-# new test
+# test
 **Rui Song (rui.song@ucl.ac.uk)**
 
 **University College London, Mullard Space Science Laboratory**
