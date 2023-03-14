@@ -68,7 +68,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
     # Extract the day of year from the middle datetime string
     doy = datetime.datetime.strptime(middle_datetime_str, "%Y-%m-%d").strftime("%j")
     year = datetime.datetime.strptime(middle_datetime_str, "%Y-%m-%d").strftime("%Y")
-
+    print(modis_tile)
     # extract MCD43 data from SIAC intermediate results
     try:
         mcd43a1_file = glob.glob(sentinel2_directory + '/MCD43/*%s%s*%s*.hdf' %
