@@ -124,13 +124,8 @@ def brdf_f2(sza, vza, phi):
     return 4. / (3. * np.pi) / (np.cos(sza) + np.cos(vza)) * ((np.pi / 2. - ci) * np.cos(ci) + np.sin(ci)) - 1. / 3.
 
 def cal_endmember(sentinel2_file, mcd43a1_file, sample_interval):
-    """
-    :param sentinel2_file: directory and filename of Sentinel-2 .SAFE format data.
-    :param mcd43a1_file: directory and filename of corresponding MCD43A1 data.
-    :param sample_interval: pixel interval for EEA algorithm
-    :return:
-    """
-    modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
+
+    modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1_f0_avr' % mcd43a1_file
     modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
     modis_band003_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band3' % mcd43a1_file
     modis_band004_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band4' % mcd43a1_file
@@ -148,7 +143,8 @@ def cal_endmember(sentinel2_file, mcd43a1_file, sample_interval):
 
     modis_brdf_x_resolution = modis_brdf_geotransform[1]
     modis_brdf_y_resolution = modis_brdf_geotransform[5]
-
+    print(modis_brdf_band001)
+    print(modis_brdf_x_resolution, modis_brdf_y_resolution)
     # load Sentinel-2 spectral surface reflectance, with masks on.
     tbd_directory = sentinel2_file + '/tbd'  # temporal directory, to be deleted in the end.
     if not os.path.exists(tbd_directory):
