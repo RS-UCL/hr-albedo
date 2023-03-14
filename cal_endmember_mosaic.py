@@ -172,7 +172,9 @@ def cal_endmember(sentinel2_directory, mcd43a1_file):
     # load sentinel-2 20m geo-reference data
     s2_20m_geotransform = s2_band02_masked.GetGeoTransform()
     s2_20m_proj = s2_band02_masked.GetProjection()
-
+    print(s2_20m_geotransform)
+    print(s2_20m_proj)
+    quit()
     # get sentinel-2 number of rows and cols
     s2_cols_20m = s2_band02_masked.RasterXSize
     s2_rows_20m = s2_band02_masked.RasterYSize
@@ -184,6 +186,7 @@ def cal_endmember(sentinel2_directory, mcd43a1_file):
     boa_band8A = s2_band8A_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band11 = s2_band11_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band12 = s2_band12_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+
     print('gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
         s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band02_masked_file, tbd_directory))
     quit()
