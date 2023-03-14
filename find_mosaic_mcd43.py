@@ -78,6 +78,8 @@ def find_mcd43(s2_mosaic_band_location):
 
     most_common_tile = max(set(tile_all), key=tile_all.count)
 
+    return most_common_tile
+
 
 if __name__ == '__main__':
 
