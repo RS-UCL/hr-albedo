@@ -45,13 +45,13 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
             break
 
     # extract year, month, day from Sentinel-2 file name
-    year_start = s2gm_part[9:13]
-    month_start = s2gm_part[13:15]
-    day_start = s2gm_part[15:17]
+    year_start = int(s2gm_part[9:13])
+    month_start = int(s2gm_part[13:15])
+    day_start = int(s2gm_part[15:17])
 
-    year_end = s2gm_part[18:22]
-    month_end = s2gm_part[22:24]
-    day_end = s2gm_part[24:26]
+    year_end = int(s2gm_part[18:22])
+    month_end = int(s2gm_part[22:24])
+    day_end = int(s2gm_part[24:26])
 
     # convert datetime to day of year
     datetime_start = datetime.datetime(year_start, month_start, day_start)
