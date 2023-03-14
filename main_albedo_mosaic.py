@@ -69,6 +69,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
 
 from cal_endmember_mosaic import *
 from find_mosaic_mcd43 import *
+import datetime
 import yaml
 
 S2GM_config = LoadConfig('./config_mosaic.yaml')
