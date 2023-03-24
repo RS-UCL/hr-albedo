@@ -1,0 +1,9 @@
+sentinel2:
+      filename: S2A_MSIL1C_20200725T110631_N0209_R137_T30UXD_20200725T114244.SAFE
+      directory: /gws/nopw/j04/qa4ecv_vol2/HR_Alebdo/WheatBelt/30UXD/30UXD
+      tile: 30UXD
+
+EEA:
+      SampleInterval: 10
+      PatchSize: 1000
+      Overlap: 50
