@@ -83,7 +83,7 @@ import datetime
 import glob
 import yaml
 
-S2GM_config = LoadConfig('./config_mosaic.yaml')
+S2GM_config = LoadConfig('./config/config_val.yaml')
 sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 
 # start calculating the endmembers
