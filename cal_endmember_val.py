@@ -139,6 +139,7 @@ def cal_endmember(sentinel2_directory):
 
     kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
     print(kernel_weights.files)
+    print(kernel_weights['fs'])
     quit()
     tbd = file_subdirectory + '/tbd'
     if not os.path.exists(tbd):
