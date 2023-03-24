@@ -137,7 +137,7 @@ def cal_endmember(sentinel2_directory):
     file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
     file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
 
-    print(sentinel2_directory)
+    print(file_subdirectory)
     quit()
     modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
     modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
