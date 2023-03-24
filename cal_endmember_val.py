@@ -132,6 +132,11 @@ def brdf_f2(sza, vza, phi):
 
 def cal_endmember(sentinel2_directory):
 
+    # file subdirectory in the format of sentinel2_directory/GRANULE/L1C****/IMG_DATA
+    file_subdirectory = os.path.join(sentinel2_directory, 'GRANULE')
+    file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
+    file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
+
     print(sentinel2_directory)
     quit()
     modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
