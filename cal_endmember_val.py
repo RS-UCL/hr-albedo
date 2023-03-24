@@ -138,33 +138,42 @@ def cal_endmember(sentinel2_directory):
     file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
 
     kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
-    print(kernel_weights)
+    tbd = file_subdirectory + '/tbd'
+    if not os.path.exists(tbd):
+        os.makedirs(tbd)
+
+    # modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
+    # modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
+    # modis_band003_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band3' % mcd43a1_file
+    # modis_band004_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band4' % mcd43a1_file
+    # modis_band005_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band5' % mcd43a1_file
+    # modis_band006_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band6' % mcd43a1_file
+    # modis_band007_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band7' % mcd43a1_file
+    # modis_bandVIS_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_vis' % mcd43a1_file
+    # modis_bandNIR_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_nir' % mcd43a1_file
+    # modis_band0SW_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_shortwave' % mcd43a1_file
+    #
+    # # load modis geo-reference data
+    # modis_brdf_band001 = gdal.Open(modis_band001_file)
+    # modis_brdf_geotransform = modis_brdf_band001.GetGeoTransform()
+    # modis_brdf_proj = modis_brdf_band001.GetProjection()
+    #
+    # modis_brdf_x_resolution = modis_brdf_geotransform[1]
+    # modis_brdf_y_resolution = modis_brdf_geotransform[5]
+    #
+    # # load Sentinel-2 spectral surface reflectance, with masks on.
+    # tbd_directory = sentinel2_directory + '/tbd'  # temporal directory, to be deleted in the end.
+    # if not os.path.exists(tbd_directory):
+    #     os.makedirs(tbd_directory)
+
+    # use gdalwarp from os.system() to process a file in the subdirectory
+    for file in os.listdir(file_subdirectory):
+        if file.endswith("B02_sur.tif"):
+            os.system('gdalwarp -tr 500 500 %s/%s %s/%s'%(file_subdirectory, file, tbd, file[0:-4] + "_500m.tif"))
+
     quit()
-    modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
-    modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
-    modis_band003_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band3' % mcd43a1_file
-    modis_band004_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band4' % mcd43a1_file
-    modis_band005_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band5' % mcd43a1_file
-    modis_band006_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band6' % mcd43a1_file
-    modis_band007_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band7' % mcd43a1_file
-    modis_bandVIS_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_vis' % mcd43a1_file
-    modis_bandNIR_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_nir' % mcd43a1_file
-    modis_band0SW_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_shortwave' % mcd43a1_file
 
-    # load modis geo-reference data
-    modis_brdf_band001 = gdal.Open(modis_band001_file)
-    modis_brdf_geotransform = modis_brdf_band001.GetGeoTransform()
-    modis_brdf_proj = modis_brdf_band001.GetProjection()
-
-    modis_brdf_x_resolution = modis_brdf_geotransform[1]
-    modis_brdf_y_resolution = modis_brdf_geotransform[5]
-
-    # load Sentinel-2 spectral surface reflectance, with masks on.
-    tbd_directory = sentinel2_directory + '/tbd'  # temporal directory, to be deleted in the end.
-    if not os.path.exists(tbd_directory):
-        os.makedirs(tbd_directory)
-
-    for file in os.listdir(sentinel2_directory):
+    for file in os.listdir(file_subdirectory):
         if file.endswith("B02.tif"):
             s2_band02_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
             s2_band02_masked_file = '%s/%s' % (sentinel2_directory, file)
