@@ -1,7 +1,5 @@
 sentinel2:
-      filename: S2B_MSIL1C_20191015T104029_N0208_R008_T31TFJ_20191015T124042.SAFE
-      directory: /gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/
-      tile: 30UXD
+      directory: /gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/S2B_MSIL1C_20191015T104029_N0208_R008_T31TFJ_20191015T124042.SAFE
 
 EEA:
       SampleInterval: 10
