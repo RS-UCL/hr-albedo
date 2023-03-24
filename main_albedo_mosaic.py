@@ -6,7 +6,7 @@
 # @Time:        14/03/2023 10:31
 
 class LoadConfig:
-
+    # test
     def __init__(self, configuration):
         with open(configuration) as yaml_config_file:
             self.config = yaml.load(yaml_config_file, Loader=yaml.FullLoader)
