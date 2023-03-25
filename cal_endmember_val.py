@@ -253,6 +253,10 @@ def cal_endmember(sentinel2_directory):
     test = s2_500m_matrix[:, 0, 5]
     print(np.mean(test[test > 0]))
 
+    test2 = np.copy(s2_500m_matrix[:, 0, 0])
+    test2[test2 == -9999.] = np.nan
+    print(np.mean(test2))
+
     quit()
     s2_resampled_matrix_filtered = s2_resampled_matrix[cloud_filter_index, :, :]
 
