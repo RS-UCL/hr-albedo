@@ -176,7 +176,7 @@ def cal_endmember(sentinel2_directory):
 
     # use gdalwarp from os.system() to process a file in the subdirectory
     for file in os.listdir(file_subdirectory):
-        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif")):
+        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     for file in os.listdir(file_subdirectory):
@@ -190,6 +190,7 @@ def cal_endmember(sentinel2_directory):
     s2_band8A_500m_data = None
     s2_band11_500m_data = None
     s2_band12_500m_data = None
+    s2_mask_500m_data = None
 
     # initialize variables with None for 20-m data
     s2_band02_20m_data = None
@@ -213,6 +214,8 @@ def cal_endmember(sentinel2_directory):
             s2_band11_500m_data = gdal.Open('%s/%s' % (tbd, file))
         if file.endswith("B12_sur_500m.tif"):
             s2_band12_500m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("_mask_500m.tif"):
+            s2_mask_500m_data = gdal.Open('%s/%s' % (tbd, file))
 
     for file in os.listdir(tbd):
         if file.endswith("B02_sur_20m.tif"):
@@ -261,6 +264,7 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_500m = s2_band8A_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band11_500m = s2_band11_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band12_500m = s2_band12_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    boa_mask_500m = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
 
     # get raster band for 20m data
     boa_band02_20m = s2_band02_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
@@ -350,6 +354,7 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_500m_array = boa_band8A_500m.reshape(boa_band8A_500m.size, 1)
     boa_band11_500m_array = boa_band11_500m.reshape(boa_band11_500m.size, 1)
     boa_band12_500m_array = boa_band12_500m.reshape(boa_band12_500m.size, 1)
+    boa_mask_500m_array = boa_mask_500m.reshape(boa_mask_500m.size, 1)
 
     s2_500m_matrix = np.zeros((boa_band02_500m_array.size, 1, 6))
 
@@ -370,6 +375,7 @@ def cal_endmember(sentinel2_directory):
     s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
     for k in range(s2_abundance_500m.shape[2]):
         s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
+        s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
     #
     print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
     np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
