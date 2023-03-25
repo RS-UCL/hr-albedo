@@ -199,13 +199,12 @@ def cal_endmember(sentinel2_directory):
     s2_500m_geotransform = s2_band02_500m_data.GetGeoTransform()
     s2_500m_proj = s2_band02_500m_data.GetProjection()
 
-    print(s2_500m_geotransform)
-    print(s2_500m_proj)
-    quit()
-    # get sentinel-2 number of rows and cols
-    s2_cols_20m = s2_band02_masked.RasterXSize
-    s2_rows_20m = s2_band02_masked.RasterYSize
+    # get sentinel-2 500m data number of rows and cols
+    s2_cols_500m = s2_band02_500m_file.RasterXSize
+    s2_rows_500m = s2_band02_500m_file.RasterYSize
 
+    print(s2_cols_500m, s2_rows_500m)
+    quit()
     # get raster band
     boa_band02 = s2_band02_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band03 = s2_band03_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
