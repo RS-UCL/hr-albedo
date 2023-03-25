@@ -178,7 +178,7 @@ def cal_endmember(sentinel2_directory):
     s2_band02_500m_data = None
     s2_band03_500m_data = None
     s2_band04_500m_data = None
-    s2_band08_500m_data = None
+    s2_band8A_500m_data = None
     s2_band11_500m_data = None
     s2_band12_500m_data = None
 
@@ -193,8 +193,8 @@ def cal_endmember(sentinel2_directory):
             s2_band04_500m_data = gdal.Open('%s/%s' % (tbd, file))
             s2_band04_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B8A_sur_500m.tif"):
-            s2_band08_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band08_500m_file = '%s/%s' % (tbd, file)
+            s2_band8A_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band8A_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B11_sur_500m.tif"):
             s2_band11_500m_data = gdal.Open('%s/%s' % (tbd, file))
             s2_band11_500m_file = '%s/%s' % (tbd, file)
@@ -203,7 +203,7 @@ def cal_endmember(sentinel2_directory):
             s2_band12_500m_file = '%s/%s' % (tbd, file)
 
     # check if variables were assigned
-    if s2_band02_500m_data and s2_band03_500m_data and s2_band04_500m_data and s2_band08_500m_data and s2_band11_500m_data and s2_band12_500m_data:
+    if s2_band02_500m_data and s2_band03_500m_data and s2_band04_500m_data and s2_band8A_500m_data and s2_band11_500m_data and s2_band12_500m_data:
         # load sentinel-2 500m geo-reference data
         s2_500m_geotransform = s2_band02_500m_data.GetGeoTransform()
         s2_500m_proj = s2_band02_500m_data.GetProjection()
