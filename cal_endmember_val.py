@@ -303,7 +303,6 @@ def cal_endmember(sentinel2_directory):
     # index to filter out cloud pixels
     valid_index = (s2_20m_matrix[:, 0, 0] > 0) & (s2_20m_matrix[:, 0, 1] > 0) & (s2_20m_matrix[:, 0, 2] > 0) & (
                 s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0) & (boa_mask_array[:, 0] == 0.)
-    print(valid_index[valid_index == True].size)
     s2_20m_matrix = s2_20m_matrix[valid_index, :, :]
 
     # resample over the sentinel-2 eea spetral wavelengths
@@ -363,6 +362,11 @@ def cal_endmember(sentinel2_directory):
 
     s2_500m_matrix[s2_500m_matrix == -9999.] = np.nan
     s2_500m_matrix = s2_500m_matrix / 1.e4
+
+    # index to filter out cloud pixels
+    valid_index = (s2_500m_matrix[:, 0, 0] > 0) & (s2_500m_matrix[:, 0, 1] > 0) & (s2_500m_matrix[:, 0, 2] > 0) & (
+            s2_500m_matrix[:, 0, 3] > 0) & (s2_500m_matrix[:, 0, 4] > 0) & (s2_500m_matrix[:, 0, 5] > 0)
+    s2_500m_matrix = s2_500m_matrix[valid_index, :, :]
 
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
