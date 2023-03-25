@@ -176,7 +176,7 @@ def cal_endmember(sentinel2_directory):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     for file in os.listdir(file_subdirectory):
-        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif")):
+        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
 
     # initialize variables with None for 500-m data
@@ -194,6 +194,7 @@ def cal_endmember(sentinel2_directory):
     s2_band8A_20m_data = None
     s2_band11_20m_data = None
     s2_band12_20m_data = None
+    s2_mask_data = None
 
     for file in os.listdir(tbd):
         if file.endswith("B02_sur_500m.tif"):
@@ -222,6 +223,8 @@ def cal_endmember(sentinel2_directory):
             s2_band11_20m_data = gdal.Open('%s/%s' % (tbd, file))
         if file.endswith("B12_sur_20m.tif"):
             s2_band12_20m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("_mask_20m.tif"):
+            s2_mask_data = gdal.Open('%s/%s' % (tbd, file))
 
     # check if variables were assigned
     if s2_band02_500m_data and s2_band03_500m_data and s2_band04_500m_data and s2_band8A_500m_data and s2_band11_500m_data and s2_band12_500m_data:
@@ -262,7 +265,9 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_20m = s2_band8A_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band11_20m = s2_band11_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_band12_20m = s2_band12_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-
+    boa_mask_20m = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    print(np.mean(boa_mask_20m))
+    quit()
     boa_band02_20m_resampled = boa_band02_20m[::sample_interval, ::sample_interval]
     boa_band03_20m_resampled = boa_band03_20m[::sample_interval, ::sample_interval]
     boa_band04_20m_resampled = boa_band04_20m[::sample_interval, ::sample_interval]
