@@ -171,7 +171,7 @@ def cal_endmember(sentinel2_directory):
 
     # use gdalwarp from os.system() to process a file in the subdirectory
     for file in os.listdir(file_subdirectory):
-        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B08_sur.tif", "B11_sur.tif", "B12_sur.tif")):
+        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     # initialize variables with None
@@ -192,7 +192,7 @@ def cal_endmember(sentinel2_directory):
         if file.endswith("B04_sur_500m.tif"):
             s2_band04_500m_data = gdal.Open('%s/%s' % (tbd, file))
             s2_band04_500m_file = '%s/%s' % (tbd, file)
-        if file.endswith("B08_sur_500m.tif"):
+        if file.endswith("B8A_sur_500m.tif"):
             s2_band08_500m_data = gdal.Open('%s/%s' % (tbd, file))
             s2_band08_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B11_sur_500m.tif"):
