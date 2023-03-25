@@ -326,7 +326,7 @@ def cal_endmember(sentinel2_directory):
 
     cal_EEA = NFINDR()
     print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
-    main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
+    main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=5, maxit=10, normalize=False, ATGP_init=True)
     print("-----------> Finish calculating end-members processing")
     np.save('%s/endmembers.npy' % tbd, main_endmember)
 
