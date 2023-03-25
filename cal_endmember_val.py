@@ -132,6 +132,7 @@ def brdf_f2(sza, vza, phi):
 
 def cal_endmember(sentinel2_directory):
 
+    sample_interval = 10
     # file subdirectory in the format of sentinel2_directory/GRANULE/L1C****/IMG_DATA
     file_subdirectory = os.path.join(sentinel2_directory, 'GRANULE')
     file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
@@ -174,7 +175,11 @@ def cal_endmember(sentinel2_directory):
         if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
-    # initialize variables with None
+    for file in os.listdir(file_subdirectory):
+        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif")):
+            os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
+
+    # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None
     s2_band04_500m_data = None
@@ -182,25 +187,41 @@ def cal_endmember(sentinel2_directory):
     s2_band11_500m_data = None
     s2_band12_500m_data = None
 
+    # initialize variables with None for 20-m data
+    s2_band02_20m_data = None
+    s2_band03_20m_data = None
+    s2_band04_20m_data = None
+    s2_band8A_20m_data = None
+    s2_band11_20m_data = None
+    s2_band12_20m_data = None
+
     for file in os.listdir(tbd):
         if file.endswith("B02_sur_500m.tif"):
             s2_band02_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band02_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B03_sur_500m.tif"):
             s2_band03_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band03_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B04_sur_500m.tif"):
             s2_band04_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band04_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B8A_sur_500m.tif"):
             s2_band8A_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band8A_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B11_sur_500m.tif"):
             s2_band11_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band11_500m_file = '%s/%s' % (tbd, file)
         if file.endswith("B12_sur_500m.tif"):
             s2_band12_500m_data = gdal.Open('%s/%s' % (tbd, file))
-            s2_band12_500m_file = '%s/%s' % (tbd, file)
+
+    for file in os.listdir(tbd):
+        if file.endswith("B02_sur_20m.tif"):
+            s2_band02_20m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("B03_sur_20m.tif"):
+            s2_band03_20m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("B04_sur_20m.tif"):
+            s2_band04_20m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("B8A_sur_20m.tif"):
+            s2_band8A_20m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("B11_sur_20m.tif"):
+            s2_band11_20m_data = gdal.Open('%s/%s' % (tbd, file))
+        if file.endswith("B12_sur_20m.tif"):
+            s2_band12_20m_data = gdal.Open('%s/%s' % (tbd, file))
 
     # check if variables were assigned
     if s2_band02_500m_data and s2_band03_500m_data and s2_band04_500m_data and s2_band8A_500m_data and s2_band11_500m_data and s2_band12_500m_data:
@@ -211,11 +232,22 @@ def cal_endmember(sentinel2_directory):
         # handle the case where one or more variables were not assigned
         print("Error: One or more Sentinel-2 500m bands not found.")
 
+    if s2_band02_20m_data and s2_band03_20m_data and s2_band04_20m_data and s2_band8A_20m_data and s2_band11_20m_data and s2_band12_20m_data:
+        # load sentinel-2 20m geo-reference data
+        s2_20m_geotransform = s2_band02_20m_data.GetGeoTransform()
+        s2_20m_proj = s2_band02_20m_data.GetProjection()
+    else:
+        # handle the case where one or more variables were not assigned
+        print("Error: One or more Sentinel-2 20m bands not found.")
+
     # get sentinel-2 500m data number of rows and cols
     s2_cols_500m = s2_band02_500m_data.RasterXSize
     s2_rows_500m = s2_band02_500m_data.RasterYSize
 
-    # get raster band
+    s2_cols_20m = s2_band02_20m_data.RasterXSize
+    s2_rows_20m = s2_band02_20m_data.RasterYSize
+
+    # get raster band for 500m data
     boa_band02_500m = s2_band02_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band03_500m = s2_band03_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band04_500m = s2_band04_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
@@ -223,30 +255,45 @@ def cal_endmember(sentinel2_directory):
     boa_band11_500m = s2_band11_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band12_500m = s2_band12_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
 
+    # get raster band for 20m data
+    boa_band02_20m = s2_band02_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band03_20m = s2_band03_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band04_20m = s2_band04_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band8A_20m = s2_band8A_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band11_20m = s2_band11_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band12_20m = s2_band12_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+
+    boa_band02_20m_resampled = boa_band02_20m[::sample_interval, ::sample_interval]
+    boa_band03_20m_resampled = boa_band03_20m[::sample_interval, ::sample_interval]
+    boa_band04_20m_resampled = boa_band04_20m[::sample_interval, ::sample_interval]
+    boa_band8A_20m_resampled = boa_band8A_20m[::sample_interval, ::sample_interval]
+    boa_band11_20m_resampled = boa_band11_20m[::sample_interval, ::sample_interval]
+    boa_band12_20m_resampled = boa_band12_20m[::sample_interval, ::sample_interval]
+
     # convert 2d-array to 1-d array
-    boa_band02_array = boa_band02_500m.reshape(boa_band02_500m.size, 1)
-    boa_band03_array = boa_band03_500m.reshape(boa_band03_500m.size, 1)
-    boa_band04_array = boa_band04_500m.reshape(boa_band04_500m.size, 1)
-    boa_band8A_array = boa_band8A_500m.reshape(boa_band8A_500m.size, 1)
-    boa_band11_array = boa_band11_500m.reshape(boa_band11_500m.size, 1)
-    boa_band12_array = boa_band12_500m.reshape(boa_band12_500m.size, 1)
+    boa_band02_array = boa_band02_20m_resampled.reshape(boa_band02_20m_resampled.size, 1)
+    boa_band03_array = boa_band03_20m_resampled.reshape(boa_band03_20m_resampled.size, 1)
+    boa_band04_array = boa_band04_20m_resampled.reshape(boa_band04_20m_resampled.size, 1)
+    boa_band8A_array = boa_band8A_20m_resampled.reshape(boa_band8A_20m_resampled.size, 1)
+    boa_band11_array = boa_band11_20m_resampled.reshape(boa_band11_20m_resampled.size, 1)
+    boa_band12_array = boa_band12_20m_resampled.reshape(boa_band12_20m_resampled.size, 1)
 
-    s2_500m_matrix = np.zeros((boa_band02_array.size, 1, 6))
+    s2_20m_matrix = np.zeros((boa_band02_array.size, 1, 6))
 
-    s2_500m_matrix[:, 0, 0] = boa_band02_array[:, 0]
-    s2_500m_matrix[:, 0, 1] = boa_band03_array[:, 0]
-    s2_500m_matrix[:, 0, 2] = boa_band04_array[:, 0]
-    s2_500m_matrix[:, 0, 3] = boa_band8A_array[:, 0]
-    s2_500m_matrix[:, 0, 4] = boa_band11_array[:, 0]
-    s2_500m_matrix[:, 0, 5] = boa_band12_array[:, 0]
+    s2_20m_matrix[:, 0, 0] = boa_band02_array[:, 0]
+    s2_20m_matrix[:, 0, 1] = boa_band03_array[:, 0]
+    s2_20m_matrix[:, 0, 2] = boa_band04_array[:, 0]
+    s2_20m_matrix[:, 0, 3] = boa_band8A_array[:, 0]
+    s2_20m_matrix[:, 0, 4] = boa_band11_array[:, 0]
+    s2_20m_matrix[:, 0, 5] = boa_band12_array[:, 0]
 
-    s2_500m_matrix[s2_500m_matrix == -9999.] = np.nan
-    s2_500m_matrix = s2_500m_matrix / 1.e4
+    s2_20m_matrix[s2_20m_matrix == -9999.] = np.nan
+    s2_20m_matrix = s2_20m_matrix / 1.e4
 
     # index to filter out cloud pixels
-    valid_index = (s2_500m_matrix[:, 0, 0] > 0) & (s2_500m_matrix[:, 0, 1] > 0) & (s2_500m_matrix[:, 0, 2] > 0) & (
-                s2_500m_matrix[:, 0, 3] > 0) & (s2_500m_matrix[:, 0, 4] > 0) & (s2_500m_matrix[:, 0, 5] > 0)
-    s2_500m_matrix = s2_500m_matrix[valid_index, :, :]
+    valid_index = (s2_20m_matrix[:, 0, 0] > 0) & (s2_20m_matrix[:, 0, 1] > 0) & (s2_20m_matrix[:, 0, 2] > 0) & (
+                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0)
+    s2_20m_matrix = s2_20m_matrix[valid_index, :, :]
 
     # resample over the sentinel-2 eea spetral wavelengths
     s2_eea_wavelength = np.asarray([459., 560., 665., 865., 1610., 2190.])
@@ -263,12 +310,12 @@ def cal_endmember(sentinel2_directory):
 
     # resample the Sentinel-2 matrix over the resampled wavelength range
 
-    func_wv = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
-    s2_500m_matrix_interp = func_wv(s2_wv_resampled)
+    func_wv = interpolate.interp1d(s2_eea_wavelength, s2_20m_matrix, axis=2)
+    s2_20m_matrix_interp = func_wv(s2_wv_resampled)
 
     cal_EEA = NFINDR()
     print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
-    main_endmember = cal_EEA.extract(M=s2_500m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
+    main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
     print("-----------> Finish calculating end-members processing")
     np.save('%s/endmembers.npy' % tbd, main_endmember)
 
@@ -289,8 +336,8 @@ def cal_endmember(sentinel2_directory):
     plt.legend(fontsize=26)
     plt.savefig('%s/endmember_spectrum.png' % fig_directory)
     plt.close()
-    quit()
 
+    quit()
 
     # calculate abundance for aggregated S2
     s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
