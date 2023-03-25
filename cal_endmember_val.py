@@ -277,6 +277,7 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_20m_resampled = boa_band8A_20m[::sample_interval, ::sample_interval]
     boa_band11_20m_resampled = boa_band11_20m[::sample_interval, ::sample_interval]
     boa_band12_20m_resampled = boa_band12_20m[::sample_interval, ::sample_interval]
+    boa_mask_20m_resampled = boa_mask_20m[::sample_interval, ::sample_interval]
 
     # convert 2d-array to 1-d array
     boa_band02_array = boa_band02_20m_resampled.reshape(boa_band02_20m_resampled.size, 1)
@@ -285,6 +286,7 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_array = boa_band8A_20m_resampled.reshape(boa_band8A_20m_resampled.size, 1)
     boa_band11_array = boa_band11_20m_resampled.reshape(boa_band11_20m_resampled.size, 1)
     boa_band12_array = boa_band12_20m_resampled.reshape(boa_band12_20m_resampled.size, 1)
+    boa_mask_array = boa_mask_20m_resampled.reshape(boa_mask_20m_resampled.size, 1)
 
     s2_20m_matrix = np.zeros((boa_band02_array.size, 1, 6))
 
@@ -300,7 +302,7 @@ def cal_endmember(sentinel2_directory):
 
     # index to filter out cloud pixels
     valid_index = (s2_20m_matrix[:, 0, 0] > 0) & (s2_20m_matrix[:, 0, 1] > 0) & (s2_20m_matrix[:, 0, 2] > 0) & (
-                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0 & (boa_mask_20m == 0.))
+                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0 & (boa_mask_array[:, 0] == 0))
     s2_20m_matrix = s2_20m_matrix[valid_index, :, :]
 
     # resample over the sentinel-2 eea spetral wavelengths
