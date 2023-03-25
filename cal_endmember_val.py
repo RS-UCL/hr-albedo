@@ -200,18 +200,20 @@ def cal_endmember(sentinel2_directory):
     s2_500m_proj = s2_band02_500m_data.GetProjection()
 
     # get sentinel-2 500m data number of rows and cols
-    s2_cols_500m = s2_band02_500m_file.RasterXSize
-    s2_rows_500m = s2_band02_500m_file.RasterYSize
+    s2_cols_500m = s2_band02_500m_data.RasterXSize
+    s2_rows_500m = s2_band02_500m_data.RasterYSize
 
     print(s2_cols_500m, s2_rows_500m)
-    quit()
+
     # get raster band
-    boa_band02 = s2_band02_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band03 = s2_band03_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band04 = s2_band04_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band8A = s2_band8A_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band11 = s2_band11_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band12 = s2_band12_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band02_500m = s2_band02_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    print(boa_band02_500m.shape)
+    quit()
+    boa_band03_500m = s2_band03_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band04_500m = s2_band04_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band8A_500m = s2_band8A_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band11_500m = s2_band11_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
+    boa_band12_500m = s2_band12_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
 
     print('gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
         s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band02_masked_file, tbd_directory))
