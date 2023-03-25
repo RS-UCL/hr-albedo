@@ -174,6 +174,13 @@ def cal_endmember(sentinel2_directory):
         if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B08_sur.tif", "B11_sur.tif", "B12_sur.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
+    # initialize variables with None
+    s2_band02_500m_data = None
+    s2_band03_500m_data = None
+    s2_band04_500m_data = None
+    s2_band08_500m_data = None
+    s2_band11_500m_data = None
+    s2_band12_500m_data = None
 
     for file in os.listdir(tbd):
         if file.endswith("B02_sur_500m.tif"):
@@ -195,124 +202,51 @@ def cal_endmember(sentinel2_directory):
             s2_band12_500m_data = gdal.Open('%s/%s' % (tbd, file))
             s2_band12_500m_file = '%s/%s' % (tbd, file)
 
-    # load sentinel-2 500m geo-reference data
-    s2_500m_geotransform = s2_band02_500m_data.GetGeoTransform()
-    s2_500m_proj = s2_band02_500m_data.GetProjection()
+    # check if variables were assigned
+    if s2_band02_500m_data and s2_band03_500m_data and s2_band04_500m_data and s2_band08_500m_data and s2_band11_500m_data and s2_band12_500m_data:
+        # load sentinel-2 500m geo-reference data
+        s2_500m_geotransform = s2_band02_500m_data.GetGeoTransform()
+        s2_500m_proj = s2_band02_500m_data.GetProjection()
+    else:
+        # handle the case where one or more variables were not assigned
+        print("Error: One or more Sentinel-2 500m bands not found.")
 
     # get sentinel-2 500m data number of rows and cols
     s2_cols_500m = s2_band02_500m_data.RasterXSize
     s2_rows_500m = s2_band02_500m_data.RasterYSize
 
-    print(s2_cols_500m, s2_rows_500m)
-
     # get raster band
     boa_band02_500m = s2_band02_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
-    print(boa_band02_500m.shape)
-    quit()
-    boa_band03_500m = s2_band03_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band04_500m = s2_band04_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band8A_500m = s2_band8A_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band11_500m = s2_band11_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-    boa_band12_500m = s2_band12_masked.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-
-    print('gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band02_masked_file, tbd_directory))
-
-    # reproject Sentinel-2 spectral boa-brf to modis SIN projection
-    os.system(
-        'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band02_masked_file, tbd_directory))
-    os.system(
-        'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b03_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band03_masked_file, tbd_directory))
-    os.system(
-        'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b04_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band04_masked_file, tbd_directory))
-    os.system(
-        'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b8A_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band8A_masked_file, tbd_directory))
-    os.system(
-        'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b11_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band11_masked_file, tbd_directory))
-    os.system(
-        'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b12_SIN_500m.tiff' % (
-        s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band12_masked_file, tbd_directory))
-
-    # get Sentinel-2 at 500-m SIN projection
-    s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
-    s2_SIN_500m_geotransform = s2_band02_SIN_500m.GetGeoTransform()
-
-    s2_SIN_500m_ymax = s2_SIN_500m_geotransform[3]
-    s2_SIN_500m_ymin = s2_SIN_500m_geotransform[3] + s2_SIN_500m_geotransform[5] * s2_band02_SIN_500m.RasterYSize
-    s2_SIN_500m_xmin = s2_SIN_500m_geotransform[0]
-    s2_SIN_500m_xmax = s2_SIN_500m_geotransform[0] + s2_SIN_500m_geotransform[1] * s2_band02_SIN_500m.RasterXSize
-
-    # crop MODIS BRDF to aggregated S2 boundaries
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band001_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band001_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band002_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band002_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band003_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band003_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band004_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band004_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band005_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band005_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band006_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band006_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band007_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band007_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_bandVIS_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_bandVIS_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_bandNIR_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_bandNIR_file, tbd_directory))
-    os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
-              '%s/modis_brdf_band0SW_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
-                                                      s2_SIN_500m_ymax, modis_band0SW_file, tbd_directory))
-
-
-    # resample spectral boa-brf for EEA preparation.
-    boa_band02_resampled = boa_band02[::sample_interval, ::sample_interval]
-    boa_band03_resampled = boa_band03[::sample_interval, ::sample_interval]
-    boa_band04_resampled = boa_band04[::sample_interval, ::sample_interval]
-    boa_band8A_resampled = boa_band8A[::sample_interval, ::sample_interval]
-    boa_band11_resampled = boa_band11[::sample_interval, ::sample_interval]
-    boa_band12_resampled = boa_band12[::sample_interval, ::sample_interval]
+    boa_band03_500m = s2_band03_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    boa_band04_500m = s2_band04_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    boa_band8A_500m = s2_band8A_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    boa_band11_500m = s2_band11_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    boa_band12_500m = s2_band12_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
 
     # convert 2d-array to 1-d array
-    boa_band02_array = boa_band02_resampled.reshape(boa_band02_resampled.size, 1)
-    boa_band03_array = boa_band03_resampled.reshape(boa_band03_resampled.size, 1)
-    boa_band04_array = boa_band04_resampled.reshape(boa_band04_resampled.size, 1)
-    boa_band8A_array = boa_band8A_resampled.reshape(boa_band8A_resampled.size, 1)
-    boa_band11_array = boa_band11_resampled.reshape(boa_band11_resampled.size, 1)
-    boa_band12_array = boa_band12_resampled.reshape(boa_band12_resampled.size, 1)
+    boa_band02_array = boa_band02_500m.reshape(boa_band02_500m.size, 1)
+    boa_band03_array = boa_band03_500m.reshape(boa_band03_500m.size, 1)
+    boa_band04_array = boa_band04_500m.reshape(boa_band04_500m.size, 1)
+    boa_band8A_array = boa_band8A_500m.reshape(boa_band8A_500m.size, 1)
+    boa_band11_array = boa_band11_500m.reshape(boa_band11_500m.size, 1)
+    boa_band12_array = boa_band12_500m.reshape(boa_band12_500m.size, 1)
 
-    s2_resampled_matrix = np.zeros((boa_band02_array.size, 1, 6))
+    s2_500m_matrix = np.zeros((boa_band02_array.size, 1, 6))
 
-    s2_resampled_matrix[:, 0, 0] = boa_band02_array[:, 0]
-    s2_resampled_matrix[:, 0, 1] = boa_band03_array[:, 0]
-    s2_resampled_matrix[:, 0, 2] = boa_band04_array[:, 0]
-    s2_resampled_matrix[:, 0, 3] = boa_band8A_array[:, 0]
-    s2_resampled_matrix[:, 0, 4] = boa_band11_array[:, 0]
-    s2_resampled_matrix[:, 0, 5] = boa_band12_array[:, 0]
+    s2_500m_matrix[:, 0, 0] = boa_band02_array[:, 0]
+    s2_500m_matrix[:, 0, 1] = boa_band03_array[:, 0]
+    s2_500m_matrix[:, 0, 2] = boa_band04_array[:, 0]
+    s2_500m_matrix[:, 0, 3] = boa_band8A_array[:, 0]
+    s2_500m_matrix[:, 0, 4] = boa_band11_array[:, 0]
+    s2_500m_matrix[:, 0, 5] = boa_band12_array[:, 0]
 
-    # index to filter out cloud pixels
-    cloud_filter_index = (s2_resampled_matrix[:, 0, 0] > 0) & (s2_resampled_matrix[:, 0, 1] > 0) & \
-                         (s2_resampled_matrix[:, 0, 2] > 0) & (s2_resampled_matrix[:, 0, 3] > 0) & \
-                         (s2_resampled_matrix[:, 0, 4] > 0) & (s2_resampled_matrix[:, 0, 5] > 0) & \
-                         (s2_resampled_matrix[:, 0, 0] < .8) & (s2_resampled_matrix[:, 0, 1] < .8) & \
-                         (s2_resampled_matrix[:, 0, 2] < .8) & (s2_resampled_matrix[:, 0, 3] < .8) & \
-                         (s2_resampled_matrix[:, 0, 4] < .8) & (s2_resampled_matrix[:, 0, 5] < .8)
-
+    print(np.mean(s2_500m_matrix[:, 0, 0]))
+    print(np.mean(s2_500m_matrix[:, 0, 1]))
+    print(np.mean(s2_500m_matrix[:, 0, 2]))
+    print(np.mean(s2_500m_matrix[:, 0, 3]))
+    print(np.mean(s2_500m_matrix[:, 0, 4]))
+    print(np.mean(s2_500m_matrix[:, 0, 5]))
+    quit()
     s2_resampled_matrix_filtered = s2_resampled_matrix[cloud_filter_index, :, :]
 
     # resample over the sentinel-2 eea spetral wavelengths
