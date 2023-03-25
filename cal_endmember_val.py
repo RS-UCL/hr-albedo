@@ -264,7 +264,7 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_500m = s2_band8A_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band11_500m = s2_band11_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band12_500m = s2_band12_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
-    boa_mask_500m = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    boa_mask_500m = s2_mask_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
 
     # get raster band for 20m data
     boa_band02_20m = s2_band02_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
