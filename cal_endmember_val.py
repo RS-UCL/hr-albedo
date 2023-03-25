@@ -173,6 +173,7 @@ def cal_endmember(sentinel2_directory):
     for file in os.listdir(file_subdirectory):
         if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B08_sur.tif", "B11_sur.tif", "B12_sur.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
+    quit()
     #
     #
     # for file in os.listdir(file_subdirectory):
