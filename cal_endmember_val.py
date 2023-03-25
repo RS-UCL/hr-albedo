@@ -240,12 +240,19 @@ def cal_endmember(sentinel2_directory):
     s2_500m_matrix[:, 0, 4] = boa_band11_array[:, 0]
     s2_500m_matrix[:, 0, 5] = boa_band12_array[:, 0]
 
-    print(np.mean(s2_500m_matrix[:, 0, 0]))
-    print(np.mean(s2_500m_matrix[:, 0, 1]))
-    print(np.mean(s2_500m_matrix[:, 0, 2]))
-    print(np.mean(s2_500m_matrix[:, 0, 3]))
-    print(np.mean(s2_500m_matrix[:, 0, 4]))
-    print(np.mean(s2_500m_matrix[:, 0, 5]))
+    test = s2_500m_matrix[:, 0, 0]
+    print(np.mean(test[test>0]))
+    test = s2_500m_matrix[:, 0, 1]
+    print(np.mean(test[test > 0]))
+    test = s2_500m_matrix[:, 0, 2]
+    print(np.mean(test[test > 0]))
+    test = s2_500m_matrix[:, 0, 3]
+    print(np.mean(test[test > 0]))
+    test = s2_500m_matrix[:, 0, 4]
+    print(np.mean(test[test > 0]))
+    test = s2_500m_matrix[:, 0, 5]
+    print(np.mean(test[test > 0]))
+
     quit()
     s2_resampled_matrix_filtered = s2_resampled_matrix[cloud_filter_index, :, :]
 
