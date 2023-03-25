@@ -273,6 +273,8 @@ def cal_endmember(sentinel2_directory):
     np.save('%s/endmembers.npy' % tbd, main_endmember)
 
     fig_directory = file_subdirectory + '/Figures'  # temporal directory, to be deleted in the end.
+    if not os.path.exists(fig_directory):
+        os.makedirs(fig_directory)
     # display pure-pixel spectra.
     ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     fig, ax = plt.subplots(figsize=(22, 12))
@@ -288,6 +290,8 @@ def cal_endmember(sentinel2_directory):
     plt.savefig('%s/endmember_spectrum.png' % fig_directory)
     plt.close()
     quit()
+
+
     # calculate abundance for aggregated S2
     s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
     s2_band03_SIN_500m = gdal.Open('%s/s2_boa_b03_SIN_500m.tiff' % tbd_directory)
