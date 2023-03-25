@@ -345,49 +345,23 @@ def cal_endmember(sentinel2_directory):
     plt.savefig('%s/endmember_spectrum.png' % fig_directory)
     plt.close()
 
-    quit()
+    boa_band02_500m_array = boa_band02_500m.reshape(boa_band02_500m, 1)
+    boa_band03_500m_array = boa_band03_500m.reshape(boa_band03_500m, 1)
+    boa_band04_500m_array = boa_band04_500m.reshape(boa_band04_500m, 1)
+    boa_band8A_500m_array = boa_band8A_500m.reshape(boa_band8A_500m, 1)
+    boa_band11_500m_array = boa_band11_500m.reshape(boa_band11_500m, 1)
+    boa_band12_500m_array = boa_band12_500m.reshape(boa_band12_500m, 1)
 
-    # calculate abundance for aggregated S2
-    s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
-    s2_band03_SIN_500m = gdal.Open('%s/s2_boa_b03_SIN_500m.tiff' % tbd_directory)
-    s2_band04_SIN_500m = gdal.Open('%s/s2_boa_b04_SIN_500m.tiff' % tbd_directory)
-    s2_band8A_SIN_500m = gdal.Open('%s/s2_boa_b8A_SIN_500m.tiff' % tbd_directory)
-    s2_band11_SIN_500m = gdal.Open('%s/s2_boa_b11_SIN_500m.tiff' % tbd_directory)
-    s2_band12_SIN_500m = gdal.Open('%s/s2_boa_b12_SIN_500m.tiff' % tbd_directory)
+    s2_500m_matrix = np.zeros((boa_band02_500m_array.size, 1, 6))
 
-    s2_band02_SIN_500m_cols = s2_band02_SIN_500m.RasterXSize
-    s2_band02_SIN_500m_rows = s2_band02_SIN_500m.RasterYSize
+    s2_500m_matrix[:, 0, 0] = boa_band02_500m_array[:, 0]
+    s2_500m_matrix[:, 0, 1] = boa_band03_500m_array[:, 0]
+    s2_500m_matrix[:, 0, 2] = boa_band04_500m_array[:, 0]
+    s2_500m_matrix[:, 0, 3] = boa_band8A_500m_array[:, 0]
+    s2_500m_matrix[:, 0, 4] = boa_band11_500m_array[:, 0]
+    s2_500m_matrix[:, 0, 5] = boa_band12_500m_array[:, 0]
 
-    s2_band02_SIN_500m_array = s2_band02_SIN_500m.GetRasterBand(1).\
-        ReadAsArray(0, 0, s2_band02_SIN_500m_cols, s2_band02_SIN_500m_rows)
-    s2_band03_SIN_500m_array = s2_band03_SIN_500m.GetRasterBand(1).\
-        ReadAsArray(0, 0, s2_band02_SIN_500m_cols, s2_band02_SIN_500m_rows)
-    s2_band04_SIN_500m_array = s2_band04_SIN_500m.GetRasterBand(1).\
-        ReadAsArray(0, 0, s2_band02_SIN_500m_cols, s2_band02_SIN_500m_rows)
-    s2_band8A_SIN_500m_array = s2_band8A_SIN_500m.GetRasterBand(1).\
-        ReadAsArray(0, 0, s2_band02_SIN_500m_cols, s2_band02_SIN_500m_rows)
-    s2_band11_SIN_500m_array = s2_band11_SIN_500m.GetRasterBand(1).\
-        ReadAsArray(0, 0, s2_band02_SIN_500m_cols, s2_band02_SIN_500m_rows)
-    s2_band12_SIN_500m_array = s2_band12_SIN_500m.GetRasterBand(1).\
-        ReadAsArray(0, 0, s2_band02_SIN_500m_cols, s2_band02_SIN_500m_rows)
-
-    s2_band02_SIN_500m_array = s2_band02_SIN_500m_array.reshape(s2_band02_SIN_500m_array.size, 1)
-    s2_band03_SIN_500m_array = s2_band03_SIN_500m_array.reshape(s2_band03_SIN_500m_array.size, 1)
-    s2_band04_SIN_500m_array = s2_band04_SIN_500m_array.reshape(s2_band04_SIN_500m_array.size, 1)
-    s2_band8A_SIN_500m_array = s2_band8A_SIN_500m_array.reshape(s2_band8A_SIN_500m_array.size, 1)
-    s2_band11_SIN_500m_array = s2_band11_SIN_500m_array.reshape(s2_band11_SIN_500m_array.size, 1)
-    s2_band12_SIN_500m_array = s2_band12_SIN_500m_array.reshape(s2_band12_SIN_500m_array.size, 1)
-
-    s2_resampled_matrix_SIN_500m = np.zeros((s2_band02_SIN_500m_array.size, 1, 6))
-
-    s2_resampled_matrix_SIN_500m[:, 0, 0] = s2_band02_SIN_500m_array[:, 0]
-    s2_resampled_matrix_SIN_500m[:, 0, 1] = s2_band03_SIN_500m_array[:, 0]
-    s2_resampled_matrix_SIN_500m[:, 0, 2] = s2_band04_SIN_500m_array[:, 0]
-    s2_resampled_matrix_SIN_500m[:, 0, 3] = s2_band8A_SIN_500m_array[:, 0]
-    s2_resampled_matrix_SIN_500m[:, 0, 4] = s2_band11_SIN_500m_array[:, 0]
-    s2_resampled_matrix_SIN_500m[:, 0, 5] = s2_band12_SIN_500m_array[:, 0]
-
-    func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_resampled_matrix_SIN_500m, axis=2)
+    func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
     CalAbundanceMap = FCLS()
@@ -405,6 +379,7 @@ def cal_endmember(sentinel2_directory):
         colortable_i = ascii_uppercase[i]
         _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
 
+    quit()
     # load solar and sensor angular data
     granule_dir = sentinel2_file + '/GRANULE'
     for file in os.listdir(granule_dir):
