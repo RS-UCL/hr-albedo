@@ -240,25 +240,8 @@ def cal_endmember(sentinel2_directory):
     s2_500m_matrix[:, 0, 4] = boa_band11_array[:, 0]
     s2_500m_matrix[:, 0, 5] = boa_band12_array[:, 0]
 
-    test = s2_500m_matrix[:, 0, 0]
-    print(np.mean(test[test>0]))
-    test = s2_500m_matrix[:, 0, 1]
-    print(np.mean(test[test > 0]))
-    test = s2_500m_matrix[:, 0, 2]
-    print(np.mean(test[test > 0]))
-    test = s2_500m_matrix[:, 0, 3]
-    print(np.mean(test[test > 0]))
-    test = s2_500m_matrix[:, 0, 4]
-    print(np.mean(test[test > 0]))
-    test = s2_500m_matrix[:, 0, 5]
-    print(np.mean(test[test > 0]))
-
-    test2 = np.copy(s2_500m_matrix[:, 0, 0])
-    test2[test2 == -9999.] = np.nan
-    print(np.nanmean(test2))
-
-    quit()
-    s2_resampled_matrix_filtered = s2_resampled_matrix[cloud_filter_index, :, :]
+    s2_500m_matrix[s2_500m_matrix == -9999.] = np.nan
+    s2_500m_matrix = s2_500m_matrix / 1.e4
 
     # resample over the sentinel-2 eea spetral wavelengths
     s2_eea_wavelength = np.asarray([459., 560., 665., 865., 1610., 2190.])
@@ -275,16 +258,16 @@ def cal_endmember(sentinel2_directory):
 
     # resample the Sentinel-2 matrix over the resampled wavelength range
 
-    func_wv = interpolate.interp1d(s2_eea_wavelength, s2_resampled_matrix_filtered, axis=2)
-    s2_resampled_matrix_filtered_interp = func_wv(s2_wv_resampled)
+    func_wv = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
+    s2_500m_matrix_interp = func_wv(s2_wv_resampled)
 
     cal_EEA = NFINDR()
     print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
-    main_endmember = cal_EEA.extract(M=s2_resampled_matrix_filtered_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
+    main_endmember = cal_EEA.extract(M=s2_500m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
     print("-----------> Finish calculating end-members processing")
-    np.save('%s/endmembers.npy' % tbd_directory, main_endmember)
+    np.save('%s/endmembers.npy' % tbd, main_endmember)
 
-    fig_directory = sentinel2_file + '/Figures'  # temporal directory, to be deleted in the end.
+    fig_directory = file_subdirectory + '/Figures'  # temporal directory, to be deleted in the end.
     # display pure-pixel spectra.
     ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     fig, ax = plt.subplots(figsize=(22, 12))
@@ -299,7 +282,7 @@ def cal_endmember(sentinel2_directory):
     plt.legend(fontsize=26)
     plt.savefig('%s/endmember_spectrum.png' % fig_directory)
     plt.close()
-
+    quit()
     # calculate abundance for aggregated S2
     s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
     s2_band03_SIN_500m = gdal.Open('%s/s2_boa_b03_SIN_500m.tiff' % tbd_directory)
