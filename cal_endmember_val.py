@@ -360,13 +360,7 @@ def cal_endmember(sentinel2_directory):
     s2_500m_matrix[:, 0, 4] = boa_band11_500m_array[:, 0]
     s2_500m_matrix[:, 0, 5] = boa_band12_500m_array[:, 0]
 
-    s2_500m_matrix[s2_500m_matrix == -9999.] = np.nan
     s2_500m_matrix = s2_500m_matrix / 1.e4
-
-    # index to filter out cloud pixels
-    valid_index = (s2_500m_matrix[:, 0, 0] > 0) & (s2_500m_matrix[:, 0, 1] > 0) & (s2_500m_matrix[:, 0, 2] > 0) & (
-            s2_500m_matrix[:, 0, 3] > 0) & (s2_500m_matrix[:, 0, 4] > 0) & (s2_500m_matrix[:, 0, 5] > 0)
-    s2_500m_matrix = s2_500m_matrix[valid_index, :, :]
 
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
@@ -374,6 +368,9 @@ def cal_endmember(sentinel2_directory):
     CalAbundanceMap = FCLS()
     print("-----------> Start calculating abundance on aggregated S2 scence.\n")
     s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
+    for k in range(s2_abundance_500m.shape[2]):
+        s2_abundance_500m[:, :, k][boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
+
     print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
     np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
 
