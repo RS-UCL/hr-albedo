@@ -278,7 +278,7 @@ def cal_endmember(sentinel2_directory):
     boa_band11_20m_resampled = boa_band11_20m[::sample_interval, ::sample_interval]
     boa_band12_20m_resampled = boa_band12_20m[::sample_interval, ::sample_interval]
     boa_mask_20m_resampled = boa_mask_20m[::sample_interval, ::sample_interval]
-    print(np.mean(boa_band02_20m_resampled))
+    print(np.mean(boa_mask_20m_resampled))
     quit()
     # convert 2d-array to 1-d array
     boa_band02_array = boa_band02_20m_resampled.reshape(boa_band02_20m_resampled.size, 1)
