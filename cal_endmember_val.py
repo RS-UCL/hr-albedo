@@ -146,6 +146,10 @@ def cal_endmember(sentinel2_directory):
     if not os.path.exists(tbd):
         os.makedirs(tbd)
 
+    fig_directory = file_subdirectory + '/Figures'  # temporal directory, to be deleted in the end.
+    if not os.path.exists(fig_directory):
+        os.makedirs(fig_directory)
+
     # modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
     # modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
     # modis_band003_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band3' % mcd43a1_file
@@ -267,6 +271,12 @@ def cal_endmember(sentinel2_directory):
     boa_band12_20m = s2_band12_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     boa_mask_20m = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     print(np.mean(boa_mask_20m))
+    fig, ax = plt.subplots(figsize=(12, 12))
+    plt.pcolor(boa_mask_20m, cmap='jet')
+    plt.colorbar()
+    plt.savefig('%s/test.png' % fig_directory)
+    plt.close()
+
     quit()
     boa_band02_20m_resampled = boa_band02_20m[::sample_interval, ::sample_interval]
     boa_band03_20m_resampled = boa_band03_20m[::sample_interval, ::sample_interval]
@@ -324,9 +334,6 @@ def cal_endmember(sentinel2_directory):
     print("-----------> Finish calculating end-members processing")
     np.save('%s/endmembers.npy' % tbd, main_endmember)
 
-    fig_directory = file_subdirectory + '/Figures'  # temporal directory, to be deleted in the end.
-    if not os.path.exists(fig_directory):
-        os.makedirs(fig_directory)
     # display pure-pixel spectra.
     ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     fig, ax = plt.subplots(figsize=(22, 12))
