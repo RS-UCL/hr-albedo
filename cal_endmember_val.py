@@ -138,9 +138,9 @@ def cal_endmember(sentinel2_directory):
     file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
 
     kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
-    print(kernel_weights.files)
-    print(kernel_weights['fs'].shape)
-    quit()
+    # print(kernel_weights.files)
+    # print(kernel_weights['fs'].shape)
+    # quit()
     tbd = file_subdirectory + '/tbd'
     if not os.path.exists(tbd):
         os.makedirs(tbd)
@@ -171,30 +171,29 @@ def cal_endmember(sentinel2_directory):
 
     # use gdalwarp from os.system() to process a file in the subdirectory
     for file in os.listdir(file_subdirectory):
-        if file.endswith("B02_sur.tif"):
-            os.system('gdalwarp -tr 500 500 %s/%s %s/%s'%(file_subdirectory, file, tbd, file[0:-4] + "_500m.tif"))
-
-    quit()
-
-    for file in os.listdir(file_subdirectory):
-        if file.endswith("B02.tif"):
-            s2_band02_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-            s2_band02_masked_file = '%s/%s' % (sentinel2_directory, file)
-        if file.endswith("B03.tif"):
-            s2_band03_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-            s2_band03_masked_file = '%s/%s' % (sentinel2_directory, file)
-        if file.endswith("B04.tif"):
-            s2_band04_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-            s2_band04_masked_file = '%s/%s' % (sentinel2_directory, file)
-        if file.endswith("B8A.tif"):
-            s2_band8A_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-            s2_band8A_masked_file = '%s/%s' % (sentinel2_directory, file)
-        if file.endswith("B11.tif"):
-            s2_band11_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-            s2_band11_masked_file = '%s/%s' % (sentinel2_directory, file)
-        if file.endswith("B12.tif"):
-            s2_band12_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-            s2_band12_masked_file = '%s/%s' % (sentinel2_directory, file)
+        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B08_sur.tif", "B11_sur.tif", "B12_sur.tif")):
+            os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
+    #
+    #
+    # for file in os.listdir(file_subdirectory):
+    #     if file.endswith("B02.tif"):
+    #         s2_band02_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+    #         s2_band02_masked_file = '%s/%s' % (sentinel2_directory, file)
+    #     if file.endswith("B03.tif"):
+    #         s2_band03_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+    #         s2_band03_masked_file = '%s/%s' % (sentinel2_directory, file)
+    #     if file.endswith("B04.tif"):
+    #         s2_band04_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+    #         s2_band04_masked_file = '%s/%s' % (sentinel2_directory, file)
+    #     if file.endswith("B8A.tif"):
+    #         s2_band8A_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+    #         s2_band8A_masked_file = '%s/%s' % (sentinel2_directory, file)
+    #     if file.endswith("B11.tif"):
+    #         s2_band11_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+    #         s2_band11_masked_file = '%s/%s' % (sentinel2_directory, file)
+    #     if file.endswith("B12.tif"):
+    #         s2_band12_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
+    #         s2_band12_masked_file = '%s/%s' % (sentinel2_directory, file)
 
     # load sentinel-2 20m geo-reference data
     s2_20m_geotransform = s2_band02_masked.GetGeoTransform()
@@ -214,7 +213,7 @@ def cal_endmember(sentinel2_directory):
 
     print('gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
         s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band02_masked_file, tbd_directory))
-    quit()
+
     # reproject Sentinel-2 spectral boa-brf to modis SIN projection
     os.system(
         'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b02_SIN_500m.tiff' % (
@@ -234,7 +233,7 @@ def cal_endmember(sentinel2_directory):
     os.system(
         'gdalwarp -s_srs %s -t_srs %s -srcnodata -999 -dstnodata -999 -tr %s %s -overwrite %s %s/s2_boa_b12_SIN_500m.tiff' % (
         s2_20m_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution, s2_band12_masked_file, tbd_directory))
-    quit()
+
     # get Sentinel-2 at 500-m SIN projection
     s2_band02_SIN_500m = gdal.Open('%s/s2_boa_b02_SIN_500m.tiff' % tbd_directory)
     s2_SIN_500m_geotransform = s2_band02_SIN_500m.GetGeoTransform()
@@ -275,6 +274,7 @@ def cal_endmember(sentinel2_directory):
     os.system('gdalwarp -srcnodata 32767 -dstnodata 32767 -te %s %s %s %s -overwrite %s '
               '%s/modis_brdf_band0SW_cropped.tiff' % (s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax,
                                                       s2_SIN_500m_ymax, modis_band0SW_file, tbd_directory))
+
 
     # resample spectral boa-brf for EEA preparation.
     boa_band02_resampled = boa_band02[::sample_interval, ::sample_interval]
