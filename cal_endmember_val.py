@@ -371,7 +371,7 @@ def cal_endmember(sentinel2_directory):
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
     fig, ax = plt.subplots(figsize=(22, 12))
-    plt.imshow(boa_mask_500m_array, cmap='gray')
+    plt.imshow(boa_mask_500m_array.reshape((s2_rows_500m, s2_cols_500m)), cmap='gray')
     plt.colorbar()
     plt.savefig('%s/500_clou_mask.png' % fig_directory)
     plt.close()
