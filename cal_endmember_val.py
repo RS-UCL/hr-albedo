@@ -173,33 +173,35 @@ def cal_endmember(sentinel2_directory):
     for file in os.listdir(file_subdirectory):
         if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B08_sur.tif", "B11_sur.tif", "B12_sur.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
+
+
+    for file in os.listdir(tbd):
+        if file.endswith("B02_sur_500m.tif"):
+            s2_band02_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band02_500m_file = '%s/%s' % (tbd, file)
+        if file.endswith("B03_sur_500m.tif"):
+            s2_band03_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band03_500m_file = '%s/%s' % (tbd, file)
+        if file.endswith("B04_sur_500m.tif"):
+            s2_band04_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band04_500m_file = '%s/%s' % (tbd, file)
+        if file.endswith("B08_sur_500m.tif"):
+            s2_band08_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band08_500m_file = '%s/%s' % (tbd, file)
+        if file.endswith("B11_sur_500m.tif"):
+            s2_band11_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band11_500m_file = '%s/%s' % (tbd, file)
+        if file.endswith("B12_sur_500m.tif"):
+            s2_band12_500m_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_band12_500m_file = '%s/%s' % (tbd, file)
+
+    # load sentinel-2 500m geo-reference data
+    s2_500m_geotransform = s2_band02_500m_data.GetGeoTransform()
+    s2_500m_proj = s2_band02_500m_data.GetProjection()
+
+    print(s2_500m_geotransform)
+    print(s2_500m_proj)
     quit()
-    #
-    #
-    # for file in os.listdir(file_subdirectory):
-    #     if file.endswith("B02.tif"):
-    #         s2_band02_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-    #         s2_band02_masked_file = '%s/%s' % (sentinel2_directory, file)
-    #     if file.endswith("B03.tif"):
-    #         s2_band03_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-    #         s2_band03_masked_file = '%s/%s' % (sentinel2_directory, file)
-    #     if file.endswith("B04.tif"):
-    #         s2_band04_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-    #         s2_band04_masked_file = '%s/%s' % (sentinel2_directory, file)
-    #     if file.endswith("B8A.tif"):
-    #         s2_band8A_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-    #         s2_band8A_masked_file = '%s/%s' % (sentinel2_directory, file)
-    #     if file.endswith("B11.tif"):
-    #         s2_band11_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-    #         s2_band11_masked_file = '%s/%s' % (sentinel2_directory, file)
-    #     if file.endswith("B12.tif"):
-    #         s2_band12_masked = gdal.Open('%s/%s' % (sentinel2_directory, file))
-    #         s2_band12_masked_file = '%s/%s' % (sentinel2_directory, file)
-
-    # load sentinel-2 20m geo-reference data
-    s2_20m_geotransform = s2_band02_masked.GetGeoTransform()
-    s2_20m_proj = s2_band02_masked.GetProjection()
-
     # get sentinel-2 number of rows and cols
     s2_cols_20m = s2_band02_masked.RasterXSize
     s2_rows_20m = s2_band02_masked.RasterYSize
