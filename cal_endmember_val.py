@@ -368,7 +368,7 @@ def cal_endmember(sentinel2_directory):
     print("-----------> Start calculating abundance on aggregated S2 scence.\n")
     s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
     print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
-    np.save('%s/s2_500m_abundance.npy' % tbd_directory, s2_abundance_500m)
+    np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
 
     # plot 2d abundance figures
     for i in range(main_endmember.shape[0]):
