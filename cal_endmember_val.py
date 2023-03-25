@@ -361,6 +361,9 @@ def cal_endmember(sentinel2_directory):
     s2_500m_matrix[:, 0, 4] = boa_band11_500m_array[:, 0]
     s2_500m_matrix[:, 0, 5] = boa_band12_500m_array[:, 0]
 
+    s2_500m_matrix[s2_500m_matrix == -9999.] = np.nan
+    s2_500m_matrix = s2_500m_matrix / 1.e4
+
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
