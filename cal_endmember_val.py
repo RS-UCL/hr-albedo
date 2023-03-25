@@ -373,8 +373,8 @@ def cal_endmember(sentinel2_directory):
     # plot 2d abundance figures
     for i in range(main_endmember.shape[0]):
         abundane_i = s2_abundance_500m[:, :, i]
-        abundane_i = abundane_i.reshape(s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)
-        abundane_i[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = np.nan
+        abundane_i = abundane_i.reshape(s2_rows_500m, s2_cols_500m)
+        abundane_i[boa_band02_500m_array.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
 
         colortable_i = ascii_uppercase[i]
         _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
