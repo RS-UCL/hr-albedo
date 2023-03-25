@@ -272,7 +272,7 @@ def cal_endmember(sentinel2_directory):
     boa_mask_20m = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
     print(np.mean(boa_mask_20m))
     fig, ax = plt.subplots(figsize=(12, 12))
-    plt.pcolor(boa_mask_20m, cmap='jet')
+    plt.imshow(boa_mask_20m, cmap='jet')
     plt.colorbar()
     plt.savefig('%s/test.png' % fig_directory)
     plt.close()
@@ -307,7 +307,7 @@ def cal_endmember(sentinel2_directory):
 
     # index to filter out cloud pixels
     valid_index = (s2_20m_matrix[:, 0, 0] > 0) & (s2_20m_matrix[:, 0, 1] > 0) & (s2_20m_matrix[:, 0, 2] > 0) & (
-                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0)
+                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0 & (boa_mask_20m == 0.))
     s2_20m_matrix = s2_20m_matrix[valid_index, :, :]
 
     # resample over the sentinel-2 eea spetral wavelengths
