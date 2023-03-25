@@ -345,12 +345,12 @@ def cal_endmember(sentinel2_directory):
     plt.savefig('%s/endmember_spectrum.png' % fig_directory)
     plt.close()
 
-    boa_band02_500m_array = boa_band02_500m.reshape(boa_band02_500m, 1)
-    boa_band03_500m_array = boa_band03_500m.reshape(boa_band03_500m, 1)
-    boa_band04_500m_array = boa_band04_500m.reshape(boa_band04_500m, 1)
-    boa_band8A_500m_array = boa_band8A_500m.reshape(boa_band8A_500m, 1)
-    boa_band11_500m_array = boa_band11_500m.reshape(boa_band11_500m, 1)
-    boa_band12_500m_array = boa_band12_500m.reshape(boa_band12_500m, 1)
+    boa_band02_500m_array = boa_band02_500m.reshape(boa_band02_500m.size, 1)
+    boa_band03_500m_array = boa_band03_500m.reshape(boa_band03_500m.size, 1)
+    boa_band04_500m_array = boa_band04_500m.reshape(boa_band04_500m.size, 1)
+    boa_band8A_500m_array = boa_band8A_500m.reshape(boa_band8A_500m.size, 1)
+    boa_band11_500m_array = boa_band11_500m.reshape(boa_band11_500m.size, 1)
+    boa_band12_500m_array = boa_band12_500m.reshape(boa_band12_500m.size, 1)
 
     s2_500m_matrix = np.zeros((boa_band02_500m_array.size, 1, 6))
 
