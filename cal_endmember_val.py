@@ -331,7 +331,7 @@ def cal_endmember(sentinel2_directory):
     # print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
     # main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
     print("-----------> Finish calculating end-members processing")
-    np.save('%s/endmembers.npy' % tbd, main_endmember)
+    # np.save('%s/endmembers.npy' % tbd, main_endmember)
 
     # display pure-pixel spectra.
     ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
