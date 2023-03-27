@@ -390,17 +390,14 @@ def cal_endmember(sentinel2_directory):
         _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
 
     # load solar and sensor angular data
-    granule_dir = sentinel2_file + '/GRANULE'
-    for file in os.listdir(granule_dir):
-        if file.startswith('L1C'):
-            angular_dir = granule_dir + '/%s/ANG_DATA' % file
+    granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
+    angular_dir = os.path.join(granule_dir, 'ANG_DATA')
 
     for file in os.listdir(angular_dir):
         if file.endswith(("SAA_SZA.tif", "VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
             os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
-    quit()
 
-    solar_500_data = gdal.Open('%s/solar_angle_500.tiff' % tbd_directory)
+    solar_500_data = gdal.Open('%s/solar_angle_500.tiff' % tbd)
     saa_data = solar_500_data.GetRasterBand(1)
     sza_data = solar_500_data.GetRasterBand(2)
     saa_angle = saa_data.ReadAsArray() / 100.
@@ -411,10 +408,11 @@ def cal_endmember(sentinel2_directory):
 
     sza_angle[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = np.nan
     _plot_solar_angluar(sza_angle, fig_directory + '/sza_angle.png')
-
+    quit()
     s2_band_id = ['02','03','04','8A','11','12']
+
     for i in range(len(s2_band_id)):
-        sensor_500_data = gdal.Open('%s/sensor_angle_b%s_500.tiff' % (tbd_directory, s2_band_id[i]))
+        sensor_500_data = gdal.Open('%s/sensor_angle_b%s_500.tiff' % (tbd, s2_band_id[i]))
         vaa_data = sensor_500_data.GetRasterBand(1)
         vza_data = sensor_500_data.GetRasterBand(2)
         vaa_angle = vaa_data.ReadAsArray() / 100.
