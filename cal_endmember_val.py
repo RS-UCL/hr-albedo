@@ -77,6 +77,21 @@ def _plot_instrument_angluar(angle_array, fig_title, save_fig_name):
     plt.savefig('%s' %save_fig_name)
     plt.close()
 
+def _plot_kernel(kernel_array, fig_title, save_fig_name):
+
+    fig, ax = plt.subplots(figsize=(16, 16))
+    plt.imshow(kernel_array)
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(22)
+    for tick in ax.yaxis.get_major_ticks():
+        tick.label.set_fontsize(22)
+    plt.colorbar(shrink=0.7, extend='both')
+    plt.xlabel('Pixels', fontsize=26)
+    plt.ylabel('Pixels', fontsize=26)
+    plt.title('%s' % fig_title, fontsize=26)
+    plt.savefig('%s' %save_fig_name)
+    plt.close()
+
 def _plot_2d_brf(brf_array, save_fig_name):
     """
     :param brf_array: 2D BRF array
@@ -141,7 +156,7 @@ def cal_endmember(sentinel2_directory):
     kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
     print(kernel_weights.files)
     print(kernel_weights['fs'].shape)
-    quit()
+
     tbd = file_subdirectory + '/tbd'
     if not os.path.exists(tbd):
         os.makedirs(tbd)
@@ -465,31 +480,28 @@ def cal_endmember(sentinel2_directory):
 
             brdf1_val = brdf_f1(sza_angle, vza_angle, phi)
             brdf2_val = brdf_f2(sza_angle, vza_angle, phi)
-            print(111)
-            quit()
+
             if inverse_band_id[m] == '02':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band003_cropped.tiff" % tbd_directory)
+                mcd_dataset = kernel_weights['fs'][:,0,:,:]
             if inverse_band_id[m] == '03':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band004_cropped.tiff" % tbd_directory)
+                mcd_dataset = kernel_weights['fs'][:,1,:,:]
             if inverse_band_id[m] == '04':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band001_cropped.tiff" % tbd_directory)
-            if inverse_band_id[m] == '11':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band006_cropped.tiff" % tbd_directory)
-            if inverse_band_id[m] == '12':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band007_cropped.tiff" % tbd_directory)
+                mcd_dataset = kernel_weights['fs'][:,2,:,:]
             if inverse_band_id[m] == '8A':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band002_cropped.tiff" % tbd_directory)
-            if inverse_band_id[m] == 'VIS':
-                mcd_dataset = gdal.Open("%s/modis_brdf_bandVIS_cropped.tiff" % tbd_directory)
-            if inverse_band_id[m] == 'NIR':
-                mcd_dataset = gdal.Open("%s/modis_brdf_bandNIR_cropped.tiff" % tbd_directory)
-            if inverse_band_id[m] == 'SW':
-                mcd_dataset = gdal.Open("%s/modis_brdf_band0SW_cropped.tiff" % tbd_directory)
+                mcd_dataset = kernel_weights['fs'][:,3,:,:]
+            if inverse_band_id[m] == '11':
+                mcd_dataset = kernel_weights['fs'][:,4,:,:]
+            if inverse_band_id[m] == '12':
+                mcd_dataset = kernel_weights['fs'][:,5,:,:]
 
-            mcd_k0 = mcd_dataset.GetRasterBand(1)
-            mcd_k1 = mcd_dataset.GetRasterBand(2)
-            mcd_k2 = mcd_dataset.GetRasterBand(3)
+            mcd_k0 = mcd_dataset[0,:,:]
+            mcd_k1 = mcd_dataset[1,:,:]
+            mcd_k2 = mcd_dataset[2,:,:]
 
+            _plot_kernel(mcd_k0, 'k0', fig_directory + '/k0_band%s.png' % inverse_band_id[m])
+            _plot_kernel(mcd_k1, 'k1', fig_directory + '/k1_band%s.png' % inverse_band_id[m])
+            _plot_kernel(mcd_k2, 'k2', fig_directory + '/k2_band%s.png' % inverse_band_id[m])
+            quit()
             mcd_k0 = mcd_k0.ReadAsArray() / 1.e3
             mcd_k1 = mcd_k1.ReadAsArray() / 1.e3
             mcd_k2 = mcd_k2.ReadAsArray() / 1.e3
