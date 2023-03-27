@@ -404,10 +404,10 @@ def cal_endmember(sentinel2_directory):
     saa_angle = saa_data.ReadAsArray() / 100.
     sza_angle = sza_data.ReadAsArray() / 100.
 
-    saa_angle[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = np.nan
+    saa_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
     _plot_solar_angluar(saa_angle, fig_directory + '/saa_angle.png')
 
-    sza_angle[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = np.nan
+    sza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
     _plot_solar_angluar(sza_angle, fig_directory + '/sza_angle.png')
     quit()
     s2_band_id = ['02','03','04','8A','11','12']
