@@ -395,8 +395,21 @@ def cal_endmember(sentinel2_directory):
     angular_dir = os.path.join(L1C_dir, 'ANG_DATA')
 
     for file in os.listdir(angular_dir):
-        if file.endswith(("SAA_SZA.tif", "VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
+        if file.endswith(("VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
             os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
+
+    # get Sentinel-2 coordinates at 500-m resolution
+    s2_band02_500m = gdal.Open('%s/VAA_VZA_B02_500m.tif' % tbd)
+    s2_500m_geotransform = s2_band02_500m.GetGeoTransform()
+
+    s2_500m_ymax = s2_500m_geotransform[3]
+    s2_500m_ymin = s2_500m_geotransform[3] + s2_500m_geotransform[5] * s2_band02_500m.RasterYSize
+    s2_500m_xmin = s2_500m_geotransform[0]
+    s2_500m_xmax = s2_500m_geotransform[0] + s2_500m_geotransform[1] * s2_band02_500m.RasterXSize
+
+    for file in os.listdir(angular_dir):
+        if file.endswith(("SAA_SZA.tif")):
+            os.system(f'gdalwarp -tr 500 500 -te "{s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax}" "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     solar_500_data = gdal.Open('%s/SAA_SZA_500m.tif' % tbd)
     saa_data = solar_500_data.GetRasterBand(1)
