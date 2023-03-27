@@ -501,15 +501,11 @@ def cal_endmember(sentinel2_directory):
             _plot_kernel(mcd_k0, 'k0', fig_directory + '/k0_band%s.png' % inverse_band_id[m])
             _plot_kernel(mcd_k1, 'k1', fig_directory + '/k1_band%s.png' % inverse_band_id[m])
             _plot_kernel(mcd_k2, 'k2', fig_directory + '/k2_band%s.png' % inverse_band_id[m])
-            quit()
-            mcd_k0 = mcd_k0.ReadAsArray() / 1.e3
-            mcd_k1 = mcd_k1.ReadAsArray() / 1.e3
-            mcd_k2 = mcd_k2.ReadAsArray() / 1.e3
 
             brf_array = mcd_k0 + mcd_k1 * brdf2_val + mcd_k2 * brdf1_val
-            brf_array[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = -999.
+            brf_array[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = -999.
 
-            np.save('%s/brf_band%s.npy' % (tbd_directory, inverse_band_id[m]), brf_array)
+            np.save('%s/brf_band%s.npy' % (tbd, inverse_band_id[m]), brf_array)
 
             dhr_array = mcd_k0 * (g_iso[0] + g_iso[1] * np.sin(np.deg2rad(sza_angle)) +
                                   g_iso[2] * np.sin(np.deg2rad(sza_angle)) ** 2) +\
@@ -519,12 +515,13 @@ def cal_endmember(sentinel2_directory):
                                   + g_geo[2] * np.sin(np.deg2rad(sza_angle)) ** 2)
 
             bhr_array = mcd_k0 * g_white[0] + mcd_k1 * g_white[1] + mcd_k2 * g_white[2]
-            dhr_array[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = -999.
-            bhr_array[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = -999.
-            print(s2_band_id[i], dhr_array.shape)
-            np.save('%s/dhr_band%s.npy' % (tbd_directory, inverse_band_id[m]), dhr_array)
-            np.save('%s/bhr_band%s.npy' % (tbd_directory, inverse_band_id[m]), bhr_array)
+            dhr_array[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = -999.
+            bhr_array[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = -999.
+
+            np.save('%s/dhr_band%s.npy' % (tbd, inverse_band_id[m]), dhr_array)
+            np.save('%s/bhr_band%s.npy' % (tbd, inverse_band_id[m]), bhr_array)
 
             _plot_2d_brf(brf_array, '%s/modis_brf_band%s.png' % (fig_directory, inverse_band_id[m]))
             _plot_2d_brf(dhr_array, '%s/modis_dhr_band%s.png' % (fig_directory, inverse_band_id[m]))
             _plot_2d_brf(bhr_array, '%s/modis_bhr_band%s.png' % (fig_directory, inverse_band_id[m]))
+            quit()
