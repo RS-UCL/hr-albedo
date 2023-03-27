@@ -370,12 +370,6 @@ def cal_endmember(sentinel2_directory):
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
-    fig, ax = plt.subplots(figsize=(22, 12))
-    plt.imshow(boa_mask_500m_array.reshape((s2_rows_500m, s2_cols_500m)), cmap='gray')
-    plt.colorbar()
-    plt.savefig('%s/500_clou_mask.png' % fig_directory)
-    plt.close()
-
     CalAbundanceMap = FCLS()
     print("-----------> Start calculating abundance on aggregated S2 scence.\n")
     s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
