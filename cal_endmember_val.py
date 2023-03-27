@@ -398,7 +398,7 @@ def cal_endmember(sentinel2_directory):
         if file.endswith(("SAA_SZA.tif", "VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
             os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
-    solar_500_data = gdal.Open('%s/SAA_SZA_500.tiff' % tbd)
+    solar_500_data = gdal.Open('%s/SAA_SZA_500.tif' % tbd)
     saa_data = solar_500_data.GetRasterBand(1)
     sza_data = solar_500_data.GetRasterBand(2)
     saa_angle = saa_data.ReadAsArray() / 100.
