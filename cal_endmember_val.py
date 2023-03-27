@@ -327,9 +327,9 @@ def cal_endmember(sentinel2_directory):
     func_wv = interpolate.interp1d(s2_eea_wavelength, s2_20m_matrix, axis=2)
     s2_20m_matrix_interp = func_wv(s2_wv_resampled)
 
-    cal_EEA = NFINDR()
-    print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
-    main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
+    # cal_EEA = NFINDR()
+    # print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
+    # main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
     print("-----------> Finish calculating end-members processing")
     np.save('%s/endmembers.npy' % tbd, main_endmember)
 
@@ -370,9 +370,9 @@ def cal_endmember(sentinel2_directory):
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
-    CalAbundanceMap = FCLS()
-    print("-----------> Start calculating abundance on aggregated S2 scence.\n")
-    s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
+    # CalAbundanceMap = FCLS()
+    # print("-----------> Start calculating abundance on aggregated S2 scence.\n")
+    # s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
     for k in range(s2_abundance_500m.shape[2]):
         s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
         s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
@@ -409,6 +409,7 @@ def cal_endmember(sentinel2_directory):
 
     for file in os.listdir(angular_dir):
         if file.endswith(("SAA_SZA.tif")):
+            print(f'gdalwarp -tr 500 500 -te "{s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax}" "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
             os.system(f'gdalwarp -tr 500 500 -te "{s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax}" "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     solar_500_data = gdal.Open('%s/SAA_SZA_500m.tif' % tbd)
