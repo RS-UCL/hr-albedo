@@ -139,9 +139,9 @@ def cal_endmember(sentinel2_directory):
     file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
 
     kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
-    # print(kernel_weights.files)
-    # print(kernel_weights['fs'].shape)
-    # quit()
+    print(kernel_weights.files)
+    print(kernel_weights['fs'].shape)
+    quit()
     tbd = file_subdirectory + '/tbd'
     if not os.path.exists(tbd):
         os.makedirs(tbd)
