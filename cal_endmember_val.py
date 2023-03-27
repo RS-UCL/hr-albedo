@@ -330,23 +330,23 @@ def cal_endmember(sentinel2_directory):
     # cal_EEA = NFINDR()
     # print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
     # main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
-    print("-----------> Finish calculating end-members processing")
+    # print("-----------> Finish calculating end-members processing")
     # np.save('%s/endmembers.npy' % tbd, main_endmember)
 
     # display pure-pixel spectra.
-    ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    fig, ax = plt.subplots(figsize=(22, 12))
-    for i in range(main_endmember.shape[0]):
-        plt.plot(s2_wv_resampled, main_endmember[i, :], '--o', markersize=12, lw=2, label='%s' % ascii_uppercase[i])
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label.set_fontsize(22)
-    for tick in ax.yaxis.get_major_ticks():
-        tick.label.set_fontsize(22)
-    plt.xlabel('Wavelenth [nm]', fontsize=26)
-    plt.ylabel('Surface Reflectance', fontsize=26)
-    plt.legend(fontsize=26)
-    plt.savefig('%s/endmember_spectrum.png' % fig_directory)
-    plt.close()
+    # ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    # fig, ax = plt.subplots(figsize=(22, 12))
+    # for i in range(main_endmember.shape[0]):
+    #     plt.plot(s2_wv_resampled, main_endmember[i, :], '--o', markersize=12, lw=2, label='%s' % ascii_uppercase[i])
+    # for tick in ax.xaxis.get_major_ticks():
+    #     tick.label.set_fontsize(22)
+    # for tick in ax.yaxis.get_major_ticks():
+    #     tick.label.set_fontsize(22)
+    # plt.xlabel('Wavelenth [nm]', fontsize=26)
+    # plt.ylabel('Surface Reflectance', fontsize=26)
+    # plt.legend(fontsize=26)
+    # plt.savefig('%s/endmember_spectrum.png' % fig_directory)
+    # plt.close()
 
     boa_band02_500m_array = boa_band02_500m.reshape(boa_band02_500m.size, 1)
     boa_band03_500m_array = boa_band03_500m.reshape(boa_band03_500m.size, 1)
