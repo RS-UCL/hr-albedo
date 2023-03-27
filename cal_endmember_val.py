@@ -524,4 +524,3 @@ def cal_endmember(sentinel2_directory):
             _plot_2d_brf(brf_array, '%s/modis_brf_band%s.png' % (fig_directory, inverse_band_id[m]))
             _plot_2d_brf(dhr_array, '%s/modis_dhr_band%s.png' % (fig_directory, inverse_band_id[m]))
             _plot_2d_brf(bhr_array, '%s/modis_bhr_band%s.png' % (fig_directory, inverse_band_id[m]))
-            quit()
