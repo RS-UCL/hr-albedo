@@ -395,11 +395,11 @@ def cal_endmember(sentinel2_directory):
     angular_dir = os.path.join(L1C_dir, 'ANG_DATA')
 
     for file in os.listdir(angular_dir):
-        if file.endswith(("VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
+        if file.endswith(("Mean_VAA_VZA.tif")):
             os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     # get Sentinel-2 coordinates at 500-m resolution
-    s2_band02_500m = gdal.Open('%s/VAA_VZA_B02_500m.tif' % tbd)
+    s2_band02_500m = gdal.Open('%s/Mean_VAA_VZA_500m.tif' % tbd)
     s2_500m_geotransform = s2_band02_500m.GetGeoTransform()
 
     s2_500m_ymax = s2_500m_geotransform[3]
@@ -423,11 +423,12 @@ def cal_endmember(sentinel2_directory):
 
     sza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
     _plot_solar_angluar(sza_angle, fig_directory + '/sza_angle.png')
-    quit()
+
     s2_band_id = ['02','03','04','8A','11','12']
 
     for i in range(len(s2_band_id)):
-        sensor_500_data = gdal.Open('%s/VAA_VZA_B%s_500.tiff' % (tbd, s2_band_id[i]))
+
+        sensor_500_data = gdal.Open('%s/Mean_VAA_VZA_500m.tif' %tbd)
         vaa_data = sensor_500_data.GetRasterBand(1)
         vza_data = sensor_500_data.GetRasterBand(2)
         vaa_angle = vaa_data.ReadAsArray() / 100.
@@ -436,10 +437,10 @@ def cal_endmember(sentinel2_directory):
         fig, ax = plt.subplots(figsize=(16, 16))
         vaa_angle[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = np.nan
         _plot_instrument_angluar(vaa_angle, 'VAA Band %s' % s2_band_id[i],
-                                 '%s/vaa_angle_b%s.png' % (fig_directory, s2_band_id[i]))
+                                 '%s/Mean_VAA_500m.png' %fig_directory)
         vza_angle[s2_band02_SIN_500m_array.reshape((s2_band02_SIN_500m_rows, s2_band02_SIN_500m_cols)) < 0] = np.nan
-        _plot_instrument_angluar(vaa_angle, 'VZA Band %s' % s2_band_id[i],
-                                 '%s/vza_angle_b%s.png' % (fig_directory, s2_band_id[i]))
+        _plot_instrument_angluar(vza_angle, 'VZA Band %s' % s2_band_id[i],
+                                 '%s/Mean_VAA_500m.png' %fig_directory)
 
         # MODIS brdf polynomial parameter
         # please refer to https://modis.gsfc.nasa.gov/data/atbd/atbd_mod09.pdf on page-16
@@ -453,14 +454,7 @@ def cal_endmember(sentinel2_directory):
 
         for m in range(len(inverse_band_id)):
 
-            sensor_data = gdal.Open('%s/sensor_angle_b%s_500.tiff' % (tbd_directory, s2_band_id[i]))
-
-            if inverse_band_id[i] == 'VIS':
-                sensor_data = gdal.Open('%s/sensor_angle_b02_500.tiff' % tbd_directory)
-            if inverse_band_id[i] == 'NIR':
-                sensor_data = gdal.Open('%s/sensor_angle_b8A_500.tiff' % tbd_directory)
-            if inverse_band_id[i] == 'SW':
-                sensor_data = gdal.Open('%s/sensor_angle_b02_500.tiff' % tbd_directory)
+            sensor_data = gdal.Open('%s/Mean_VAA_VZA_500m.tif' % tbd)
 
             vaa_data = sensor_data.GetRasterBand(1)
             vza_data = sensor_data.GetRasterBand(2)
@@ -471,7 +465,8 @@ def cal_endmember(sentinel2_directory):
 
             brdf1_val = brdf_f1(sza_angle, vza_angle, phi)
             brdf2_val = brdf_f2(sza_angle, vza_angle, phi)
-
+            print(111)
+            quit()
             if inverse_band_id[m] == '02':
                 mcd_dataset = gdal.Open("%s/modis_brdf_band003_cropped.tiff" % tbd_directory)
             if inverse_band_id[m] == '03':
