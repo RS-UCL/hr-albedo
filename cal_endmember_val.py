@@ -389,66 +389,16 @@ def cal_endmember(sentinel2_directory):
         colortable_i = ascii_uppercase[i]
         _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
 
-    quit()
     # load solar and sensor angular data
     granule_dir = sentinel2_file + '/GRANULE'
     for file in os.listdir(granule_dir):
         if file.startswith('L1C'):
             angular_dir = granule_dir + '/%s/ANG_DATA' % file
 
-    solar_file = angular_dir + '/SAA_SZA.tif'
-    solar_data = gdal.Open(solar_file)
-    solar_proj = solar_data.GetProjection()
-
-    sensor_b02_file = angular_dir + '/VAA_VZA_B02.tif'
-    sensor_b03_file = angular_dir + '/VAA_VZA_B03.tif'
-    sensor_b04_file = angular_dir + '/VAA_VZA_B04.tif'
-    sensor_b8A_file = angular_dir + '/VAA_VZA_B8A.tif'
-    sensor_b11_file = angular_dir + '/VAA_VZA_B11.tif'
-    sensor_b12_file = angular_dir + '/VAA_VZA_B12.tif'
-
-    sensor_b02_data = gdal.Open(sensor_b02_file)
-    sensor_b03_data = gdal.Open(sensor_b03_file)
-    sensor_b04_data = gdal.Open(sensor_b04_file)
-    sensor_b8A_data = gdal.Open(sensor_b8A_file)
-    sensor_b11_data = gdal.Open(sensor_b11_file)
-    sensor_b12_data = gdal.Open(sensor_b12_file)
-
-    sensor_b02_proj = sensor_b02_data.GetProjection()
-    sensor_b03_proj = sensor_b03_data.GetProjection()
-    sensor_b04_proj = sensor_b04_data.GetProjection()
-    sensor_b8A_proj = sensor_b8A_data.GetProjection()
-    sensor_b11_proj = sensor_b11_data.GetProjection()
-    sensor_b12_proj = sensor_b12_data.GetProjection()
-
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/solar_angle_500.tiff'
-              % (solar_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, solar_file, tbd_directory))
-
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/sensor_angle_b02_500.tiff'
-              % (sensor_b02_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, sensor_b02_file,
-                 tbd_directory))
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/sensor_angle_b03_500.tiff'
-              % (sensor_b03_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, sensor_b03_file,
-                 tbd_directory))
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/sensor_angle_b04_500.tiff'
-              % (sensor_b04_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, sensor_b04_file,
-                 tbd_directory))
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/sensor_angle_b8A_500.tiff'
-              % (sensor_b8A_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, sensor_b8A_file,
-                 tbd_directory))
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/sensor_angle_b11_500.tiff'
-              % (sensor_b11_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, sensor_b11_file,
-                 tbd_directory))
-    os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -te %s %s %s %s -overwrite %s %s/sensor_angle_b12_500.tiff'
-              % (sensor_b12_proj, modis_brdf_proj, modis_brdf_x_resolution, modis_brdf_y_resolution,
-                 s2_SIN_500m_xmin, s2_SIN_500m_ymin, s2_SIN_500m_xmax, s2_SIN_500m_ymax, sensor_b12_file,
-                 tbd_directory))
+    for file in os.listdir(angular_dir):
+        if file.endswith(("SAA_SZA.tif", "VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
+            os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
+    quit()
 
     solar_500_data = gdal.Open('%s/solar_angle_500.tiff' % tbd_directory)
     saa_data = solar_500_data.GetRasterBand(1)
