@@ -391,7 +391,8 @@ def cal_endmember(sentinel2_directory):
 
     # load solar and sensor angular data
     granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
-    angular_dir = os.path.join(granule_dir, 'ANG_DATA')
+    L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
+    angular_dir = os.path.join(L1C_dir, 'ANG_DATA')
 
     for file in os.listdir(angular_dir):
         if file.endswith(("SAA_SZA.tif", "VAA_VZA_B02.tif", "VAA_VZA_B03.tif", "VAA_VZA_B04.tif", "VAA_VZA_B8A.tif", "VAA_VZA_B11.tif", "VAA_VZA_B12.tif")):
