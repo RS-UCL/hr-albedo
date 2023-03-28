@@ -367,7 +367,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             bhr_coefficient_band12_k = [bhr_coef_b[5, 0], bhr_coef_b[5, 1], bhr_coef_b[5, 2], bhr_coef_b[5, 3]]
             bhr_coefficient_band12_a = [bhr_coef_a[5, 0], bhr_coef_a[5, 1], bhr_coef_a[5, 2], bhr_coef_a[5, 3]]
 
-            hr_albedo_bands = ['02', '03', '04', 'VIS', 'NIR', 'SW', '8A', '11', '12']
+            hr_albedo_bands = ['02', '03', '04', '8A', '11', '12', 'VIS', 'NIR', 'SW']
 
             abu_0_20m = s2_20m_patch_abundance[:, :, 0].reshape(boa_band02_20m_cut.shape[0],
                                                                 boa_band02_20m_cut.shape[1])
