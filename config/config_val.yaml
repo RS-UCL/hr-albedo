@@ -3,5 +3,5 @@ sentinel2:
 
 EEA:
       SampleInterval: 10
-      PatchSize: 1000
-      Overlap: 50
+      PatchSize: 500
+      Overlap: 10
