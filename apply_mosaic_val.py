@@ -125,12 +125,18 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         command = f"gdalbuildvrt {vrt_filename} {subdataset_pattern}"
         os.system(command)
 
-    quit()
     s2_bands = ['02','03','04','8A','VIS','NIR','SW','11','12']
 
     for file in os.listdir(tbd_directory):
         if file.endswith("band02_masked.tiff"):
             s2_band02_masked = gdal.Open('%s/%s'%(tbd_directory, file))
+
+    for file in os.listdir(tbd):
+        if file.endswith("_mask_20m.tif"):
+            s2_mask_data = gdal.Open('%s/%s' % (tbd, file))
+            os.system(f'gdalwarp -tr 10 10 "{tbd}/{file}" "{tbd}/{file[:-4]}_10m.tif"')
+
+    quit()
 
     # load cloud mask (here Deeplabv3+ cloud mask is being used)
     mask2 = np.load('%s/CLOUD_MASK/mask2.npy'%sentinel2_file)
@@ -185,7 +191,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         cols = merged_data.RasterXSize
         rows = merged_data.RasterYSize
         band_data  = band_data.ReadAsArray(0, 0, cols, rows)
-        print(cols,rows)
+
         band_unc_rel = np.load(tbd_directory + '/unc_relative_B%s.npy'%s2_bands[i])
         band_unc = band_data * band_unc_rel
 
