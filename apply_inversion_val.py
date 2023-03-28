@@ -800,26 +800,25 @@ def apply_uncertainty(sentinel2_directory):
                     inverse_band_id[i], np.mean(unc_relative[unc_relative < 1.])))
                     np.save(tbd_directory + '/unc_relative_B%s.npy' % (inverse_band_id[i]), unc_relative)
 
-            quit()
-            for file in os.listdir('%s/20m/' % level2_dir):
-                if file.endswith("B02_sur.tiff"):
-                    band02_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band02_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B03_sur.tiff"):
-                    band03_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band03_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B04_sur.tiff"):
-                    band04_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band04_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B8A_sur.tiff"):
-                    band8A_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band8A_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B11_sur.tiff"):
-                    band11_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band11_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B12_sur.tiff"):
-                    band12_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band12_20m_file = '%s/20m/%s' % (level2_dir, file)
+            for file in os.listdir('%s/' % tbd_directory):
+                if file.endswith("B02_sur_20m.tif"):
+                    band02_20m = gdal.Open('%s/%s' % (tbd_directory, file))
+                    band02_20m_file = '%s/%s' % (tbd_directory, file)
+                if file.endswith("B03_sur_20m.tif"):
+                    band03_20m = gdal.Open('%s/%s' % (tbd_directory, file))
+                    band03_20m_file = '%s/%s' % (tbd_directory, file)
+                if file.endswith("B04_sur_20m.tif"):
+                    band04_20m = gdal.Open('%s/%s' % (tbd_directory, file))
+                    band04_20m_file = '%s/%s' % (tbd_directory, file)
+                if file.endswith("B8A_sur_20m.tif"):
+                    band8A_20m = gdal.Open('%s/%s' % (tbd_directory, file))
+                    band8A_20m_file = '%s/%s' % (tbd_directory, file)
+                if file.endswith("B11_sur_20m.tif"):
+                    band11_20m = gdal.Open('%s/%s' % (tbd_directory, file))
+                    band11_20m_file = '%s/%s' % (tbd_directory, file)
+                if file.endswith("B12_sur_20m.tif"):
+                    band12_20m = gdal.Open('%s/%s' % (tbd_directory, file))
+                    band12_20m_file = '%s/%s' % (tbd_directory, file)
 
             ulx, xres, xskew, uly, yskew, yres = band02_20m.GetGeoTransform()
             lrx = ulx + (band02_20m.RasterXSize * xres)
@@ -828,15 +827,16 @@ def apply_uncertainty(sentinel2_directory):
             for unc_file in os.listdir(level2_dir):
                 if unc_file.endswith("B8A_sur_unc.tif") | unc_file.endswith("B11_sur_unc.tif") | unc_file.endswith(
                         "B12_sur_unc.tif"):
-                    command = "gdal_translate -of GTiff %s/%s %s/20m/%s.tiff \n" % (
-                    level2_dir, unc_file, level2_dir, unc_file[0:-4])
+                    command = "cp %s/%s %s/%s\n" % (
+                    level2_dir, unc_file, tbd_directory, unc_file)
                     os.system(command)
                 if unc_file.endswith("B02_sur_unc.tif") | unc_file.endswith("B03_sur_unc.tif") | unc_file.endswith(
                         "B04_sur_unc.tif"):
-                    command = "gdalwarp -tr 20 20 -te %s %s %s %s -r average -overwrite %s/%s %s/20m/%s.tiff \n" % (
-                    ulx, lry, lrx, uly, level2_dir, unc_file, level2_dir, unc_file[0:-4])
+                    command = "gdalwarp -tr 20 20 -te %s %s %s %s -r average -overwrite %s/%s %s/%s.tif \n" % (
+                    ulx, lry, lrx, uly, level2_dir, unc_file, tbd_directory, unc_file[0:-4])
                     os.system(command)
 
+            quit()
             s2_20m_cols = band02_20m.RasterXSize
             s2_20m_rows = band02_20m.RasterYSize
 
