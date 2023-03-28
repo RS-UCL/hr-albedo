@@ -9,9 +9,9 @@ from sklearn.linear_model import LinearRegression
 from pysptools.abundance_maps import FCLS
 import matplotlib.pyplot as plt
 from scipy import interpolate
+from osgeo import gdal
 import numpy as np
 import glob
-import gdal
 import os
 
 def apply_inversion(sentinel2_file, patch_size, patch_overlap):
