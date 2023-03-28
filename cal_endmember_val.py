@@ -318,26 +318,26 @@ def cal_endmember(sentinel2_directory):
     func_wv = interpolate.interp1d(s2_eea_wavelength, s2_20m_matrix, axis=2)
     s2_20m_matrix_interp = func_wv(s2_wv_resampled)
 
-    # cal_EEA = NFINDR()
-    # print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
-    # main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
-    # print("-----------> Finish calculating end-members processing")
-    # np.save('%s/endmembers.npy' % tbd, main_endmember)
+    cal_EEA = NFINDR()
+    print('-----------> Start calculating end-members based on Sentinel-2 multispectral data.')
+    main_endmember = cal_EEA.extract(M=s2_20m_matrix_interp, q=4, maxit=5, normalize=False, ATGP_init=True)
+    print("-----------> Finish calculating end-members processing")
+    np.save('%s/endmembers.npy' % tbd, main_endmember)
 
     # display pure-pixel spectra.
-    # ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    # fig, ax = plt.subplots(figsize=(22, 12))
-    # for i in range(main_endmember.shape[0]):
-    #     plt.plot(s2_wv_resampled, main_endmember[i, :], '--o', markersize=12, lw=2, label='%s' % ascii_uppercase[i])
-    # for tick in ax.xaxis.get_major_ticks():
-    #     tick.label.set_fontsize(22)
-    # for tick in ax.yaxis.get_major_ticks():
-    #     tick.label.set_fontsize(22)
-    # plt.xlabel('Wavelenth [nm]', fontsize=26)
-    # plt.ylabel('Surface Reflectance', fontsize=26)
-    # plt.legend(fontsize=26)
-    # plt.savefig('%s/endmember_spectrum.png' % fig_directory)
-    # plt.close()
+    ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    fig, ax = plt.subplots(figsize=(22, 12))
+    for i in range(main_endmember.shape[0]):
+        plt.plot(s2_wv_resampled, main_endmember[i, :], '--o', markersize=12, lw=2, label='%s' % ascii_uppercase[i])
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(22)
+    for tick in ax.yaxis.get_major_ticks():
+        tick.label.set_fontsize(22)
+    plt.xlabel('Wavelenth [nm]', fontsize=26)
+    plt.ylabel('Surface Reflectance', fontsize=26)
+    plt.legend(fontsize=26)
+    plt.savefig('%s/endmember_spectrum.png' % fig_directory)
+    plt.close()
 
     boa_band02_500m_array = boa_band02_500m.reshape(boa_band02_500m.size, 1)
     boa_band03_500m_array = boa_band03_500m.reshape(boa_band03_500m.size, 1)
@@ -361,24 +361,24 @@ def cal_endmember(sentinel2_directory):
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
-    # CalAbundanceMap = FCLS()
-    # print("-----------> Start calculating abundance on aggregated S2 scence.\n")
-    # s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
-    # for k in range(s2_abundance_500m.shape[2]):
-    #     s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
-    #     s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
-    #
-    # print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
-    # np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
+    CalAbundanceMap = FCLS()
+    print("-----------> Start calculating abundance on aggregated S2 scence.\n")
+    s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
+    for k in range(s2_abundance_500m.shape[2]):
+        s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
+        s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
+
+    print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
+    np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
 
     # plot 2d abundance figures
-    # for i in range(main_endmember.shape[0]):
-    #     abundane_i = s2_abundance_500m[:, :, i]
-    #     abundane_i = abundane_i.reshape(s2_rows_500m, s2_cols_500m)
-    #     abundane_i[boa_band02_500m_array.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
-    #
-    #     colortable_i = ascii_uppercase[i]
-    #     _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
+    for i in range(main_endmember.shape[0]):
+        abundane_i = s2_abundance_500m[:, :, i]
+        abundane_i = abundane_i.reshape(s2_rows_500m, s2_cols_500m)
+        abundane_i[boa_band02_500m_array.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
+
+        colortable_i = ascii_uppercase[i]
+        _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
 
     # load solar and sensor angular data
     granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
