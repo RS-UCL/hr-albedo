@@ -78,6 +78,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
 
     return mcd43a1_file
 
+from apply_inversion_val import *
 from cal_endmember_val import *
 import datetime
 import glob
@@ -85,6 +86,9 @@ import yaml
 
 S2GM_config = LoadConfig('./config/config_val.yaml')
 sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
+(sample_interval, patch_size, patch_overlap) = S2GM_config.__get_EEA_attr__()
 
 # start calculating the endmembers
-cal_endmember(sentinel2_directory)
+# cal_endmember(sentinel2_directory)
+# start retrieval process
+apply_inversion(sentinel2_directory+'/%s'%sentinel2_filename, patch_size, patch_overlap)
