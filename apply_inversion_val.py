@@ -283,19 +283,6 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             SW_coefficient = [-0.0049, 0.2688, 0.0362, 0.1501, 0.3045, 0.1644, 0.0356]
             NIR_coefficient = [-0.0073, 0., 0., 0., 0.5595, 0.3844, 0.0290]
 
-            boa_bandVIS_cut = VIS_coefficient[0] + VIS_coefficient[1] * boa_band02_20m_cut + \
-                              VIS_coefficient[2] * boa_band03_20m_cut + VIS_coefficient[3] * boa_band04_20m_cut + \
-                              VIS_coefficient[4] * boa_band8A_20m_cut + VIS_coefficient[5] * boa_band11_20m_cut + \
-                              VIS_coefficient[6] * boa_band12_20m_cut
-            boa_bandSW_cut = SW_coefficient[0] + SW_coefficient[1] * boa_band02_20m_cut + \
-                             SW_coefficient[2] * boa_band03_20m_cut + SW_coefficient[3] * boa_band04_20m_cut + \
-                             SW_coefficient[4] * boa_band8A_20m_cut + SW_coefficient[5] * boa_band11_20m_cut + \
-                             SW_coefficient[6] * boa_band12_20m_cut
-            boa_bandNIR_cut = NIR_coefficient[0] + NIR_coefficient[1] * boa_band02_20m_cut + \
-                              NIR_coefficient[2] * boa_band03_20m_cut + NIR_coefficient[3] * boa_band04_20m_cut + \
-                              NIR_coefficient[4] * boa_band8A_20m_cut + NIR_coefficient[5] * boa_band11_20m_cut + \
-                              NIR_coefficient[6] * boa_band12_20m_cut
-
             s2_matrix_20m_patch = np.zeros((boa_band02_20m_cut.size, 1, 6))
 
             boa_band02_20m_cut_array = boa_band02_20m_cut.reshape(boa_band02_20m_cut.size, 1)
@@ -328,9 +315,10 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             s2_matrix_20m_patch_interp = func_wv_20m(s2_wv_resampled)
 
             main_endmember = np.load('%s/endmembers.npy' % tbd_directory)
-            CalAbundanceMap = FCLS()
-
-            s2_20m_patch_abundance = CalAbundanceMap.map(s2_matrix_20m_patch_interp, main_endmember)
+            # CalAbundanceMap = FCLS()
+            #
+            # s2_20m_patch_abundance = CalAbundanceMap.map(s2_matrix_20m_patch_interp, main_endmember)
+            s2_20m_patch_abundance = np.zeros((boa_band02_20m_cut.size, 1, 7))
             np.save('%s/s2_20m_patch_abundance_h%sv%s.npy'
                     % (tbd_directory, num_row_str, num_col_str), s2_20m_patch_abundance)
 
@@ -406,6 +394,9 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             x_res_abundance_10m = geotransform_10m[1]
             y_res_abundance_10m = geotransform_10m[5]
 
+            print('gdalwarp -s_srs %s -t_srs %s -tr %s %s -overwrite %s %s/sub_abundance_10m_h%sv%s.tiff' % (
+            proj_20m, proj_10m, x_res_abundance_10m, y_res_abundance_10m, abundnace_20m_FileName, tbd_directory,
+            num_row_str, num_col_str))
             os.system('gdalwarp -s_srs %s -t_srs %s -tr %s %s -overwrite %s %s/sub_abundance_10m_h%sv%s.tiff' % (
             proj_20m, proj_10m, x_res_abundance_10m, y_res_abundance_10m, abundnace_20m_FileName, tbd_directory,
             num_row_str, num_col_str))
@@ -435,12 +426,22 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                          boa_band02_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band02_10m_cut * coffe_k[3] + coffe_a[3])
 
+                    hr_dhr_b02_20m = abu_0_20m * (boa_band02_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
+                                boa_band02_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
+                                         boa_band02_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
+                                         boa_band02_20m_cut * coffe_k[3] + coffe_a[3])
+
                     coffe_k = np.copy(bhr_coefficient_band02_k)
                     coffe_a = np.copy(bhr_coefficient_band02_a)
                     hr_bhr_b02_10m = abu_0_10m * (boa_band02_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
                                 boa_band02_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band02_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band02_10m_cut * coffe_k[3] + coffe_a[3])
+
+                    hr_bhr_b02_20m = abu_0_20m * (boa_band02_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
+                                boa_band02_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
+                                         boa_band02_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
+                                         boa_band02_20m_cut * coffe_k[3] + coffe_a[3])
 
                     nx, ny = hr_dhr_b02_10m.shape
 
@@ -471,12 +472,21 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                          boa_band03_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band03_10m_cut * coffe_k[3] + coffe_a[3])
 
+                    hr_dhr_b03_20m = abu_0_20m * (boa_band03_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
+                                boa_band03_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
+                                         boa_band03_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
+                                         boa_band03_20m_cut * coffe_k[3] + coffe_a[3])
+
                     coffe_k = np.copy(bhr_coefficient_band03_k)
                     coffe_a = np.copy(bhr_coefficient_band03_a)
                     hr_bhr_b03_10m = abu_0_10m * (boa_band03_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
                                 boa_band03_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band03_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band03_10m_cut * coffe_k[3] + coffe_a[3])
+                    hr_bhr_b03_20m = abu_0_20m * (boa_band03_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
+                                boa_band03_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
+                                         boa_band03_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
+                                         boa_band03_20m_cut * coffe_k[3] + coffe_a[3])
 
                     nx, ny = hr_dhr_b03_10m.shape
 
@@ -506,6 +516,10 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                 boa_band04_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band04_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band04_10m_cut * coffe_k[3] + coffe_a[3])
+                    hr_dhr_b04_20m = abu_0_20m * (boa_band04_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
+                                boa_band04_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
+                                         boa_band04_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
+                                         boa_band04_20m_cut * coffe_k[3] + coffe_a[3])
 
                     coffe_k = np.copy(bhr_coefficient_band04_k)
                     coffe_a = np.copy(bhr_coefficient_band04_a)
@@ -513,6 +527,10 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                 boa_band04_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band04_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band04_10m_cut * coffe_k[3] + coffe_a[3])
+                    hr_bhr_b04_20m = abu_0_20m * (boa_band04_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
+                                boa_band04_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
+                                         boa_band04_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
+                                         boa_band04_20m_cut * coffe_k[3] + coffe_a[3])
 
                     nx, ny = hr_dhr_b04_10m.shape
 
@@ -642,210 +660,97 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     dst_ds.FlushCache()
                     dst_ds = None
 
-                quit()
+                if hr_albedo_bands[i] == 'VIS':
+
+                    hr_dhr_VIS = VIS_coefficient[0] + VIS_coefficient[1] * hr_dhr_b02_20m + \
+                                  VIS_coefficient[2] * hr_dhr_b03_20m + VIS_coefficient[3] * hr_dhr_b04_20m + \
+                                  VIS_coefficient[4] * hr_dhr_b8A_20m + VIS_coefficient[5] * hr_dhr_b11_20m + \
+                                  VIS_coefficient[6] * hr_dhr_b12_20m
+
+                    hr_bhr_VIS = VIS_coefficient[0] + VIS_coefficient[1] * hr_bhr_b02_20m + \
+                                    VIS_coefficient[2] * hr_bhr_b03_20m + VIS_coefficient[3] * hr_bhr_b04_20m + \
+                                    VIS_coefficient[4] * hr_bhr_b8A_20m + VIS_coefficient[5] * hr_bhr_b11_20m + \
+                                    VIS_coefficient[6] * hr_bhr_b12_20m
+
+                    nx, ny = hr_dhr_VIS.shape
+                    outputFileName = tbd_directory + '/sub_dhr_bandVIS_h%sv%s.tiff' % (
+                    num_row_str, num_col_str)
+                    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
+                    dst_ds.SetGeoTransform(geotransform_20m_patch)
+                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_VIS)
+                    dst_ds.FlushCache()
+                    dst_ds = None
+
+                    outputFileName = tbd_directory + '/sub_bhr_bandVIS_h%sv%s.tiff' % (
+                    num_row_str, num_col_str)
+                    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
+                    dst_ds.SetGeoTransform(geotransform_20m_patch)
+                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_VIS)
+                    dst_ds.FlushCache()
+                    dst_ds = None
+
+                if hr_albedo_bands[i] == 'NIR':
+
+                    hr_dhr_NIR = NIR_coefficient[0] + NIR_coefficient[1] * hr_dhr_b02_20m + \
+                                    NIR_coefficient[2] * hr_dhr_b03_20m + NIR_coefficient[3] * hr_dhr_b04_20m + \
+                                    NIR_coefficient[4] * hr_dhr_b8A_20m + NIR_coefficient[5] * hr_dhr_b11_20m + \
+                                    NIR_coefficient[6] * hr_dhr_b12_20m
+                    hr_bhr_NIR = NIR_coefficient[0] + NIR_coefficient[1] * hr_bhr_b02_20m + \
+                                    NIR_coefficient[2] * hr_bhr_b03_20m + NIR_coefficient[3] * hr_bhr_b04_20m + \
+                                    NIR_coefficient[4] * hr_bhr_b8A_20m + NIR_coefficient[5] * hr_bhr_b11_20m + \
+                                    NIR_coefficient[6] * hr_bhr_b12_20m
+
+                    nx, ny = hr_dhr_NIR.shape
+
+                    outputFileName = tbd_directory + '/sub_dhr_bandNIR_h%sv%s.tiff' % (
+                    num_row_str, num_col_str)
+                    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
+                    dst_ds.SetGeoTransform(geotransform_20m_patch)
+                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_NIR)
+                    dst_ds.FlushCache()
+                    dst_ds = None
+
+                    outputFileName = tbd_directory + '/sub_bhr_bandNIR_h%sv%s.tiff' % (
+                    num_row_str, num_col_str)
+                    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
+                    dst_ds.SetGeoTransform(geotransform_20m_patch)
+                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_NIR)
+                    dst_ds.FlushCache()
+                    dst_ds = None
+
+                if hr_albedo_bands[i] == 'SW':
+
+                    hr_dhr_SW = SW_coefficient[0] + SW_coefficient[1] * hr_dhr_b02_20m + \
+                                    SW_coefficient[2] * hr_dhr_b03_20m + SW_coefficient[3] * hr_dhr_b04_20m + \
+                                    SW_coefficient[4] * hr_dhr_b8A_20m + SW_coefficient[5] * hr_dhr_b11_20m + \
+                                    SW_coefficient[6] * hr_dhr_b12_20m
+                    hr_bhr_SW = SW_coefficient[0] + SW_coefficient[1] * hr_bhr_b02_20m + \
+                                    SW_coefficient[2] * hr_bhr_b03_20m + SW_coefficient[3] * hr_bhr_b04_20m + \
+                                    SW_coefficient[4] * hr_bhr_b8A_20m + SW_coefficient[5] * hr_bhr_b11_20m + \
+                                    SW_coefficient[6] * hr_bhr_b12_20m
+
+                    nx, ny = hr_dhr_SW.shape
+
+                    outputFileName = tbd_directory + '/sub_dhr_bandSW_h%sv%s.tiff' % (
+                    num_row_str, num_col_str)
+                    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
+                    dst_ds.SetGeoTransform(geotransform_20m_patch)
+                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_SW)
+                    dst_ds.FlushCache()
+                    dst_ds = None
+
+                    outputFileName = tbd_directory + '/sub_bhr_bandSW_h%sv%s.tiff' % (
+                    num_row_str, num_col_str)
+                    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
+                    dst_ds.SetGeoTransform(geotransform_20m_patch)
+                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_SW)
+                    dst_ds.FlushCache()
+                    dst_ds = None
 
 
-
-def apply_uncertainty(sentinel2_file):
-    """
-
-    :param sentinel2_file:  directory and filename of Sentinel-2 .SAFE format data.
-    :return:
-    """
-    # retrieve 10m/20m albedo uncertainties are derived from SIAC output uncertainties.
-    tbd_directory = sentinel2_file + '/tbd'  # temporal directory, to be deleted in the end.
-    granule_dir = sentinel2_file + '/GRANULE'
-
-    for file in os.listdir(granule_dir):
-        if file.startswith('L1C'):
-            level2_dir = granule_dir + '/%s/IMG_DATA' % file
-
-    # Sentinel-2 band to be retrieved
-    inverse_band_id = ['02', '03', '04', 'VIS', 'NIR', 'SW', '8A', '11', '12']
-
-    for i in range(len(inverse_band_id)):
-        if (inverse_band_id[i] == '02') | (inverse_band_id[i] == '03') | (inverse_band_id[i] == '04') | \
-                (inverse_band_id[i] == '8A') | (inverse_band_id[i] == '11') | (inverse_band_id[i] == '12'):
-
-            for file in os.listdir('%s/' % level2_dir):
-                # get reflectance and uncetainties for individual bands from SIAC outpus
-                if file.endswith("B%s_sur.tif" % (inverse_band_id[i])):
-                    boa_band = gdal.Open('%s/%s' % (level2_dir, file))
-                    cols_i = boa_band.RasterXSize
-                    rows_i = boa_band.RasterYSize
-                    boa_band_array = boa_band.GetRasterBand(1)
-                    boa_band_array = boa_band_array.ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
-
-                    boa_band_unc = gdal.Open('%s/%s_unc.tif' % (level2_dir, file[:-4]))
-                    cols_i = boa_band_unc.RasterXSize
-                    rows_i = boa_band_unc.RasterYSize
-                    boa_band_unc_array = boa_band_unc.GetRasterBand(1)
-                    boa_band_unc_array = boa_band_unc_array.ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
-
-                    print('-----------> Mean B%s boa reflectance is: %s -------' % (
-                    inverse_band_id[i], np.mean(boa_band_array[boa_band_array > 0])))
-                    print('-----------> Mean B%s boa reflectance uncertainty is: %s -------' % (
-                    inverse_band_id[i], np.mean(boa_band_unc_array[boa_band_unc_array > 0])))
-
-                    unc_relative = boa_band_unc_array / boa_band_array
-                    print('-----------> Mean B%s relative uncertainty is: %s -------' % (
-                    inverse_band_id[i], np.mean(unc_relative[unc_relative < 1.])))
-                    np.save(tbd_directory + '/unc_relative_B%s.npy' % (inverse_band_id[i]), unc_relative)
-
-            for file in os.listdir('%s/20m/' % level2_dir):
-                if file.endswith("B02_sur.tiff"):
-                    band02_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band02_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B03_sur.tiff"):
-                    band03_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band03_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B04_sur.tiff"):
-                    band04_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band04_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B8A_sur.tiff"):
-                    band8A_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band8A_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B11_sur.tiff"):
-                    band11_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band11_20m_file = '%s/20m/%s' % (level2_dir, file)
-                if file.endswith("B12_sur.tiff"):
-                    band12_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                    band12_20m_file = '%s/20m/%s' % (level2_dir, file)
-
-            ulx, xres, xskew, uly, yskew, yres = band02_20m.GetGeoTransform()
-            lrx = ulx + (band02_20m.RasterXSize * xres)
-            lry = uly + (band02_20m.RasterYSize * yres)
-
-            for unc_file in os.listdir(level2_dir):
-                if unc_file.endswith("B8A_sur_unc.tif") | unc_file.endswith("B11_sur_unc.tif") | unc_file.endswith(
-                        "B12_sur_unc.tif"):
-                    command = "gdal_translate -of GTiff %s/%s %s/20m/%s.tiff \n" % (
-                    level2_dir, unc_file, level2_dir, unc_file[0:-4])
-                    os.system(command)
-                if unc_file.endswith("B02_sur_unc.tif") | unc_file.endswith("B03_sur_unc.tif") | unc_file.endswith(
-                        "B04_sur_unc.tif"):
-                    command = "gdalwarp -tr 20 20 -te %s %s %s %s -r average -overwrite %s/%s %s/20m/%s.tiff \n" % (
-                    ulx, lry, lrx, uly, level2_dir, unc_file, level2_dir, unc_file[0:-4])
-                    os.system(command)
-
-            s2_20m_cols = band02_20m.RasterXSize
-            s2_20m_rows = band02_20m.RasterYSize
-
-            boa_band02_20m = band02_20m.GetRasterBand(1)
-            boa_band03_20m = band03_20m.GetRasterBand(1)
-            boa_band04_20m = band04_20m.GetRasterBand(1)
-            boa_band8A_20m = band8A_20m.GetRasterBand(1)
-            boa_band11_20m = band11_20m.GetRasterBand(1)
-            boa_band12_20m = band12_20m.GetRasterBand(1)
-
-            boa_band02_20m = boa_band02_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band03_20m = boa_band03_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band04_20m = boa_band04_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band8A_20m = boa_band8A_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band11_20m = boa_band11_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band12_20m = boa_band12_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-
-            for file in os.listdir('%s/20m/' % level2_dir):
-                if file.endswith("B02_sur_unc.tiff"):
-                    band02_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B03_sur_unc.tiff"):
-                    band03_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B04_sur_unc.tiff"):
-                    band04_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B8A_sur_unc.tiff"):
-                    band8A_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B11_sur_unc.tiff"):
-                    band11_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B12_sur_unc.tiff"):
-                    band12_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-
-            boa_band02_unc_20m = band02_unc_20m.GetRasterBand(1)
-            boa_band03_unc_20m = band03_unc_20m.GetRasterBand(1)
-            boa_band04_unc_20m = band04_unc_20m.GetRasterBand(1)
-            boa_band8A_unc_20m = band8A_unc_20m.GetRasterBand(1)
-            boa_band11_unc_20m = band11_unc_20m.GetRasterBand(1)
-            boa_band12_unc_20m = band12_unc_20m.GetRasterBand(1)
-
-            boa_band02_unc_20m = boa_band02_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band03_unc_20m = boa_band03_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band04_unc_20m = boa_band04_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band8A_unc_20m = boa_band8A_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band11_unc_20m = boa_band11_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band12_unc_20m = boa_band12_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-
-            for file in os.listdir('%s/20m/' % level2_dir):
-                if file.endswith("B02_sur_unc.tiff"):
-                    band02_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B03_sur_unc.tiff"):
-                    band03_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B04_sur_unc.tiff"):
-                    band04_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B8A_sur_unc.tiff"):
-                    band8A_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B11_sur_unc.tiff"):
-                    band11_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-                if file.endswith("B12_sur_unc.tiff"):
-                    band12_unc_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-
-            boa_band02_unc_20m = band02_unc_20m.GetRasterBand(1)
-            boa_band03_unc_20m = band03_unc_20m.GetRasterBand(1)
-            boa_band04_unc_20m = band04_unc_20m.GetRasterBand(1)
-            boa_band8A_unc_20m = band8A_unc_20m.GetRasterBand(1)
-            boa_band11_unc_20m = band11_unc_20m.GetRasterBand(1)
-            boa_band12_unc_20m = band12_unc_20m.GetRasterBand(1)
-
-            boa_band02_unc_20m = boa_band02_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band03_unc_20m = boa_band03_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band04_unc_20m = boa_band04_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band8A_unc_20m = boa_band8A_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band11_unc_20m = boa_band11_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-            boa_band12_unc_20m = boa_band12_unc_20m.ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / 1.e4
-
-            # narrow to broadband conversion coefficients, available from: https://doi.org/10.1016/j.rse.2018.08.025
-            VIS_coefficient = [-0.0048, 0.5673, 0.1407, 0.2359, 0, 0, 0]
-            SW_coefficient = [-0.0049, 0.2688, 0.0362, 0.1501, 0.3045, 0.1644, 0.0356]
-            NIR_coefficient = [-0.0073, 0., 0., 0., 0.5595, 0.3844, 0.0290]
-
-            boa_bandVIS_20m = VIS_coefficient[0] + VIS_coefficient[1] * boa_band02_20m + VIS_coefficient[
-                2] * boa_band03_20m + VIS_coefficient[3] * boa_band04_20m + VIS_coefficient[4] * boa_band8A_20m + \
-                              VIS_coefficient[5] * boa_band11_20m + VIS_coefficient[6] * boa_band12_20m
-            boa_bandSW_20m = SW_coefficient[0] + SW_coefficient[1] * boa_band02_20m + SW_coefficient[
-                2] * boa_band03_20m + SW_coefficient[3] * boa_band04_20m + SW_coefficient[4] * boa_band8A_20m + \
-                             SW_coefficient[5] * boa_band11_20m + SW_coefficient[6] * boa_band12_20m
-            boa_bandNIR_20m = NIR_coefficient[0] + NIR_coefficient[1] * boa_band02_20m + NIR_coefficient[
-                2] * boa_band03_20m + NIR_coefficient[3] * boa_band04_20m + NIR_coefficient[4] * boa_band8A_20m + \
-                              NIR_coefficient[5] * boa_band11_20m + NIR_coefficient[6] * boa_band12_20m
-
-            boa_bandVIS_unc_20m = np.sqrt(
-                (VIS_coefficient[1] * boa_band02_unc_20m) ** 2 + (VIS_coefficient[2] * boa_band03_unc_20m) ** 2 + (
-                            VIS_coefficient[3] * boa_band04_unc_20m) ** 2 + (
-                            VIS_coefficient[4] * boa_band8A_unc_20m) ** 2 + (
-                            VIS_coefficient[5] * boa_band11_unc_20m) ** 2 + (
-                            VIS_coefficient[6] * boa_band12_unc_20m) ** 2)
-            boa_bandSW_unc_20m = np.sqrt(
-                (SW_coefficient[1] * boa_band02_unc_20m) ** 2 + (SW_coefficient[2] * boa_band03_unc_20m) ** 2 + (
-                            SW_coefficient[3] * boa_band04_unc_20m) ** 2 + (
-                            SW_coefficient[4] * boa_band8A_unc_20m) ** 2 + (
-                            SW_coefficient[5] * boa_band11_unc_20m) ** 2 + (
-                            SW_coefficient[6] * boa_band12_unc_20m) ** 2)
-            boa_bandNIR_unc_20m = np.sqrt(
-                (NIR_coefficient[1] * boa_band02_unc_20m) ** 2 + (NIR_coefficient[2] * boa_band03_unc_20m) ** 2 + (
-                            NIR_coefficient[3] * boa_band04_unc_20m) ** 2 + (
-                            NIR_coefficient[4] * boa_band8A_unc_20m) ** 2 + (
-                            NIR_coefficient[5] * boa_band11_unc_20m) ** 2 + (
-                            NIR_coefficient[6] * boa_band12_unc_20m) ** 2)
-
-            VIS_unc_relative = boa_bandVIS_unc_20m / boa_bandVIS_20m
-            SW_unc_relative = boa_bandSW_unc_20m / boa_bandSW_20m
-            NIR_unc_relative = boa_bandNIR_unc_20m / boa_bandNIR_20m
-
-            np.save(tbd_directory + '/unc_relative_BVIS.npy', VIS_unc_relative)
-            np.save(tbd_directory + '/unc_relative_BSW.npy', SW_unc_relative)
-            np.save(tbd_directory + '/unc_relative_BNIR.npy', NIR_unc_relative)
-
-            print('-----------> Mean VIS albedo is: %s.' % (np.mean(boa_bandVIS_20m[boa_bandVIS_20m > 0])))
-            print('-----------> Mean VIS albedo uncertainty is: %s.' % (np.mean(boa_bandVIS_unc_20m[boa_bandVIS_unc_20m > 0])))
-            print('-----------> Mean SW albedo is: %s.' % (np.mean(boa_bandSW_20m[boa_bandSW_20m > 0])))
-            print('-----------> Mean SW albedo uncertainty is: %s.' % (np.mean(boa_bandSW_unc_20m[boa_bandSW_unc_20m > 0])))
-            print('-----------> Mean NIR albedo is: %s.' % (np.mean(boa_bandNIR_20m[boa_bandNIR_20m > 0])))
-            print('-----------> Mean NIR albedo uncertainty is: %s.' % (np.mean(boa_bandNIR_unc_20m[boa_bandNIR_unc_20m > 0])))
