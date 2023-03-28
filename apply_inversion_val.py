@@ -394,8 +394,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             x_res_abundance_10m = geotransform_10m[1]
             y_res_abundance_10m = geotransform_10m[5]
 
-            print(f'gdalwarp -tr 10 10 {abundnace_20m_FileName} {abundance_20m_FileName.replace("20m", "10m")}')
-            os.system(f'gdalwarp -tr 10 10 {abundnace_20m_FileName} {abundance_20m_FileName.replace("20m", "10m")}')
+            print(f'gdalwarp -tr 10 10 "{abundnace_20m_FileName}" "{abundance_20m_FileName.replace("20m", "10m")}"')
+            os.system(f'gdalwarp -tr 10 10 "{abundnace_20m_FileName}" "{abundance_20m_FileName.replace("20m", "10m")}"')
 
             abundance_10m_data = gdal.Open(tbd_directory + '/sub_abundance_10m_h%sv%s.tif' % (num_row_str, num_col_str))
             abu_0_10m = abundance_10m_data.GetRasterBand(1)
