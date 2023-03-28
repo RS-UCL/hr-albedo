@@ -483,12 +483,12 @@ def cal_endmember(sentinel2_directory):
 
             np.save('%s/brf_band%s.npy' % (tbd, inverse_band_id[m]), brf_array)
 
-            dhr_array = mcd_k0 * (g_iso[0] + g_iso[1] * np.sin(np.deg2rad(sza_angle)) +
-                                  g_iso[2] * np.sin(np.deg2rad(sza_angle)) ** 2) +\
-                        mcd_k1 * (g_vol[0] + g_vol[1] * np.sin(np.deg2rad(sza_angle))
-                                  + g_vol[2] * np.sin(np.deg2rad(sza_angle)) ** 2) + \
-                        mcd_k2 * (g_geo[0] + g_geo[1] * np.sin(np.deg2rad(sza_angle))
-                                  + g_geo[2] * np.sin(np.deg2rad(sza_angle)) ** 2)
+            dhr_array = mcd_k0 * (g_iso[0] + g_iso[1] * np.deg2rad(sza_angle) ** 2 +
+                                  g_iso[2] * np.deg2rad(sza_angle) ** 3) +\
+                        mcd_k1 * (g_vol[0] + g_vol[1] * np.deg2rad(sza_angle) ** 2 +
+                                  g_vol[2] * np.deg2rad(sza_angle) ** 3) + \
+                        mcd_k2 * (g_geo[0] + g_geo[1] * np.deg2rad(sza_angle) ** 2 +
+                                  g_geo[2] * np.deg2rad(sza_angle) ** 3)
 
             bhr_array = mcd_k0 * g_white[0] + mcd_k1 * g_white[1] + mcd_k2 * g_white[2]
             dhr_array[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = -999.
