@@ -161,7 +161,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     for file in os.listdir(tbd_directory):
         if file.endswith("B02_sur_20m.tif"):
             band02_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band02_20m_file = '%s/20m/%s' % (tbd_directory, file)
+            band02_20m_file = '%s/%s' % (tbd_directory, file)
         if file.endswith("B03_sur_20m.tif"):
             band03_20m = gdal.Open('%s/%s' % (tbd_directory, file))
         if file.endswith("B04_sur_20m.tif"):
