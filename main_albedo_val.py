@@ -12,11 +12,11 @@ class LoadConfig:
             self.config = yaml.load(yaml_config_file, Loader=yaml.FullLoader)
             self.sentinel2_arg = self.config['sentinel2']
             # self.modis_arg = self.config['MODIS']
-            # self.eea_arg = self.config['EEA']
+            self.eea_arg = self.config['EEA']
 
             self.__get_sentinel2_attr__()
             # self.__get_modis_attr__()
-            # self.__get_EEA_attr__()
+            self.__get_EEA_attr__()
 
     def __get_sentinel2_attr__(self):
         sentinel2_directory = self.sentinel2_arg['directory']
