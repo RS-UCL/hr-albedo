@@ -157,8 +157,8 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         band_unc_rel = np.load(tbd_directory + '/unc_relative_B%s.npy'%s2_bands[i])
         band_unc = band_data * band_unc_rel
 
-        print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.mean(band_data)))
-        print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.mean(band_unc[band_unc>0])))
+        print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data)))
+        print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
         if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
             # dhr for 10-m bands: band-02, band-03 and band-04
@@ -239,19 +239,19 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         band_unc_rel = np.load(tbd_directory + '/unc_relative_B%s.npy'%s2_bands[i])
         band_unc = band_data * band_unc_rel
 
-        print('Mean band %s bhr is: %s -------'%(s2_bands[i], np.mean(band_data)))
-        print('Mean band %s bhr uncertainty is: %s -------'%(s2_bands[i], np.mean(band_unc[band_unc>0])))
+        print('Mean band %s bhr is: %s -------'%(s2_bands[i], np.nanmean(band_data)))
+        print('Mean band %s bhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
         if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
             # bhr for 10-m bands: band-02, band-03 and band-04
-            band_data[cloud_mask_10m==-999.] = np.nan
+            band_data[cloud_mask_10m>0.] = np.nan
             for file in os.listdir(level2_dir):
                 if file.endswith("B02.jp2"):
                     src = gdal.Open('%s/%s'%(level2_dir, file))
 
         else:
             # bhr for other 20-m bands
-            band_data[cloud_mask==-999.] = np.nan
+            band_data[cloud_mask_20m>0.] = np.nan
             for file in os.listdir(level2_dir):
                 if file.endswith("B8A.jp2"):
                     src = gdal.Open('%s/%s'%(level2_dir, file))
