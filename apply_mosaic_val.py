@@ -125,63 +125,25 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         command = f"gdalbuildvrt {vrt_filename} {subdataset_pattern}"
         os.system(command)
 
-    s2_bands = ['02','03','04','8A','VIS','NIR','SW','11','12']
-
-    for file in os.listdir(tbd_directory):
-        if file.endswith("band02_masked.tiff"):
-            s2_band02_masked = gdal.Open('%s/%s'%(tbd_directory, file))
-
     for file in os.listdir(tbd_directory):
         if file.endswith("_mask_20m.tif"):
             s2_mask_data = gdal.Open('%s/%s' % (tbd_directory, file))
             os.system(f'gdalwarp -tr 10 10 "{tbd_directory}/{file}" "{tbd_directory}/{file.replace("20m", "10m")}"')
 
-    quit()
+    for file in os.listdir(tbd_directory):
+        if file.endswith("_mask_20m.tif"):
+            s2_mask_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+            s2_cols_20m = s2_mask_20m_data.RasterXSize
+            s2_rows_20m = s2_mask_20m_data.RasterYSize
+            cloud_mask_20m = s2_mask_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
 
-    # load cloud mask (here Deeplabv3+ cloud mask is being used)
-    mask2 = np.load('%s/CLOUD_MASK/mask2.npy'%sentinel2_file)
-    mask2 = np.argmax(mask2,axis=-1)
-    cloud_mask = np.zeros((mask2.shape))
-    cloud_mask[mask2>= cloud_threshold] = -999.
+        if file.endswith("_mask_10m.tif"):
+            s2_mask_10m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+            s2_cols_10m = s2_mask_10m_data.RasterXSize
+            s2_rows_10m = s2_mask_10m_data.RasterYSize
+            cloud_mask_10m = s2_mask_10m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
 
-    geotransform_20m = s2_band02_masked.GetGeoTransform()
-    proj_20m = s2_band02_masked.GetProjection()
-
-    nx, ny = cloud_mask.shape
-    outputFileName =  tbd_directory + '/cloud_mask_20m.tiff'
-    dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-    dst_ds.SetGeoTransform(geotransform_20m)
-    dst_ds.SetProjection(proj_20m)
-    dst_ds.GetRasterBand(1).WriteArray(cloud_mask)
-    dst_ds.FlushCache()
-    dst_ds = None
-
-    cloud_mask_20m_file = tbd_directory + '/cloud_mask_20m.tiff'
-
-    ####################################################################################################
-    granule_dir = sentinel2_file + '/GRANULE'
-    for file in os.listdir(granule_dir):
-        if file.startswith('L1C'):
-            level2_dir = granule_dir + '/%s/IMG_DATA'%file
-
-    ####################################################################################################
-    # extract geo-coordinates
-    for file in os.listdir(level2_dir):
-        if file.endswith("B02_sur.tif"):
-            src = gdal.Open('%s/%s'%(level2_dir, file))
-            ulx, xres, xskew, uly, yskew, yres  = src.GetGeoTransform()
-            lrx = ulx + (src.RasterXSize * xres)
-            lry = uly + (src.RasterYSize * yres)
-
-    command = "gdalwarp -tr 10 10 -te %s %s %s %s -r average -overwrite %s %s/cloud_mask_10m.tiff \n" % (ulx, lry, lrx, uly, cloud_mask_20m_file, tbd_directory)
-    os.system(command)
-
-    cloud_mask_10m_data = gdal.Open('%s/cloud_mask_10m.tiff'%tbd_directory)
-    cloud_mask_10m = cloud_mask_10m_data.GetRasterBand(1)
-    cloud_mask_10m_cols = cloud_mask_10m_data.RasterXSize
-    cloud_mask_10m_rows = cloud_mask_10m_data.RasterYSize
-    cloud_mask_10m = cloud_mask_10m.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
-    cloud_mask_10m[cloud_mask_10m<0] = -999.
+    s2_bands = ['02', '03', '04', '8A', 'VIS', 'NIR', 'SW', '11', '12']
 
     for i in range(len(s2_bands)):
 
@@ -200,7 +162,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
 
         if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
             # dhr for 10-m bands: band-02, band-03 and band-04
-            band_data[cloud_mask_10m==-999.] = np.nan
+            band_data[cloud_mask_10m>0.] = np.nan
             for file in os.listdir(level2_dir):
                 if file.endswith("B02.jp2"):
                     src = gdal.Open('%s/%s'%(level2_dir, file))
@@ -210,7 +172,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
 
         else:
             # dhr for other 20-m bands
-            band_data[cloud_mask==-999.] = np.nan
+            band_data[cloud_mask_20m>0.] = np.nan
             for file in os.listdir(level2_dir):
                 if file.endswith("B8A.jp2"):
                     src = gdal.Open('%s/%s'%(level2_dir, file))
