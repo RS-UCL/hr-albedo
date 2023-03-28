@@ -147,11 +147,25 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 dhr_coef_a[m, i] = 0
                 dhr_coef_b[m, i] = 0
 
-    quit()
-    granule_dir = sentinel2_file + '/GRANULE'
-    for file in os.listdir(granule_dir):
-        if file.startswith('L1C'):
-            level2_dir = granule_dir + '/%s/IMG_DATA'%file
+    granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
+    L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
+    level2_dir = os.path.join(L1C_dir, 'IMG_DATA')
+
+    for file in os.listdir(tbd_directory):
+        if file.endswith("B02_sur_20m.tif"):
+            s2_band02_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B03_sur_20m.tif"):
+            s2_band03_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B04_sur_20m.tif"):
+            s2_band04_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B8A_sur_20m.tif"):
+            s2_band8A_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B11_sur_20m.tif"):
+            s2_band11_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B12_sur_20m.tif"):
+            s2_band12_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("_mask_20m.tif"):
+            s2_mask_data = gdal.Open('%s/%s' % (tbd_directory, file))
 
     for file in os.listdir(level2_dir):
         if file.endswith("B12_sur.tif"):
