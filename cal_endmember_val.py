@@ -165,30 +165,6 @@ def cal_endmember(sentinel2_directory):
     if not os.path.exists(fig_directory):
         os.makedirs(fig_directory)
 
-    # modis_band001_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band1' % mcd43a1_file
-    # modis_band002_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band2' % mcd43a1_file
-    # modis_band003_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band3' % mcd43a1_file
-    # modis_band004_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band4' % mcd43a1_file
-    # modis_band005_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band5' % mcd43a1_file
-    # modis_band006_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band6' % mcd43a1_file
-    # modis_band007_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_Band7' % mcd43a1_file
-    # modis_bandVIS_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_vis' % mcd43a1_file
-    # modis_bandNIR_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_nir' % mcd43a1_file
-    # modis_band0SW_file = 'HDF4_EOS:EOS_GRID:"%s":MOD_Grid_BRDF:BRDF_Albedo_Parameters_shortwave' % mcd43a1_file
-    #
-    # # load modis geo-reference data
-    # modis_brdf_band001 = gdal.Open(modis_band001_file)
-    # modis_brdf_geotransform = modis_brdf_band001.GetGeoTransform()
-    # modis_brdf_proj = modis_brdf_band001.GetProjection()
-    #
-    # modis_brdf_x_resolution = modis_brdf_geotransform[1]
-    # modis_brdf_y_resolution = modis_brdf_geotransform[5]
-    #
-    # # load Sentinel-2 spectral surface reflectance, with masks on.
-    # tbd_directory = sentinel2_directory + '/tbd'  # temporal directory, to be deleted in the end.
-    # if not os.path.exists(tbd_directory):
-    #     os.makedirs(tbd_directory)
-
     # use gdalwarp from os.system() to process a file in the subdirectory
     for file in os.listdir(file_subdirectory):
         if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif", "_mask.tif")):
@@ -465,7 +441,7 @@ def cal_endmember(sentinel2_directory):
         g_white = [1.0, 0.189184, -1.377622]
 
         # Sentinel-2 band to be retrieved
-        inverse_band_id = ['02', '03', '04', 'VIS', 'NIR', 'SW', '8A', '11', '12']
+        inverse_band_id = ['02', '03', '04', '8A', '11', '12']
 
         for m in range(len(inverse_band_id)):
 
