@@ -91,4 +91,4 @@ sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 # start calculating the endmembers
 # cal_endmember(sentinel2_directory)
 # start retrieval process
-apply_inversion(sentinel2_directory+'/%s'%sentinel2_filename, patch_size, patch_overlap)
+apply_inversion(sentinel2_directory, patch_size, patch_overlap)
