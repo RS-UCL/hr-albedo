@@ -185,16 +185,16 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             band04_10m = gdal.Open('%s/%s' % (level2_dir, file))
 
     # get Sentinel-2 20m and 10m proj
-    geotransform_20m = s2_band02_20m_data.GetGeoTransform()
-    proj_20m = s2_band02_20m_data.GetProjection()
-    geotransform_10m = s2_band02_10m_data.GetGeoTransform()
-    proj_10m = s2_band02_10m_data.GetProjection()
+    geotransform_20m = band02_20m.GetGeoTransform()
+    proj_20m = band02_20m.GetProjection()
+    geotransform_10m = band02_10m.GetGeoTransform()
+    proj_10m = band02_10m.GetProjection()
 
-    s2_20m_cols = s2_band02_20m_data.RasterXSize
-    s2_20m_rows = s2_band02_20m_data.RasterYSize
+    s2_20m_cols = band02_20m.RasterXSize
+    s2_20m_rows = band02_20m.RasterYSize
 
-    s2_10m_cols = s2_band02_10m_data.RasterXSize
-    s2_10m_rows = s2_band02_10m_data.RasterYSize
+    s2_10m_cols = band02_10m.RasterXSize
+    s2_10m_rows = band02_10m.RasterYSize
     print(s2_20m_cols, s2_20m_rows)
 
     # Sentinel-2 reflectance data scaling factor
