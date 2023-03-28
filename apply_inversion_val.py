@@ -164,61 +164,29 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             s2_band11_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
         if file.endswith("B12_sur_20m.tif"):
             s2_band12_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
-        if file.endswith("_mask_20m.tif"):
-            s2_mask_data = gdal.Open('%s/%s' % (tbd_directory, file))
 
     for file in os.listdir(level2_dir):
-        if file.endswith("B12_sur.tif"):
-            src = gdal.Open('%s/%s' % (level2_dir, file))
-            ulx, xres, xskew, uly, yskew, yres = src.GetGeoTransform()
-            lrx = ulx + (src.RasterXSize * xres)
-            lry = uly + (src.RasterYSize * yres)
-
-    # load Sentinel-2 20-m surface BRF
-    for file in os.listdir('%s/20m/' % level2_dir):
-        if file.endswith("B02_sur.tiff"):
-            band02_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-            band02_20m_file = '%s/20m/%s' % (level2_dir, file)
-        if file.endswith("B03_sur.tiff"):
-            band03_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-            band03_20m_file = '%s/20m/%s' % (level2_dir, file)
-        if file.endswith("B04_sur.tiff"):
-            band04_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-            band04_20m_file = '%s/20m/%s' % (level2_dir, file)
-        if file.endswith("B8A_sur.tiff"):
-            band8A_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-            band8A_20m_file = '%s/20m/%s' % (level2_dir, file)
-        if file.endswith("B11_sur.tiff"):
-            band11_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-            band11_20m_file = '%s/20m/%s' % (level2_dir, file)
-        if file.endswith("B12_sur.tiff"):
-            band12_20m = gdal.Open('%s/20m/%s' % (level2_dir, file))
-            band12_20m_file = '%s/20m/%s' % (level2_dir, file)
-
-    # load Sentinel-2 10-m surface BRF
-    for file in os.listdir('%s/' % level2_dir):
-        if file.endswith("B02_sur.tif"):
-            band02_10m = gdal.Open('%s/%s' % (level2_dir, file))
-            band02_10m_file = '%s/%s' % (level2_dir, file)
-        if file.endswith("B03_sur.tif"):
-            band03_10m = gdal.Open('%s/%s' % (level2_dir, file))
-            band03_10m_file = '%s/%s' % (level2_dir, file)
-        if file.endswith("B04_sur.tif"):
-            band04_10m = gdal.Open('%s/%s' % (level2_dir, file))
-            band04_10m_file = '%s/%s' % (level2_dir, file)
+        if file.endswith("B02_sur_20m.tif"):
+            s2_band02_10m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B03_sur_20m.tif"):
+            s2_band03_10m_data = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B04_sur_20m.tif"):
+            s2_band04_10m_data = gdal.Open('%s/%s' % (tbd_directory, file))
 
     # get Sentinel-2 20m and 10m proj
-    geotransform_20m = band02_20m.GetGeoTransform()
-    proj_20m = band02_20m.GetProjection()
-    geotransform_10m = band02_10m.GetGeoTransform()
-    proj_10m = band02_10m.GetProjection()
+    geotransform_20m = s2_band02_20m_data.GetGeoTransform()
+    proj_20m = s2_band02_20m_data.GetProjection()
+    geotransform_10m = s2_band02_10m_data.GetGeoTransform()
+    proj_10m = s2_band02_10m_data.GetProjection()
 
-    s2_20m_cols = band02_20m.RasterXSize
-    s2_20m_rows = band02_20m.RasterYSize
+    s2_20m_cols = s2_band02_20m_data.RasterXSize
+    s2_20m_rows = s2_band02_20m_data.RasterYSize
 
-    s2_10m_cols = band02_10m.RasterXSize
-    s2_10m_rows = band02_10m.RasterYSize
-
+    s2_10m_cols = s2_band02_10m_data.RasterXSize
+    s2_10m_rows = s2_band02_10m_data.RasterYSize
+    print(s2_20m_cols, s2_20m_rows)
+    print(s2_10m_cols, s2_10m_rows)
+    quit()
     # Sentinel-2 reflectance data scaling factor
     s2_scaling_factor = 1.e4
 
