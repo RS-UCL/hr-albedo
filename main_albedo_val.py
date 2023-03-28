@@ -90,9 +90,9 @@ sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 (sample_interval, patch_size, patch_overlap) = S2GM_config.__get_EEA_attr__()
 
 # start calculating the endmembers
-# cal_endmember(sentinel2_directory)
+cal_endmember(sentinel2_directory)
 # start retrieval process
-# apply_inversion(sentinel2_directory, patch_size, patch_overlap)
+apply_inversion(sentinel2_directory, patch_size, patch_overlap)
 # add uncertainties to albedo
-# apply_uncertainty(sentinel2_directory)
+apply_uncertainty(sentinel2_directory)
 cal_mosaic(sentinel2_directory, 0.95)
