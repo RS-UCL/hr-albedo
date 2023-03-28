@@ -770,35 +770,6 @@ def apply_uncertainty(sentinel2_directory):
 
     # Sentinel-2 band to be retrieved
     inverse_band_id = ['02', '03', '04', 'VIS', 'NIR', 'SW', '8A', '11', '12']
-    #
-    # for i in range(len(inverse_band_id)):
-    #     if (inverse_band_id[i] == '02') | (inverse_band_id[i] == '03') | (inverse_band_id[i] == '04') | \
-    #             (inverse_band_id[i] == '8A') | (inverse_band_id[i] == '11') | (inverse_band_id[i] == '12'):
-    #
-    #         for file in os.listdir('%s/' % level2_dir):
-    #             # get reflectance and uncetainties for individual bands from SIAC outpus
-    #             if file.endswith("B%s_sur.tif" % (inverse_band_id[i])):
-    #                 boa_band = gdal.Open('%s/%s' % (level2_dir, file))
-    #                 cols_i = boa_band.RasterXSize
-    #                 rows_i = boa_band.RasterYSize
-    #                 boa_band_array = boa_band.GetRasterBand(1)
-    #                 boa_band_array = boa_band_array.ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
-    #
-    #                 boa_band_unc = gdal.Open('%s/%s_unc.tif' % (level2_dir, file[:-4]))
-    #                 cols_i = boa_band_unc.RasterXSize
-    #                 rows_i = boa_band_unc.RasterYSize
-    #                 boa_band_unc_array = boa_band_unc.GetRasterBand(1)
-    #                 boa_band_unc_array = boa_band_unc_array.ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
-    #
-    #                 print('-----------> Mean B%s boa reflectance is: %s -------' % (
-    #                 inverse_band_id[i], np.mean(boa_band_array[boa_band_array > 0])))
-    #                 print('-----------> Mean B%s boa reflectance uncertainty is: %s -------' % (
-    #                 inverse_band_id[i], np.mean(boa_band_unc_array[boa_band_unc_array > 0])))
-    #
-    #                 unc_relative = boa_band_unc_array / boa_band_array
-    #                 print('-----------> Mean B%s relative uncertainty is: %s -------' % (
-    #                 inverse_band_id[i], np.mean(unc_relative[unc_relative < 1.])))
-    #                 np.save(tbd_directory + '/unc_relative_B%s.npy' % (inverse_band_id[i]), unc_relative)
 
     for band in ['02', '03', '04', '8A', '11', '12']:
         if band in inverse_band_id:
@@ -822,7 +793,6 @@ def apply_uncertainty(sentinel2_directory):
                         f"-----------> Mean B{band} relative uncertainty is: {np.mean(unc_relative[unc_relative < 1.])} -------")
                     np.save(f"{tbd_directory}/unc_relative_B{band}.npy", unc_relative)
 
-    quit()
     for file in os.listdir('%s/' % tbd_directory):
         if file.endswith("B02_sur_20m.tif"):
             band02_20m = gdal.Open('%s/%s' % (tbd_directory, file))
