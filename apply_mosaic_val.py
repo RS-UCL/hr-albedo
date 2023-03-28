@@ -131,9 +131,9 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         if file.endswith("band02_masked.tiff"):
             s2_band02_masked = gdal.Open('%s/%s'%(tbd_directory, file))
 
-    for file in os.listdir(tbd):
+    for file in os.listdir(tbd_directory):
         if file.endswith("_mask_20m.tif"):
-            s2_mask_data = gdal.Open('%s/%s' % (tbd, file))
+            s2_mask_data = gdal.Open('%s/%s' % (tbd_directory, file))
             os.system(f'gdalwarp -tr 10 10 "{tbd_directory}/{file}" "{tbd_directory}/{file[:-4]}_10m.tif"')
 
     quit()
