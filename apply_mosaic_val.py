@@ -82,7 +82,7 @@ def _compose_rgb(band_R,band_G,band_B,cloud_mask,outputFolder,outputFilename, pr
         #gdal.Translate(outputFolder +'/%s.png'%outputFilename, outputFolder + '/%s.jp2'%outputFilename, \
         #               format = 'PNG', widthPct=25, heightPct=25, resampleAlg=gdal.GRA_Bilinear ).FlushCache()
 
-def cal_mosaic(sentinel2_file, cloud_threshold):
+def cal_mosaic(sentinel2_directory, cloud_threshold):
 
     file_subdirectory = os.path.join(sentinel2_directory, 'GRANULE')
     file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
