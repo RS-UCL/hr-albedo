@@ -80,6 +80,7 @@ def get_modis_jasmin(modis_tile, sentinel2_directory):
 
 from apply_inversion_val import *
 from cal_endmember_val import *
+from apply_mosaic_val import *
 import datetime
 import glob
 import yaml
@@ -93,4 +94,5 @@ sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
 # start retrieval process
 # apply_inversion(sentinel2_directory, patch_size, patch_overlap)
 # add uncertainties to albedo
-apply_uncertainty(sentinel2_directory)
+# apply_uncertainty(sentinel2_directory)
+cal_mosaic(sentinel2_directory, 0.95)
