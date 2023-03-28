@@ -14,7 +14,7 @@ import numpy as np
 import glob
 import os
 
-def apply_inversion(sentinel2_file, patch_size, patch_overlap):
+def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     """
     :param sentinel2_file: directory and filename of Sentinel-2 .SAFE format data.
     :param mcd43a1_file: directory and filename of corresponding MCD43A1 data.
