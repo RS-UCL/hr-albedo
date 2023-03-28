@@ -98,7 +98,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
 
             else:
                 dhr_coef_a[m, i] = 0
-                dhr_coef_b[m, i] = 0
+                dhr_coef_b[m, i] = 1.
 
         for i in range(4):
             # loop for bhr regressions.
@@ -145,7 +145,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 plt.savefig('%s/bhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
             else:
                 dhr_coef_a[m, i] = 0
-                dhr_coef_b[m, i] = 0
+                dhr_coef_b[m, i] = 1.
 
     granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
     L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
