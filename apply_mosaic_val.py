@@ -220,9 +220,9 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     dhr_band03_data = dhr_band03.GetRasterBand(1)
     dhr_band04_data = dhr_band04.GetRasterBand(1)
 
-    dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
-    dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
-    dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
+    dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
 
     _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
                  '%s_UCL_dhr_rgb'%L1C_filename, projectionRef10, geotransform10)
