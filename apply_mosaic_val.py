@@ -157,7 +157,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         band_unc_rel = np.load(tbd_directory + '/unc_relative_B%s.npy'%s2_bands[i])
         band_unc = band_data * band_unc_rel
 
-        print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data)))
+        print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
         print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
         if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
@@ -190,27 +190,27 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         dhr_name = product_directory + '/%sB%s_UCL_dhr.jp2'%(L1C_filename,s2_bands[i])
         dhr_unc_name = product_directory + '/%sB%s_UCL_dhr-unc.jp2'%(L1C_filename,s2_bands[i])
 
-        _save_band(band_data, dhr_name, projectionRef, geotransform)
-        _save_band(band_unc, dhr_unc_name, projectionRef, geotransform)
-
-        fig, ax = plt.subplots(figsize=(16,16))
-        cmap = plt.cm.jet
-        cmap.set_bad('grey')
-        plt.imshow(band_data,cmap=cmap,vmin=0.,vmax=0.6)
-        cbar = plt.colorbar(shrink=0.5, extend = 'both')
-        cbar.set_label('DHR', fontsize=30)
-        cbar.ax.tick_params(labelsize=30)
-
-        for tick in ax.xaxis.get_major_ticks():
-            tick.label.set_fontsize(30)
-        for tick in ax.yaxis.get_major_ticks():
-            tick.label.set_fontsize(30)
-        plt.title('DHR Band %s'%(s2_bands[i]), fontsize=34)
-        plt.xlabel('Pixels', fontsize = 34)
-        plt.ylabel('Pixels', fontsize = 34)
-        plt.tight_layout()
-        plt.savefig('%s/merged_DHR_band%s.png'%(product_directory,s2_bands[i]))
-        plt.close()
+        # _save_band(band_data, dhr_name, projectionRef, geotransform)
+        # _save_band(band_unc, dhr_unc_name, projectionRef, geotransform)
+        #
+        # fig, ax = plt.subplots(figsize=(16,16))
+        # cmap = plt.cm.jet
+        # cmap.set_bad('grey')
+        # plt.imshow(band_data,cmap=cmap,vmin=0.,vmax=0.6)
+        # cbar = plt.colorbar(shrink=0.5, extend = 'both')
+        # cbar.set_label('DHR', fontsize=30)
+        # cbar.ax.tick_params(labelsize=30)
+        #
+        # for tick in ax.xaxis.get_major_ticks():
+        #     tick.label.set_fontsize(30)
+        # for tick in ax.yaxis.get_major_ticks():
+        #     tick.label.set_fontsize(30)
+        # plt.title('DHR Band %s'%(s2_bands[i]), fontsize=34)
+        # plt.xlabel('Pixels', fontsize = 34)
+        # plt.ylabel('Pixels', fontsize = 34)
+        # plt.tight_layout()
+        # plt.savefig('%s/merged_DHR_band%s.png'%(product_directory,s2_bands[i]))
+        # plt.close()
 
     dhr_band02  = gdal.Open('%s/merge_dhr_band02.vrt'%tbd_directory)
     dhr_band03  = gdal.Open('%s/merge_dhr_band03.vrt'%tbd_directory)
@@ -223,10 +223,10 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
     dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
     dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-
+    print(111)
     _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
                  '%s_UCL_dhr_rgb'%L1C_filename, projectionRef10, geotransform10)
-
+    print(222)
     for i in range(len(s2_bands)):
 
         merged_data  = gdal.Open('%s/merge_bhr_band%s.vrt'%(tbd_directory,s2_bands[i]))
@@ -288,7 +288,6 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         plt.savefig('%s/merged_BHR_band%s.png'%(product_directory,s2_bands[i]))
         plt.close()
 
-
     bhr_band02  = gdal.Open('%s/merge_bhr_band02.vrt'%tbd_directory)
     bhr_band03  = gdal.Open('%s/merge_bhr_band03.vrt'%tbd_directory)
     bhr_band04  = gdal.Open('%s/merge_bhr_band04.vrt'%tbd_directory)
@@ -297,9 +296,9 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     bhr_band03_data = bhr_band03.GetRasterBand(1)
     bhr_band04_data = bhr_band04.GetRasterBand(1)
 
-    bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
-    bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
-    bhr_band04_data  = bhr_band04_data.ReadAsArray(0, 0, cloud_mask_10m_cols, cloud_mask_10m_rows)
+    bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    bhr_band04_data  = bhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
 
     _compose_rgb(bhr_band04_data,bhr_band03_data,bhr_band02_data,cloud_mask_10m,product_directory,'%s_UCL_bhr_rgb'%L1C_filename, projectionRef10, geotransform10)
 
