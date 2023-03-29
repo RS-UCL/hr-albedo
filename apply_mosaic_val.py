@@ -145,90 +145,90 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
 
     s2_bands = ['02', '03', '04', '8A', 'VIS', 'NIR', 'SW', '11', '12']
 
-    # for i in range(len(s2_bands)):
-    #
-    #     merged_data  = gdal.Open('%s/merge_dhr_band%s.vrt'%(tbd_directory,s2_bands[i]))
-    #     band_data = merged_data.GetRasterBand(1)
-    #
-    #     cols = merged_data.RasterXSize
-    #     rows = merged_data.RasterYSize
-    #     band_data  = band_data.ReadAsArray(0, 0, cols, rows)
-    #
-    #     band_unc_rel = np.load(tbd_directory + '/unc_relative_B%s.npy'%s2_bands[i])
-    #     band_unc = band_data * band_unc_rel
-    #
-    #     print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
-    #     print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
-    #
-    #     if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
-    #         # dhr for 10-m bands: band-02, band-03 and band-04
-    #         band_data[cloud_mask_10m>0.] = np.nan
-    #         for file in os.listdir(level2_dir):
-    #             if file.endswith("B02.jp2"):
-    #                 src = gdal.Open('%s/%s'%(level2_dir, file))
-    #
-    #                 projectionRef10 = src.GetProjectionRef()
-    #                 geotransform10  = src.GetGeoTransform()
-    #
-    #     else:
-    #         # dhr for other 20-m bands
-    #         band_data[cloud_mask_20m>0.] = np.nan
-    #         for file in os.listdir(level2_dir):
-    #             if file.endswith("B8A.jp2"):
-    #                 src = gdal.Open('%s/%s'%(level2_dir, file))
-    #
-    #                 projectionRef20 = src.GetProjectionRef()
-    #                 geotransform20  = src.GetGeoTransform()
-    #
-    #     for file in os.listdir(level2_dir):
-    #         if file.endswith("B8A.jp2"):
-    #             L1C_filename = file[0:-8]
-    #
-    #     projectionRef = src.GetProjectionRef()
-    #     geotransform  = src.GetGeoTransform()
-    #
-    #     dhr_name = product_directory + '/%sB%s_UCL_dhr.jp2'%(L1C_filename,s2_bands[i])
-    #     dhr_unc_name = product_directory + '/%sB%s_UCL_dhr-unc.jp2'%(L1C_filename,s2_bands[i])
-    #
-    #     # _save_band(band_data, dhr_name, projectionRef, geotransform)
-    #     # _save_band(band_unc, dhr_unc_name, projectionRef, geotransform)
-    #     #
-    #     # fig, ax = plt.subplots(figsize=(16,16))
-    #     # cmap = plt.cm.jet
-    #     # cmap.set_bad('grey')
-    #     # plt.imshow(band_data,cmap=cmap,vmin=0.,vmax=0.6)
-    #     # cbar = plt.colorbar(shrink=0.5, extend = 'both')
-    #     # cbar.set_label('DHR', fontsize=30)
-    #     # cbar.ax.tick_params(labelsize=30)
-    #     #
-    #     # for tick in ax.xaxis.get_major_ticks():
-    #     #     tick.label.set_fontsize(30)
-    #     # for tick in ax.yaxis.get_major_ticks():
-    #     #     tick.label.set_fontsize(30)
-    #     # plt.title('DHR Band %s'%(s2_bands[i]), fontsize=34)
-    #     # plt.xlabel('Pixels', fontsize = 34)
-    #     # plt.ylabel('Pixels', fontsize = 34)
-    #     # plt.tight_layout()
-    #     # plt.savefig('%s/merged_DHR_band%s.png'%(product_directory,s2_bands[i]))
-    #     # plt.close()
-    #
-    # dhr_band02  = gdal.Open('%s/merge_dhr_band02.vrt'%tbd_directory)
-    # dhr_band03  = gdal.Open('%s/merge_dhr_band03.vrt'%tbd_directory)
-    # dhr_band04  = gdal.Open('%s/merge_dhr_band04.vrt'%tbd_directory)
-    #
-    # dhr_band02_data = dhr_band02.GetRasterBand(1)
-    # dhr_band03_data = dhr_band03.GetRasterBand(1)
-    # dhr_band04_data = dhr_band04.GetRasterBand(1)
-    #
-    # dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    # dhr_band02_data[cloud_mask_10m > 0.] = np.nan
-    # dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    # dhr_band03_data[cloud_mask_10m > 0.] = np.nan
-    # dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    # dhr_band04_data[cloud_mask_10m > 0.] = np.nan
-    #
-    # _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
-    #              '%s_UCL_dhr_rgb'%L1C_filename, projectionRef10, geotransform10)
+    for i in range(len(s2_bands)):
+
+        merged_data  = gdal.Open('%s/merge_dhr_band%s.vrt'%(tbd_directory,s2_bands[i]))
+        band_data = merged_data.GetRasterBand(1)
+
+        cols = merged_data.RasterXSize
+        rows = merged_data.RasterYSize
+        band_data  = band_data.ReadAsArray(0, 0, cols, rows)
+
+        band_unc_rel = np.load(tbd_directory + '/unc_relative_B%s.npy'%s2_bands[i])
+        band_unc = band_data * band_unc_rel
+
+        print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
+        print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
+
+        if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
+            # dhr for 10-m bands: band-02, band-03 and band-04
+            band_data[cloud_mask_10m>0.] = np.nan
+            for file in os.listdir(level2_dir):
+                if file.endswith("B02.jp2"):
+                    src = gdal.Open('%s/%s'%(level2_dir, file))
+
+                    projectionRef10 = src.GetProjectionRef()
+                    geotransform10  = src.GetGeoTransform()
+
+        else:
+            # dhr for other 20-m bands
+            band_data[cloud_mask_20m>0.] = np.nan
+            for file in os.listdir(level2_dir):
+                if file.endswith("B8A.jp2"):
+                    src = gdal.Open('%s/%s'%(level2_dir, file))
+
+                    projectionRef20 = src.GetProjectionRef()
+                    geotransform20  = src.GetGeoTransform()
+
+        for file in os.listdir(level2_dir):
+            if file.endswith("B8A.jp2"):
+                L1C_filename = file[0:-8]
+
+        projectionRef = src.GetProjectionRef()
+        geotransform  = src.GetGeoTransform()
+
+        dhr_name = product_directory + '/%sB%s_UCL_dhr.jp2'%(L1C_filename,s2_bands[i])
+        dhr_unc_name = product_directory + '/%sB%s_UCL_dhr-unc.jp2'%(L1C_filename,s2_bands[i])
+
+        _save_band(band_data, dhr_name, projectionRef, geotransform)
+        _save_band(band_unc, dhr_unc_name, projectionRef, geotransform)
+
+        fig, ax = plt.subplots(figsize=(16,16))
+        cmap = plt.cm.jet
+        cmap.set_bad('grey')
+        plt.imshow(band_data,cmap=cmap,vmin=0.,vmax=0.6)
+        cbar = plt.colorbar(shrink=0.5, extend = 'both')
+        cbar.set_label('DHR', fontsize=30)
+        cbar.ax.tick_params(labelsize=30)
+
+        for tick in ax.xaxis.get_major_ticks():
+            tick.label.set_fontsize(30)
+        for tick in ax.yaxis.get_major_ticks():
+            tick.label.set_fontsize(30)
+        plt.title('DHR Band %s'%(s2_bands[i]), fontsize=34)
+        plt.xlabel('Pixels', fontsize = 34)
+        plt.ylabel('Pixels', fontsize = 34)
+        plt.tight_layout()
+        plt.savefig('%s/merged_DHR_band%s.png'%(product_directory,s2_bands[i]))
+        plt.close()
+
+    dhr_band02  = gdal.Open('%s/merge_dhr_band02.vrt'%tbd_directory)
+    dhr_band03  = gdal.Open('%s/merge_dhr_band03.vrt'%tbd_directory)
+    dhr_band04  = gdal.Open('%s/merge_dhr_band04.vrt'%tbd_directory)
+
+    dhr_band02_data = dhr_band02.GetRasterBand(1)
+    dhr_band03_data = dhr_band03.GetRasterBand(1)
+    dhr_band04_data = dhr_band04.GetRasterBand(1)
+
+    dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band02_data[cloud_mask_10m > 0.] = np.nan
+    dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band03_data[cloud_mask_10m > 0.] = np.nan
+    dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band04_data[cloud_mask_10m > 0.] = np.nan
+
+    _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
+                 '%s_UCL_dhr_rgb'%L1C_filename, projectionRef10, geotransform10)
 
     for i in range(len(s2_bands)):
 
