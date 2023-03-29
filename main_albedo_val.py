@@ -84,6 +84,7 @@ from apply_mosaic_val import *
 import datetime
 import glob
 import yaml
+import sys
 
 S2GM_config = LoadConfig('./config/config_val.yaml')
 # take s2 directory from config file
