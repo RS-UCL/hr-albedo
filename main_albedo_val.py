@@ -86,13 +86,17 @@ import glob
 import yaml
 
 S2GM_config = LoadConfig('./config/config_val.yaml')
+# take s2 directory from config file
 sentinel2_directory = S2GM_config.__get_sentinel2_attr__()
+# alternatively, take s2 directory from command line
+# sentinel2_directory = sys.argv[1]
 (sample_interval, patch_size, patch_overlap) = S2GM_config.__get_EEA_attr__()
 
-# start calculating the endmembers
-cal_endmember(sentinel2_directory)
-# start retrieval process
-apply_inversion(sentinel2_directory, patch_size, patch_overlap)
-# add uncertainties to albedo
-apply_uncertainty(sentinel2_directory)
+######## start calculating the endmembers
+# cal_endmember(sentinel2_directory)
+######## start retrieval process
+# apply_inversion(sentinel2_directory, patch_size, patch_overlap)
+######## add uncertainties to albedo
+# apply_uncertainty(sentinel2_directory)
+######## mosaic the albedo from subpatches
 cal_mosaic(sentinel2_directory, 0.95)
