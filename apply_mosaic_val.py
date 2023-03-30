@@ -296,8 +296,11 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     bhr_band04  = gdal.Open('%s/merge_bhr_band04.vrt'%tbd_directory)
 
     bhr_band02_data = bhr_band02.GetRasterBand(1)
+    bhr_band02_data[cloud_mask_10m > 0.] = np.nan
     bhr_band03_data = bhr_band03.GetRasterBand(1)
+    bhr_band03_data[cloud_mask_10m > 0.] = np.nan
     bhr_band04_data = bhr_band04.GetRasterBand(1)
+    bhr_band04_data[cloud_mask_10m > 0.] = np.nan
 
     bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
     bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
