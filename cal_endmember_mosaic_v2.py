@@ -169,6 +169,19 @@ def cal_endmember(sentinel2_directory):
         if file.endswith(("B02.tif", "B03.tif", "B04.tif", "B8A.tif", "B11.tif", "B12.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
 
+    dataset = gdal.Open(file_subdirectory + '/cloud_confidence.tif')
+    raster_band = dataset.GetRasterBand(1)  # Assuming you want to read the first band
+    raster_data = raster_band.ReadAsArray()
+
+    # Create a plot using matplotlib
+    plt.figure(figsize=(10, 10))
+    plt.imshow(raster_data, cmap='hot', interpolation='nearest')
+    plt.colorbar(label='Cloud Confidence')
+    plt.title('Cloud Confidence Map - Nairobi')
+    plt.savefig('%s/cloud_confidence.png' % fig_directory)
+    quit()
+
+
     # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None
@@ -250,8 +263,6 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_500m = s2_band8A_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band11_500m = s2_band11_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band12_500m = s2_band12_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
-    print(boa_band12_500m.shape)
-    quit()
     boa_mask_500m = s2_mask_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
 
     # get raster band for 20m data
