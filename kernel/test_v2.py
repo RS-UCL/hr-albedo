@@ -32,8 +32,6 @@ def create_plot(data_array, description, cmap, output_dir):
 # remote directory
 input_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0/VIIRS_prior/'
 index_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/'
-# generate
-a = 1
 
 os.system(f"gdal_translate -r mode -ovr NONE -tr 500 500 {index_dir}validation_source_index.tif {index_dir}validation_source_index_500.tif")
 # index_file = index_dir + 'validation_source_index_500.tif'
