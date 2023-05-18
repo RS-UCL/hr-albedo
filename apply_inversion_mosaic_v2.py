@@ -151,20 +151,20 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     band11_20m = None
     band12_20m = None
 
-    for file in os.listdir(tbd_directory):
+    for file in os.listdir(file_subdirectory):
         if file.endswith("B02.tif"):
-            band02_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band02_10m_file = '%s/%s' % (tbd_directory, file)
+            band02_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band02_10m_file = '%s/%s' % (file_subdirectory, file)
         if file.endswith("B03.tif"):
-            band03_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band03_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B04.tif"):
-            band04_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band04_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B8A.tif"):
-            band8A_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band8A_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B11.tif"):
-            band11_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band11_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B12.tif"):
-            band12_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band12_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
 
     # get Sentinel-2 20m and 10m proj
     geotransform_10m = band02_10m.GetGeoTransform()
