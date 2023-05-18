@@ -67,6 +67,8 @@ for input_file in input_files:
 
 for band_num in range(1, 37):
     output_data_array = np.zeros((rows, cols), dtype=np.float32)
+    print(band_num)
+    print(len(band_descriptions))
     band_description = band_descriptions[band_num - 1]
     for i in range(rows):
         for j in range(cols):
