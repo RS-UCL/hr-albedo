@@ -174,11 +174,11 @@ def cal_endmember(sentinel2_directory):
     cloud_raster_band = cloud_dataset.GetRasterBand(1)  # Assuming you want to read the first band
     cloud_raster_data = cloud_raster_band.ReadAsArray()
     cm = np.zeros((cloud_raster_data.shape))
-    cm[cloud_raster_data > 80.] = 1.
+    cm[cloud_raster_data > 0.9] = 1.
     print(np.mean(cm))
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
-    plt.imshow(cloud_raster_data, cmap='rainbow')
+    plt.imshow(cm, cmap='rainbow')
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
