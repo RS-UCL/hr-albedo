@@ -62,7 +62,7 @@ def _plot_instrument_angluar(angle_array, fig_title, save_fig_name):
     :return:
     """
     fig, ax = plt.subplots(figsize=(16, 16))
-    plt.imshow(angle_array, vmin=160, vmax=320)
+    plt.imshow(angle_array)
     for tick in ax.xaxis.get_major_ticks():
         tick.label.set_fontsize(22)
     for tick in ax.yaxis.get_major_ticks():
