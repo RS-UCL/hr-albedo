@@ -169,12 +169,15 @@ def cal_endmember(sentinel2_directory):
         if file.endswith(("B02.tif", "B03.tif", "B04.tif", "B8A.tif", "B11.tif", "B12.tif", "cloud_confidence.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
 
+
     cloud_dataset = gdal.Open(file_subdirectory + '/cloud_confidence.tif')
     cloud_raster_band = cloud_dataset.GetRasterBand(1)  # Assuming you want to read the first band
     cloud_raster_data = cloud_raster_band.ReadAsArray()
+    cm = np.zeros((cloud_raster_data.shape))
+    cm[cloud_raster_data > 80] = 1
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
-    plt.imshow(cloud_raster_data, cmap='rainbow', interpolation='nearest')
+    plt.imshow(cm, cmap='rainbow', interpolation='nearest')
     plt.colorbar(label='Cloud Confidence')
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
