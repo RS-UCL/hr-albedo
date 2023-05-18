@@ -270,7 +270,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             main_endmember = np.load('%s/endmembers.npy' % tbd_directory)
             CalAbundanceMap = FCLS()
             # s2_10m_patch_abundance = CalAbundanceMap.map(s2_matrix_10m_patch_interp, main_endmember)
-            s2_10m_patch_abundance = np.ones((boa_band02_20m_cut.size, 1, 7)) * 0.5
+            s2_10m_patch_abundance = np.ones((boa_band02_10m_cut.size, 1, 7)) * 0.5
             np.save('%s/s2_10m_patch_abundance_h%sv%s.npy'
                     % (tbd_directory, num_row_str, num_col_str), s2_10m_patch_abundance)
 
