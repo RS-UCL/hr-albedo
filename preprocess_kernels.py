@@ -46,15 +46,9 @@ rows, cols = input_file.RasterYSize, input_file.RasterXSize
 geotransform = input_file.GetGeoTransform()
 projection = input_file.GetProjection()
 
-output_file = "./new_file.tif"
-driver = gdal.GetDriverByName("GTiff")
-dst_ds = driver.Create(output_file, cols, rows, 36, gdal.GDT_Float32)
-
-dst_ds.SetGeoTransform(geotransform)
-dst_ds.SetProjection(projection)
 
 temp_arrays = []
-
+band_descriptions = []
 
 for input_file in input_files:
     dataset = gdal.Open(input_file)
@@ -68,12 +62,12 @@ for input_file in input_files:
         data_array[data_array == 0] = np.nan
         temp_bands.append(data_array)
         band_description = band.GetDescription()
-        print(band.GetDescription())
+
     temp_arrays.append(temp_bands)
-quit()
+
 for band_num in range(1, 37):
     output_data_array = np.zeros((rows, cols), dtype=np.float32)
-
+    band_description = band_descriptions[band_num - 1]
     for i in range(rows):
         for j in range(cols):
             index = int(index_data_array[i, j])
@@ -81,39 +75,34 @@ for band_num in range(1, 37):
             output_data_array[i, j] = temp_arrays[index][band_num - 1][i, j]
             print(i, j, index, temp_arrays[index][band_num - 1][i, j])
 
-    np.save(input_dir + f"mosaic_band_{band_num}.npy", output_data_array)
-    dst_band = dst_ds.GetRasterBand(band_num)
-    dst_band.WriteArray(output_data_array)
-    dst_band.SetNoDataValue(np.nan)
-    dst_band.FlushCache()
+    np.save(input_dir + f"mosaic_band_{band_description}.npy", output_data_array)
+    create_plot(output_data_array, band_description, 'rainbow', output_data_array)
 
-dst_ds = None
+# for input_file in input_files:
+#     dataset = gdal.Open(input_file)
+#     output_dir = os.path.join(os.getcwd(), "output_pngs", os.path.splitext(os.path.basename(input_file))[0])
+#
+#     for band_num in range(1, 37):
+#         if band_num == 1:
+#             band = dataset.GetRasterBand(band_num)
+#             description = f"{os.path.splitext(os.path.basename(input_file))[0]}_Band_{band_num}"
+#             data_array = band.ReadAsArray()
+#             create_plot(data_array, description, 'rainbow', output_dir)
 
-for input_file in input_files:
-    dataset = gdal.Open(input_file)
-    output_dir = os.path.join(os.getcwd(), "output_pngs", os.path.splitext(os.path.basename(input_file))[0])
-
-    for band_num in range(1, 37):
-        if band_num == 1:
-            band = dataset.GetRasterBand(band_num)
-            description = f"{os.path.splitext(os.path.basename(input_file))[0]}_Band_{band_num}"
-            data_array = band.ReadAsArray()
-            create_plot(data_array, description, 'rainbow', output_dir)
-
-colors = plt.cm.tab20(np.linspace(0, 1, 13))  # Replace 10 with the desired number of color bins
-discrete_cmap = ListedColormap(colors)
-
-# Plotting and saving index file
-index_data_array = index_dataset.GetRasterBand(1).ReadAsArray()
-index_output_dir = os.path.join(os.getcwd(), "output_pngs", os.path.splitext(os.path.basename(index_file))[0])
-create_plot(index_data_array, "indexing_500m", discrete_cmap, index_output_dir)
-
-# Plotting and saving merged file bands
-merged_dataset = gdal.Open(output_file)
-merged_output_dir = os.path.join(os.getcwd(), "output_pngs", os.path.splitext(os.path.basename(output_file))[0])
-
-for band_num in range(1, 37):
-    band = merged_dataset.GetRasterBand(band_num)
-    description = f"Merged_Band_{band_num}"
-    data_array = band.ReadAsArray()
-    create_plot(data_array, description, 'rainbow', merged_output_dir)
+# colors = plt.cm.tab20(np.linspace(0, 1, 13))  # Replace 10 with the desired number of color bins
+# discrete_cmap = ListedColormap(colors)
+#
+# # Plotting and saving index file
+# index_data_array = index_dataset.GetRasterBand(1).ReadAsArray()
+# index_output_dir = os.path.join(os.getcwd(), "output_pngs", os.path.splitext(os.path.basename(index_file))[0])
+# create_plot(index_data_array, "indexing_500m", discrete_cmap, index_output_dir)
+#
+# # Plotting and saving merged file bands
+# merged_dataset = gdal.Open(output_file)
+# merged_output_dir = os.path.join(os.getcwd(), "output_pngs", os.path.splitext(os.path.basename(output_file))[0])
+#
+# for band_num in range(1, 37):
+#     band = merged_dataset.GetRasterBand(band_num)
+#     description = f"Merged_Band_{band_num}"
+#     data_array = band.ReadAsArray()
+#     create_plot(data_array, description, 'rainbow', merged_output_dir)
