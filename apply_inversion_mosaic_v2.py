@@ -187,15 +187,9 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     boa_band02_10m = band02_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
     boa_band03_10m = band03_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
     boa_band04_10m = band04_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
-    print(np.mean(boa_band02_10m))
-    print(np.mean(boa_band03_10m))
-    print(np.mean(boa_band04_10m))
-    print(np.mean(boa_band8A_10m))
-    print(np.mean(boa_band11_10m))
-    print(np.mean(boa_band12_10m))
-    quit()
-    num_row = np.floor(s2_20m_rows / (patch_size - patch_overlap)) + 1
-    col_row = np.floor(s2_20m_cols / (patch_size - patch_overlap)) + 1
+
+    num_row = np.floor(s2_10m_rows / (patch_size - patch_overlap)) + 1
+    col_row = np.floor(s2_10m_cols / (patch_size - patch_overlap)) + 1
 
     # apply the retrieval using the regression coefficient for individual batches
     for m in range(int(num_row)):
@@ -214,26 +208,6 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             start_row = m * (patch_size - patch_overlap) if m > 0 else m * patch_size
             start_col = n * (patch_size - patch_overlap) if n > 0 else n * patch_size
 
-            end_row = min(start_row + patch_size, s2_20m_rows)
-            end_col = min(start_col + patch_size, s2_20m_cols)
-
-            s2_20m_proj_ymax = geotransform_20m[3] + geotransform_20m[5] * start_row
-            s2_20m_proj_ymin = geotransform_20m[3] + geotransform_20m[5] * end_row
-            s2_20m_proj_xmin = geotransform_20m[0] + geotransform_20m[1] * start_col
-            s2_20m_proj_xmax = geotransform_20m[0] + geotransform_20m[1] * end_col
-
-            # crop MODIS to aggregated S2 boundaries
-
-            boa_band02_20m_cut = boa_band02_20m[start_row:end_row, start_col:end_col]
-            boa_band03_20m_cut = boa_band03_20m[start_row:end_row, start_col:end_col]
-            boa_band04_20m_cut = boa_band04_20m[start_row:end_row, start_col:end_col]
-            boa_band8A_20m_cut = boa_band8A_20m[start_row:end_row, start_col:end_col]
-            boa_band11_20m_cut = boa_band11_20m[start_row:end_row, start_col:end_col]
-            boa_band12_20m_cut = boa_band12_20m[start_row:end_row, start_col:end_col]
-
-            start_row_10m = start_row * 2
-            start_col_10m = start_col * 2
-
             end_row_10m = min(start_row_10m + patch_size * 2, s2_10m_rows)
             end_col_10m = min(start_col_10m + patch_size * 2, s2_10m_cols)
 
@@ -245,40 +219,38 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             boa_band02_10m_cut = boa_band02_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
             boa_band03_10m_cut = boa_band03_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
             boa_band04_10m_cut = boa_band04_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
+            boa_band8A_10m_cut = boa_band8A_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
+            boa_band11_10m_cut = boa_band11_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
+            boa_band12_10m_cut = boa_band12_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
 
-            print('This 20-m patch has the following boundary: %s %s %s %s' %
+            print('This 10-m patch has the following boundary: %s %s %s %s' %
                   (start_row, end_row, start_col, end_col))
-
-            os.system('gdalwarp -te %s %s %s %s -tr 20 20 -overwrite %s %s/cut_20m_h%sv%s.tiff' %
-                      (s2_20m_proj_xmin, s2_20m_proj_ymin, s2_20m_proj_xmax, s2_20m_proj_ymax,
-                       band02_20m_file, tbd_directory, num_row_str, num_col_str))
 
             os.system('gdalwarp -te %s %s %s %s -tr 10 10 -overwrite %s %s/cut_10m_h%sv%s.tiff' %
                       (s2_10m_proj_xmin, s2_10m_proj_ymin, s2_10m_proj_xmax, s2_10m_proj_ymax,
                        band02_10m_file, tbd_directory, num_row_str, num_col_str))
 
-            patch_20m = gdal.Open('%s/cut_20m_h%sv%s.tiff' % (tbd_directory, num_row_str, num_col_str))
             patch_10m = gdal.Open('%s/cut_10m_h%sv%s.tiff' % (tbd_directory, num_row_str, num_col_str))
 
             VIS_coefficient = [-0.0048, 0.5673, 0.1407, 0.2359, 0, 0, 0]
             SW_coefficient = [-0.0049, 0.2688, 0.0362, 0.1501, 0.3045, 0.1644, 0.0356]
             NIR_coefficient = [-0.0073, 0., 0., 0., 0.5595, 0.3844, 0.0290]
 
-            s2_matrix_20m_patch = np.zeros((boa_band02_20m_cut.size, 1, 6))
+            s2_matrix_10m_patch = np.zeros((boa_band02_10m_cut.size, 1, 6))
 
-            boa_band02_20m_cut_array = boa_band02_20m_cut.reshape(boa_band02_20m_cut.size, 1)
-            boa_band03_20m_cut_array = boa_band03_20m_cut.reshape(boa_band03_20m_cut.size, 1)
-            boa_band04_20m_cut_array = boa_band04_20m_cut.reshape(boa_band04_20m_cut.size, 1)
-            boa_band8A_20m_cut_array = boa_band8A_20m_cut.reshape(boa_band8A_20m_cut.size, 1)
-            boa_band11_20m_cut_array = boa_band11_20m_cut.reshape(boa_band11_20m_cut.size, 1)
-            boa_band12_20m_cut_array = boa_band12_20m_cut.reshape(boa_band12_20m_cut.size, 1)
+            boa_band02_10m_cut_array = boa_band02_10m_cut.reshape(boa_band02_10m_cut.size, 1)
+            boa_band03_10m_cut_array = boa_band03_10m_cut.reshape(boa_band03_10m_cut.size, 1)
+            boa_band04_10m_cut_array = boa_band04_10m_cut.reshape(boa_band04_10m_cut.size, 1)
+            boa_band8A_10m_cut_array = boa_band8A_10m_cut.reshape(boa_band8A_10m_cut.size, 1)
+            boa_band11_10m_cut_array = boa_band11_10m_cut.reshape(boa_band11_10m_cut.size, 1)
+            boa_band12_10m_cut_array = boa_band12_10m_cut.reshape(boa_band12_10m_cut.size, 1)
 
-            s2_matrix_20m_patch[:, 0, 0] = boa_band02_20m_cut_array[:, 0]
-            s2_matrix_20m_patch[:, 0, 1] = boa_band03_20m_cut_array[:, 0]
-            s2_matrix_20m_patch[:, 0, 2] = boa_band04_20m_cut_array[:, 0]
-            s2_matrix_20m_patch[:, 0, 3] = boa_band8A_20m_cut_array[:, 0]
-            s2_matrix_20m_patch[:, 0, 4] = boa_band11_20m_cut_array[:, 0]
-            s2_matrix_20m_patch[:, 0, 5] = boa_band12_20m_cut_array[:, 0]
+            s2_matrix_10m_patch[:, 0, 0] = boa_band02_10m_cut_array[:, 0]
+            s2_matrix_10m_patch[:, 0, 1] = boa_band03_10m_cut_array[:, 0]
+            s2_matrix_10m_patch[:, 0, 2] = boa_band04_10m_cut_array[:, 0]
+            s2_matrix_10m_patch[:, 0, 3] = boa_band8A_10m_cut_array[:, 0]
+            s2_matrix_10m_patch[:, 0, 4] = boa_band11_10m_cut_array[:, 0]
+            s2_matrix_10m_patch[:, 0, 5] = boa_band12_10m_cut_array[:, 0]
 
             s2_eea_wavelength = np.asarray([459., 560., 665., 865., 1610., 2190.])
             s2_interp_num = 11 # number of pixels to add between two wavelengths
@@ -292,20 +264,18 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             s2_wv_resampled = np.concatenate((s2_wv_resampled[0:-1], s2_wv_band04_band8A), axis=0)
             s2_wv_resampled = np.concatenate((s2_wv_resampled, s2_wv_band11_band12), axis=0)
 
-            func_wv_20m = interpolate.interp1d(s2_eea_wavelength, s2_matrix_20m_patch, axis=2)
-            s2_matrix_20m_patch_interp = func_wv_20m(s2_wv_resampled)
+            func_wv_10m = interpolate.interp1d(s2_eea_wavelength, s2_matrix_10m_patch, axis=2)
+            s2_matrix_10m_patch_interp = func_wv_10m(s2_wv_resampled)
 
             main_endmember = np.load('%s/endmembers.npy' % tbd_directory)
             CalAbundanceMap = FCLS()
-            s2_20m_patch_abundance = CalAbundanceMap.map(s2_matrix_20m_patch_interp, main_endmember)
-            ###### s2_20m_patch_abundance = np.zeros((boa_band02_20m_cut.size, 1, 7))
-            np.save('%s/s2_20m_patch_abundance_h%sv%s.npy'
-                    % (tbd_directory, num_row_str, num_col_str), s2_20m_patch_abundance)
+            # s2_10m_patch_abundance = CalAbundanceMap.map(s2_matrix_10m_patch_interp, main_endmember)
+            s2_10m_patch_abundance = np.ones((boa_band02_20m_cut.size, 1, 7)) * 0.5
+            np.save('%s/s2_10m_patch_abundance_h%sv%s.npy'
+                    % (tbd_directory, num_row_str, num_col_str), s2_10m_patch_abundance)
 
             ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-            geotransform_20m_patch = patch_20m.GetGeoTransform()
-            proj_20m_patch = patch_20m.GetProjection()
             geotransform_10m_patch = patch_10m.GetGeoTransform()
             proj_10m_patch = patch_10m.GetProjection()
 
@@ -349,47 +319,27 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
 
             hr_albedo_bands = ['02', '03', '04', '8A', '11', '12', 'VIS', 'NIR', 'SW']
 
-            abu_0_20m = s2_20m_patch_abundance[:, :, 0].reshape(boa_band02_20m_cut.shape[0],
-                                                                boa_band02_20m_cut.shape[1])
-            abu_1_20m = s2_20m_patch_abundance[:, :, 1].reshape(boa_band02_20m_cut.shape[0],
-                                                                boa_band02_20m_cut.shape[1])
-            abu_2_20m = s2_20m_patch_abundance[:, :, 2].reshape(boa_band02_20m_cut.shape[0],
-                                                                boa_band02_20m_cut.shape[1])
-            abu_3_20m = s2_20m_patch_abundance[:, :, 3].reshape(boa_band02_20m_cut.shape[0],
-                                                                boa_band02_20m_cut.shape[1])
+            abu_0_10m = s2_10m_patch_abundance[:, :, 0].reshape(boa_band02_10m_cut.shape[0],
+                                                                boa_band02_10m_cut.shape[1])
+            abu_1_10m = s2_10m_patch_abundance[:, :, 1].reshape(boa_band02_10m_cut.shape[0],
+                                                                boa_band02_10m_cut.shape[1])
+            abu_2_10m = s2_10m_patch_abundance[:, :, 2].reshape(boa_band02_10m_cut.shape[0],
+                                                                boa_band02_10m_cut.shape[1])
+            abu_3_10m = s2_10m_patch_abundance[:, :, 3].reshape(boa_band02_10m_cut.shape[0],
+                                                                boa_band02_10m_cut.shape[1])
 
-            # save and write 20-m abundance map
-            nx, ny = boa_band02_20m_cut.shape
-            abundance_20m_FileName = tbd_directory + '/sub_abundance_20m_h%sv%s.tif' % (num_row_str, num_col_str)
-            dst_ds = gdal.GetDriverByName('GTiff').Create(abundance_20m_FileName, ny, nx, 4, gdal.GDT_Float32)
-            dst_ds.SetGeoTransform(geotransform_20m_patch)
-            dst_ds.SetProjection(proj_20m_patch)
-            dst_ds.GetRasterBand(1).WriteArray(abu_0_20m)
-            dst_ds.GetRasterBand(2).WriteArray(abu_1_20m)
-            dst_ds.GetRasterBand(3).WriteArray(abu_2_20m)
-            dst_ds.GetRasterBand(4).WriteArray(abu_3_20m)
+            # save and write 10-m abundance map
+            nx, ny = boa_band02_10m_cut.shape
+            abundance_10m_FileName = tbd_directory + '/sub_abundance_10m_h%sv%s.tif' % (num_row_str, num_col_str)
+            dst_ds = gdal.GetDriverByName('GTiff').Create(abundance_10m_FileName, ny, nx, 4, gdal.GDT_Float32)
+            dst_ds.SetGeoTransform(geotransform_10m_patch)
+            dst_ds.SetProjection(proj_10m_patch)
+            dst_ds.GetRasterBand(1).WriteArray(abu_0_10m)
+            dst_ds.GetRasterBand(2).WriteArray(abu_1_10m)
+            dst_ds.GetRasterBand(3).WriteArray(abu_2_10m)
+            dst_ds.GetRasterBand(4).WriteArray(abu_3_10m)
             dst_ds.FlushCache()
             dst_ds = None
-
-            x_res_abundance_10m = geotransform_10m[1]
-            y_res_abundance_10m = geotransform_10m[5]
-
-            print(f'gdalwarp -tr 10 10 "{abundance_20m_FileName}" "{abundance_20m_FileName.replace("20m", "10m")}"')
-            os.system(f'gdalwarp -tr 10 10 "{abundance_20m_FileName}" "{abundance_20m_FileName.replace("20m", "10m")}"')
-
-            abundance_10m_data = gdal.Open(tbd_directory + '/sub_abundance_10m_h%sv%s.tif' % (num_row_str, num_col_str))
-            abu_0_10m = abundance_10m_data.GetRasterBand(1)
-            abu_1_10m = abundance_10m_data.GetRasterBand(2)
-            abu_2_10m = abundance_10m_data.GetRasterBand(3)
-            abu_3_10m = abundance_10m_data.GetRasterBand(4)
-
-            abu_10m_cols = abundance_10m_data.RasterXSize
-            abu_10m_rows = abundance_10m_data.RasterYSize
-
-            abu_0_10m = abu_0_10m.ReadAsArray(0, 0, abu_10m_cols, abu_10m_rows)
-            abu_1_10m = abu_1_10m.ReadAsArray(0, 0, abu_10m_cols, abu_10m_rows)
-            abu_2_10m = abu_2_10m.ReadAsArray(0, 0, abu_10m_cols, abu_10m_rows)
-            abu_3_10m = abu_3_10m.ReadAsArray(0, 0, abu_10m_cols, abu_10m_rows)
 
             for i in range(len(hr_albedo_bands)):
 
@@ -402,22 +352,12 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                          boa_band02_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band02_10m_cut * coffe_k[3] + coffe_a[3])
 
-                    hr_dhr_b02_20m = abu_0_20m * (boa_band02_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band02_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band02_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band02_20m_cut * coffe_k[3] + coffe_a[3])
-
                     coffe_k = np.copy(bhr_coefficient_band02_k)
                     coffe_a = np.copy(bhr_coefficient_band02_a)
                     hr_bhr_b02_10m = abu_0_10m * (boa_band02_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
                                 boa_band02_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band02_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band02_10m_cut * coffe_k[3] + coffe_a[3])
-
-                    hr_bhr_b02_20m = abu_0_20m * (boa_band02_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band02_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band02_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band02_20m_cut * coffe_k[3] + coffe_a[3])
 
                     nx, ny = hr_dhr_b02_10m.shape
 
@@ -440,7 +380,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     dst_ds = None
 
                 if hr_albedo_bands[i] == '03':
-                    # save sentinel-2 band-03 albedo subdatasets
+
                     coffe_k = np.copy(dhr_coefficient_band03_k)
                     coffe_a = np.copy(dhr_coefficient_band03_a)
                     hr_dhr_b03_10m = abu_0_10m * (boa_band03_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
@@ -448,21 +388,12 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                          boa_band03_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band03_10m_cut * coffe_k[3] + coffe_a[3])
 
-                    hr_dhr_b03_20m = abu_0_20m * (boa_band03_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band03_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band03_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band03_20m_cut * coffe_k[3] + coffe_a[3])
-
                     coffe_k = np.copy(bhr_coefficient_band03_k)
                     coffe_a = np.copy(bhr_coefficient_band03_a)
                     hr_bhr_b03_10m = abu_0_10m * (boa_band03_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
                                 boa_band03_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band03_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band03_10m_cut * coffe_k[3] + coffe_a[3])
-                    hr_bhr_b03_20m = abu_0_20m * (boa_band03_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band03_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band03_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band03_20m_cut * coffe_k[3] + coffe_a[3])
 
                     nx, ny = hr_dhr_b03_10m.shape
 
@@ -485,17 +416,13 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     dst_ds = None
 
                 if hr_albedo_bands[i] == '04':
-                    # save sentinel-2 band-04 albedo subdatasets
+
                     coffe_k = np.copy(dhr_coefficient_band04_k)
                     coffe_a = np.copy(dhr_coefficient_band04_a)
                     hr_dhr_b04_10m = abu_0_10m * (boa_band04_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
                                 boa_band04_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band04_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band04_10m_cut * coffe_k[3] + coffe_a[3])
-                    hr_dhr_b04_20m = abu_0_20m * (boa_band04_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band04_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band04_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band04_20m_cut * coffe_k[3] + coffe_a[3])
 
                     coffe_k = np.copy(bhr_coefficient_band04_k)
                     coffe_a = np.copy(bhr_coefficient_band04_a)
@@ -503,10 +430,6 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                                 boa_band04_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
                                          boa_band04_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
                                          boa_band04_10m_cut * coffe_k[3] + coffe_a[3])
-                    hr_bhr_b04_20m = abu_0_20m * (boa_band04_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band04_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band04_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band04_20m_cut * coffe_k[3] + coffe_a[3])
 
                     nx, ny = hr_dhr_b04_10m.shape
 
@@ -529,131 +452,131 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     dst_ds = None
 
                 if hr_albedo_bands[i] == '8A':
-                    # save sentinel-2 band-8A albedo subdatasets
-                    coffe_k = dhr_coefficient_band8A_k
-                    coffe_a = dhr_coefficient_band8A_a
-                    hr_dhr_b8A_20m = abu_0_20m * (boa_band8A_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band8A_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band8A_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band8A_20m_cut * coffe_k[3] + coffe_a[3])
 
-                    coffe_k = bhr_coefficient_band11_k
-                    coffe_a = bhr_coefficient_band11_a
-                    hr_bhr_b8A_20m = abu_0_20m * (boa_band8A_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band8A_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band8A_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band8A_20m_cut * coffe_k[3] + coffe_a[3])
+                    coffe_k = np.copy(dhr_coefficient_band8A_k)
+                    coffe_a = np.copy(dhr_coefficient_band8A_a)
+                    hr_dhr_b8A_10m = abu_0_10m * (boa_band8A_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
+                                boa_band8A_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
+                                         boa_band8A_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
+                                         boa_band8A_10m_cut * coffe_k[3] + coffe_a[3])
 
-                    nx, ny = hr_dhr_b8A_20m.shape
+                    coffe_k = np.copy(bhr_coefficient_band8A_k)
+                    coffe_a = np.copy(bhr_coefficient_band8A_a)
+                    hr_bhr_b8A_10m = abu_0_10m * (boa_band8A_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
+                                boa_band8A_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
+                                         boa_band8A_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
+                                         boa_band8A_10m_cut * coffe_k[3] + coffe_a[3])
+
+                    nx, ny = hr_dhr_b8A_10m.shape
 
                     outputFileName = tbd_directory + '/sub_dhr_band%s_h%sv%s.tiff' % (
                     hr_albedo_bands[i], num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
-                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_b8A_20m)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_b8A_10m)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                     outputFileName = tbd_directory + '/sub_bhr_band%s_h%sv%s.tiff' % (
                     hr_albedo_bands[i], num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
-                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_b8A_20m)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_b8A_10m)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                 if hr_albedo_bands[i] == '11':
-                    # save sentinel-2 band-11 albedo subdatasets
-                    coffe_k = dhr_coefficient_band11_k
-                    coffe_a = dhr_coefficient_band11_a
-                    hr_dhr_b11_20m = abu_0_20m * (boa_band11_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band11_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band11_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band11_20m_cut * coffe_k[3] + coffe_a[3])
 
-                    coffe_k = bhr_coefficient_band11_k
-                    coffe_a = bhr_coefficient_band11_a
-                    hr_bhr_b11_20m = abu_0_20m * (boa_band11_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band11_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band11_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band11_20m_cut * coffe_k[3] + coffe_a[3])
+                    coffe_k = np.copy(dhr_coefficient_band11_k)
+                    coffe_a = np.copy(dhr_coefficient_band11_a)
+                    hr_dhr_b11_10m = abu_0_10m * (boa_band11_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
+                                boa_band11_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
+                                         boa_band11_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
+                                         boa_band11_10m_cut * coffe_k[3] + coffe_a[3])
 
-                    nx, ny = hr_dhr_b11_20m.shape
+                    coffe_k = np.copy(bhr_coefficient_band11_k)
+                    coffe_a = np.copy(bhr_coefficient_band11_a)
+                    hr_bhr_b11_10m = abu_0_10m * (boa_band11_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
+                                boa_band11_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
+                                         boa_band11_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
+                                         boa_band11_10m_cut * coffe_k[3] + coffe_a[3])
+
+                    nx, ny = hr_dhr_b11_10m.shape
 
                     outputFileName = tbd_directory + '/sub_dhr_band%s_h%sv%s.tiff' % (
                     hr_albedo_bands[i], num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
-                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_b11_20m)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_b11_10m)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                     outputFileName = tbd_directory + '/sub_bhr_band%s_h%sv%s.tiff' % (
                     hr_albedo_bands[i], num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
-                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_b11_20m)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_b11_10m)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                 if hr_albedo_bands[i] == '12':
-                    # save sentinel-2 band-12 albedo subdatasets
-                    coffe_k = dhr_coefficient_band12_k
-                    coffe_a = dhr_coefficient_band12_a
-                    hr_dhr_b12_20m = abu_0_20m * (boa_band12_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band12_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band12_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band12_20m_cut * coffe_k[3] + coffe_a[3])
 
-                    coffe_k = bhr_coefficient_band12_k
-                    coffe_a = bhr_coefficient_band12_a
-                    hr_bhr_b12_20m = abu_0_20m * (boa_band12_20m_cut * coffe_k[0] + coffe_a[0]) + abu_1_20m * (
-                                boa_band12_20m_cut * coffe_k[1] + coffe_a[1]) + abu_2_20m * (
-                                         boa_band12_20m_cut * coffe_k[2] + coffe_a[2]) + abu_3_20m * (
-                                         boa_band12_20m_cut * coffe_k[3] + coffe_a[3])
+                    coffe_k = np.copy(dhr_coefficient_band12_k)
+                    coffe_a = np.copy(dhr_coefficient_band12_a)
+                    hr_dhr_b12_10m = abu_0_10m * (boa_band12_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
+                                boa_band12_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
+                                         boa_band12_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
+                                         boa_band12_10m_cut * coffe_k[3] + coffe_a[3])
 
-                    nx, ny = hr_dhr_b12_20m.shape
+                    coffe_k = np.copy(bhr_coefficient_band12_k)
+                    coffe_a = np.copy(bhr_coefficient_band12_a)
+                    hr_bhr_b12_10m = abu_0_10m * (boa_band12_10m_cut * coffe_k[0] + coffe_a[0]) + abu_1_10m * (
+                                boa_band12_10m_cut * coffe_k[1] + coffe_a[1]) + abu_2_10m * (
+                                         boa_band12_10m_cut * coffe_k[2] + coffe_a[2]) + abu_3_10m * (
+                                         boa_band12_10m_cut * coffe_k[3] + coffe_a[3])
+
+                    nx, ny = hr_dhr_b12_10m.shape
 
                     outputFileName = tbd_directory + '/sub_dhr_band%s_h%sv%s.tiff' % (
                     hr_albedo_bands[i], num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
-                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_b12_20m)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_dhr_b12_10m)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                     outputFileName = tbd_directory + '/sub_bhr_band%s_h%sv%s.tiff' % (
                     hr_albedo_bands[i], num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
-                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_b12_20m)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
+                    dst_ds.GetRasterBand(1).WriteArray(hr_bhr_b12_10m)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                 if hr_albedo_bands[i] == 'VIS':
 
-                    hr_dhr_VIS = VIS_coefficient[0] + VIS_coefficient[1] * hr_dhr_b02_20m + \
-                                  VIS_coefficient[2] * hr_dhr_b03_20m + VIS_coefficient[3] * hr_dhr_b04_20m + \
-                                  VIS_coefficient[4] * hr_dhr_b8A_20m + VIS_coefficient[5] * hr_dhr_b11_20m + \
-                                  VIS_coefficient[6] * hr_dhr_b12_20m
+                    hr_dhr_VIS = VIS_coefficient[0] + VIS_coefficient[1] * hr_dhr_b02_10m + \
+                                  VIS_coefficient[2] * hr_dhr_b03_10m + VIS_coefficient[3] * hr_dhr_b04_10m + \
+                                  VIS_coefficient[4] * hr_dhr_b8A_10m + VIS_coefficient[5] * hr_dhr_b11_10m + \
+                                  VIS_coefficient[6] * hr_dhr_b12_10m
 
-                    hr_bhr_VIS = VIS_coefficient[0] + VIS_coefficient[1] * hr_bhr_b02_20m + \
-                                    VIS_coefficient[2] * hr_bhr_b03_20m + VIS_coefficient[3] * hr_bhr_b04_20m + \
-                                    VIS_coefficient[4] * hr_bhr_b8A_20m + VIS_coefficient[5] * hr_bhr_b11_20m + \
-                                    VIS_coefficient[6] * hr_bhr_b12_20m
+                    hr_bhr_VIS = VIS_coefficient[0] + VIS_coefficient[1] * hr_bhr_b02_10m + \
+                                    VIS_coefficient[2] * hr_bhr_b03_10m + VIS_coefficient[3] * hr_bhr_b04_10m + \
+                                    VIS_coefficient[4] * hr_bhr_b8A_10m + VIS_coefficient[5] * hr_bhr_b11_10m + \
+                                    VIS_coefficient[6] * hr_bhr_b12_10m
 
                     nx, ny = hr_dhr_VIS.shape
                     outputFileName = tbd_directory + '/sub_dhr_bandVIS_h%sv%s.tiff' % (
                     num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
                     dst_ds.GetRasterBand(1).WriteArray(hr_dhr_VIS)
                     dst_ds.FlushCache()
                     dst_ds = None
@@ -661,30 +584,30 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     outputFileName = tbd_directory + '/sub_bhr_bandVIS_h%sv%s.tiff' % (
                     num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
                     dst_ds.GetRasterBand(1).WriteArray(hr_bhr_VIS)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                 if hr_albedo_bands[i] == 'NIR':
 
-                    hr_dhr_NIR = NIR_coefficient[0] + NIR_coefficient[1] * hr_dhr_b02_20m + \
-                                    NIR_coefficient[2] * hr_dhr_b03_20m + NIR_coefficient[3] * hr_dhr_b04_20m + \
-                                    NIR_coefficient[4] * hr_dhr_b8A_20m + NIR_coefficient[5] * hr_dhr_b11_20m + \
-                                    NIR_coefficient[6] * hr_dhr_b12_20m
-                    hr_bhr_NIR = NIR_coefficient[0] + NIR_coefficient[1] * hr_bhr_b02_20m + \
-                                    NIR_coefficient[2] * hr_bhr_b03_20m + NIR_coefficient[3] * hr_bhr_b04_20m + \
-                                    NIR_coefficient[4] * hr_bhr_b8A_20m + NIR_coefficient[5] * hr_bhr_b11_20m + \
-                                    NIR_coefficient[6] * hr_bhr_b12_20m
+                    hr_dhr_NIR = NIR_coefficient[0] + NIR_coefficient[1] * hr_dhr_b02_10m + \
+                                    NIR_coefficient[2] * hr_dhr_b03_10m + NIR_coefficient[3] * hr_dhr_b04_10m + \
+                                    NIR_coefficient[4] * hr_dhr_b8A_10m + NIR_coefficient[5] * hr_dhr_b11_10m + \
+                                    NIR_coefficient[6] * hr_dhr_b12_10m
+                    hr_bhr_NIR = NIR_coefficient[0] + NIR_coefficient[1] * hr_bhr_b02_10m + \
+                                    NIR_coefficient[2] * hr_bhr_b03_10m + NIR_coefficient[3] * hr_bhr_b04_10m + \
+                                    NIR_coefficient[4] * hr_bhr_b8A_10m + NIR_coefficient[5] * hr_bhr_b11_10m + \
+                                    NIR_coefficient[6] * hr_bhr_b12_10m
 
                     nx, ny = hr_dhr_NIR.shape
 
                     outputFileName = tbd_directory + '/sub_dhr_bandNIR_h%sv%s.tiff' % (
                     num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
                     dst_ds.GetRasterBand(1).WriteArray(hr_dhr_NIR)
                     dst_ds.FlushCache()
                     dst_ds = None
@@ -692,30 +615,30 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     outputFileName = tbd_directory + '/sub_bhr_bandNIR_h%sv%s.tiff' % (
                     num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
                     dst_ds.GetRasterBand(1).WriteArray(hr_bhr_NIR)
                     dst_ds.FlushCache()
                     dst_ds = None
 
                 if hr_albedo_bands[i] == 'SW':
 
-                    hr_dhr_SW = SW_coefficient[0] + SW_coefficient[1] * hr_dhr_b02_20m + \
-                                    SW_coefficient[2] * hr_dhr_b03_20m + SW_coefficient[3] * hr_dhr_b04_20m + \
-                                    SW_coefficient[4] * hr_dhr_b8A_20m + SW_coefficient[5] * hr_dhr_b11_20m + \
-                                    SW_coefficient[6] * hr_dhr_b12_20m
-                    hr_bhr_SW = SW_coefficient[0] + SW_coefficient[1] * hr_bhr_b02_20m + \
-                                    SW_coefficient[2] * hr_bhr_b03_20m + SW_coefficient[3] * hr_bhr_b04_20m + \
-                                    SW_coefficient[4] * hr_bhr_b8A_20m + SW_coefficient[5] * hr_bhr_b11_20m + \
-                                    SW_coefficient[6] * hr_bhr_b12_20m
+                    hr_dhr_SW = SW_coefficient[0] + SW_coefficient[1] * hr_dhr_b02_10m + \
+                                    SW_coefficient[2] * hr_dhr_b03_10m + SW_coefficient[3] * hr_dhr_b04_10m + \
+                                    SW_coefficient[4] * hr_dhr_b8A_10m + SW_coefficient[5] * hr_dhr_b11_10m + \
+                                    SW_coefficient[6] * hr_dhr_b12_10m
+                    hr_bhr_SW = SW_coefficient[0] + SW_coefficient[1] * hr_bhr_b02_10m + \
+                                    SW_coefficient[2] * hr_bhr_b03_10m + SW_coefficient[3] * hr_bhr_b04_10m + \
+                                    SW_coefficient[4] * hr_bhr_b8A_10m + SW_coefficient[5] * hr_bhr_b11_10m + \
+                                    SW_coefficient[6] * hr_bhr_b12_10m
 
                     nx, ny = hr_dhr_SW.shape
 
                     outputFileName = tbd_directory + '/sub_dhr_bandSW_h%sv%s.tiff' % (
                     num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
                     dst_ds.GetRasterBand(1).WriteArray(hr_dhr_SW)
                     dst_ds.FlushCache()
                     dst_ds = None
@@ -723,8 +646,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     outputFileName = tbd_directory + '/sub_bhr_bandSW_h%sv%s.tiff' % (
                     num_row_str, num_col_str)
                     dst_ds = gdal.GetDriverByName('GTiff').Create(outputFileName, ny, nx, 1, gdal.GDT_Float32)
-                    dst_ds.SetGeoTransform(geotransform_20m_patch)
-                    dst_ds.SetProjection(proj_20m_patch)
+                    dst_ds.SetGeoTransform(geotransform_10m_patch)
+                    dst_ds.SetProjection(proj_10m_patch)
                     dst_ds.GetRasterBand(1).WriteArray(hr_bhr_SW)
                     dst_ds.FlushCache()
                     dst_ds = None
