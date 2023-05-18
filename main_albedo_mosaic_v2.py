@@ -26,4 +26,6 @@ patch_overlap = 100
 ######## start calculating the endmembers
 # cal_endmember(sentinel2_directory)
 ######## start retrieval process
-apply_inversion(sentinel2_directory, patch_size, patch_overlap)
+# apply_inversion(sentinel2_directory, patch_size, patch_overlap)
+######## add uncertainties to albedo
+apply_uncertainty(sentinel2_directory)

@@ -661,23 +661,18 @@ def apply_uncertainty(sentinel2_directory):
     """
     # retrieve 10m/20m albedo uncertainties are derived from SIAC output uncertainties.
 
-    file_subdirectory = os.path.join(sentinel2_directory, 'GRANULE')
-    file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
-    file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
+    file_subdirectory = sentinel2_directory
 
     tbd_directory = file_subdirectory + '/tbd'  # temporal directory, to be deleted in the end.
     fig_directory = file_subdirectory + '/Figures'  # temporal directory, to be deleted in the end.
-    granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
-    L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
-    level2_dir = os.path.join(L1C_dir, 'IMG_DATA')
 
     # Sentinel-2 band to be retrieved
     inverse_band_id = ['02', '03', '04', 'VIS', 'NIR', 'SW', '8A', '11', '12']
 
     for band in ['02', '03', '04', '8A', '11', '12']:
         if band in inverse_band_id:
-            for file in os.listdir(f"{level2_dir}/"):
-                if file.endswith(f"B{band}_sur.tif"):
+            for file in os.listdir(f"{file_subdirectory}/"):
+                if file.endswith(f"B{band}.tif"):
                     boa_band = gdal.Open(f"{level2_dir}/{file}")
                     cols_i, rows_i = boa_band.RasterXSize, boa_band.RasterYSize
                     boa_band_array = boa_band.GetRasterBand(1).ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
@@ -695,7 +690,7 @@ def apply_uncertainty(sentinel2_directory):
                     print(
                         f"-----------> Mean B{band} relative uncertainty is: {np.mean(unc_relative[unc_relative < 1.])} -------")
                     np.save(f"{tbd_directory}/unc_relative_B{band}.npy", unc_relative)
-
+    quit()
     for file in os.listdir('%s/' % tbd_directory):
         if file.endswith("B02_sur_20m.tif"):
             band02_20m = gdal.Open('%s/%s' % (tbd_directory, file))
