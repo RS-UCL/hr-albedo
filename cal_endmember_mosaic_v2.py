@@ -392,7 +392,7 @@ def cal_endmember(sentinel2_directory):
 
     for file in os.listdir(file_subdirectory):
         if file.endswith(("view_azimuth_mean.tif")) | file.endswith(("view_zenith_mean.tif")):
-            os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
+            os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     # get Sentinel-2 coordinates at 500-m resolution
     s2_band02_500m = gdal.Open('%s/B02.tif' % tbd)
@@ -405,8 +405,8 @@ def cal_endmember(sentinel2_directory):
 
     for file in os.listdir(angular_dir):
         if file.endswith(("sun_zenith.tif")) | file.endswith(("sun_azimuth.tif")):
-            print(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {angular_dir}/{file} {tbd}/{file[:-4]}_500m.tif')
-            os.system(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {angular_dir}/{file} {tbd}/{file[:-4]}_500m.tif')
+            print(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {file_subdirectory}/{file} {tbd}/{file[:-4]}_500m.tif')
+            os.system(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {file_subdirectory}/{file} {tbd}/{file[:-4]}_500m.tif')
 
     sun_zenith_data = gdal.Open('%s/sun_zenith.tif' % tbd)
     sun_azimuth_data = gdal.Open('%s/sun_azimuth.tif' % tbd)
