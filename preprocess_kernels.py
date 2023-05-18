@@ -62,7 +62,7 @@ for input_file in input_files:
         data_array[data_array == 0] = np.nan
         temp_bands.append(data_array)
         band_description = band.GetDescription()
-
+        band_descriptions.append(band_description)
     temp_arrays.append(temp_bands)
 
 for band_num in range(1, 37):
