@@ -146,13 +146,11 @@ def cal_endmember(sentinel2_directory):
 
     sample_interval = 30
     # file subdirectory in the format of sentinel2_directory/GRANULE/L1C****/IMG_DATA
-    file_subdirectory = os.path.join(sentinel2_directory, 'GRANULE')
-    file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
-    file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
+    file_subdirectory = np.copy(sentinel2_directory)
 
-    kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
-    print(kernel_weights.files)
-    print(kernel_weights['fs'].shape)
+    # kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
+    # print(kernel_weights.files)
+    # print(kernel_weights['fs'].shape)
 
     tbd = file_subdirectory + '/tbd'
     if not os.path.exists(tbd):
@@ -170,7 +168,7 @@ def cal_endmember(sentinel2_directory):
     for file in os.listdir(file_subdirectory):
         if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
-
+    quit()
     # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None
