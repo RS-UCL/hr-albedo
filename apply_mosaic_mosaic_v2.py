@@ -135,6 +135,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     cm_threshold = 5.  # cloud confidence threshold
     cm = np.zeros((cloud_mask.shape))
     cm[cloud_mask > cm_threshold] = 1.
+    print(np.mean(cm[(cm > 0) & (cm < 1.)]))
     plt.figure(figsize=(10, 10))
     plt.imshow(cm, cmap='rainbow')
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
