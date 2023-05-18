@@ -39,7 +39,6 @@ index_file = index_dir + 'Nairobi_validation_source_index_resampling_mode_ovr_no
 index_dataset = gdal.Open(index_file)
 index_data_array = index_dataset.GetRasterBand(1).ReadAsArray()
 
-
 input_files = sorted([os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith(".tif")], key=lambda x: int(os.path.basename(x).split('_')[0]))
 
 # Assuming all input files have the same dimensions
