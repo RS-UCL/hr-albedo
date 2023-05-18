@@ -70,7 +70,7 @@ for input_file in input_files:
         band_description = band.GetDescription()
         print(band.GetDescription())
     temp_arrays.append(temp_bands)
-
+quit()
 for band_num in range(1, 37):
     output_data_array = np.zeros((rows, cols), dtype=np.float32)
 
