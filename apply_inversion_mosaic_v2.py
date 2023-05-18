@@ -693,23 +693,23 @@ def apply_uncertainty(sentinel2_directory):
 
     for file in os.listdir('%s/' % file_subdirectory):
         if file.endswith("B02.tif"):
-            band02_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band02_10m_file = '%s/%s' % (tbd_directory, file)
+            band02_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band02_10m_file = '%s/%s' % (file_subdirectory, file)
         if file.endswith("B03.tif"):
-            band03_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band03_10m_file = '%s/%s' % (tbd_directory, file)
+            band03_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band03_10m_file = '%s/%s' % (file_subdirectory, file)
         if file.endswith("B04.tif"):
-            band04_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band04_10m_file = '%s/%s' % (tbd_directory, file)
+            band04_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band04_10m_file = '%s/%s' % (file_subdirectory, file)
         if file.endswith("B8A.tif"):
-            band8A_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band8A_10m_file = '%s/%s' % (tbd_directory, file)
+            band8A_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band8A_10m_file = '%s/%s' % (file_subdirectory, file)
         if file.endswith("B11.tif"):
-            band11_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band11_10m_file = '%s/%s' % (tbd_directory, file)
+            band11_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band11_10m_file = '%s/%s' % (file_subdirectory, file)
         if file.endswith("B12.tif"):
-            band12_10m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band12_10m_file = '%s/%s' % (tbd_directory, file)
+            band12_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
+            band12_10m_file = '%s/%s' % (file_subdirectory, file)
 
     ulx, xres, xskew, uly, yskew, yres = band02_10m.GetGeoTransform()
     lrx = ulx + (band02_10m.RasterXSize * xres)
@@ -734,17 +734,17 @@ def apply_uncertainty(sentinel2_directory):
 
     for file in os.listdir('%s/' % file_subdirectory):
         if file.endswith("B02_unc.tif"):
-            band02_unc_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band02_unc_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B03_unc.tif"):
-            band03_unc_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band03_unc_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B04_unc.tif"):
-            band04_unc_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band04_unc_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B8A_unc.tif"):
-            band8A_unc_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band8A_unc_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B11_unc.tif"):
-            band11_unc_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band11_unc_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
         if file.endswith("B12_unc.tif"):
-            band12_unc_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band12_unc_10m = gdal.Open('%s/%s' % (file_subdirectory, file))
 
     boa_band02_unc_10m = band02_unc_10m.GetRasterBand(1)
     boa_band03_unc_10m = band03_unc_10m.GetRasterBand(1)
