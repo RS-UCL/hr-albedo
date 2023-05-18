@@ -236,7 +236,6 @@ def cal_endmember(sentinel2_directory):
         # handle the case where one or more variables were not assigned
         print("Error: One or more Sentinel-2 20m bands not found.")
 
-    quit()
     # get sentinel-2 500m data number of rows and cols
     s2_cols_500m = s2_band02_500m_data.RasterXSize
     s2_rows_500m = s2_band02_500m_data.RasterYSize
@@ -251,6 +250,8 @@ def cal_endmember(sentinel2_directory):
     boa_band8A_500m = s2_band8A_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band11_500m = s2_band11_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
     boa_band12_500m = s2_band12_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
+    print(boa_band12_500m.shape)
+    quit()
     boa_mask_500m = s2_mask_500m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_500m, s2_rows_500m)
 
     # get raster band for 20m data
