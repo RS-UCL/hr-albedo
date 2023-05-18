@@ -126,6 +126,12 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
             s2_rows = s2_mask_data.RasterYSize
             cloud_mask = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols, s2_rows)
 
+    plt.figure(figsize=(10, 10))
+    plt.imshow(cloud_mask, cmap='rainbow')
+    plt.colorbar(label='Cloud Confidence', shrink=0.5)
+    plt.title('Cloud Confidence Map - Nairobi')
+    plt.savefig('%s/cloud_confidence.png' % product_directory)
+    quit()
     cm_threshold = 5.  # cloud confidence threshold
     cm = np.zeros((cloud_mask.shape))
     cm[cloud_mask > cm_threshold] = 1.
@@ -147,7 +153,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
         print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-        # band_data[cm>0.] = np.nan
+        band_data[cm>0.] = np.nan
 
         for file in os.listdir(file_subdirectory):
             if file.endswith("B02.tif"):
