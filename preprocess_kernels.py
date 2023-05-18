@@ -78,7 +78,7 @@ for band_num in range(1, 37):
             print(i, j, index, temp_arrays[index][band_num - 1][i, j])
 
     np.save(input_dir + f"mosaic_band_{band_description}.npy", output_data_array)
-    create_plot(output_data_array, band_description, 'rainbow', output_data_array)
+    create_plot(output_data_array, band_description, 'rainbow', input_dir)
 
 # for input_file in input_files:
 #     dataset = gdal.Open(input_file)
