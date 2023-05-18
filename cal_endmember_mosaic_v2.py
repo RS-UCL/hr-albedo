@@ -437,10 +437,10 @@ def cal_endmember(sentinel2_directory):
         fig, ax = plt.subplots(figsize=(16, 16))
         vaa_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
         _plot_instrument_angluar(vaa_angle, 'VAA Band %s' % s2_band_id[i],
-                                 '%s/Mean_VAA_500m.png' %fig_directory)
+                                 '%s/mean_vaa_500m.png' %fig_directory)
         vza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
         _plot_instrument_angluar(vza_angle, 'VZA Band %s' % s2_band_id[i],
-                                 '%s/Mean_VAA_500m.png' %fig_directory)
+                                 '%s/mean_vza_500m.png' %fig_directory)
 
         quit()
         # MODIS brdf polynomial parameter
