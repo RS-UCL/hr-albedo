@@ -147,7 +147,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
         print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-        band_data[cm>0.] = np.nan
+        # band_data[cm>0.] = np.nan
 
         for file in os.listdir(file_subdirectory):
             if file.endswith("B02.tif"):
