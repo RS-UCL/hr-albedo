@@ -37,12 +37,11 @@ index_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_
 # index_file = index_dir + 'validation_source_index_500.tif'
 index_file = index_dir + 'Nairobi_validation_source_index_resampling_mode_ovr_none.tif'
 
-
 index_dataset = gdal.Open(index_file)
 index_data_array = index_dataset.GetRasterBand(1).ReadAsArray()
 
 input_files = sorted([os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith(".tif")], key=lambda x: int(os.path.basename(x).split('_')[0]))
-
+print(input_files)
 # Assuming all input files have the same dimensions
 input_file = gdal.Open(input_files[0])
 rows, cols = input_file.RasterYSize, input_file.RasterXSize
