@@ -174,7 +174,7 @@ def cal_endmember(sentinel2_directory):
     cloud_raster_data = cloud_raster_band.ReadAsArray()
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
-    plt.imshow(raster_data, cmap='hot', interpolation='nearest')
+    plt.imshow(cloud_raster_data, cmap='hot', interpolation='nearest')
     plt.colorbar(label='Cloud Confidence')
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
