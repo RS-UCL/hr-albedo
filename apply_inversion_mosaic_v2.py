@@ -205,8 +205,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 print(f"tile h{num_row_str}v{num_col_str} is already processed")
                 continue
 
-            start_row = m * (patch_size - patch_overlap) if m > 0 else m * patch_size
-            start_col = n * (patch_size - patch_overlap) if n > 0 else n * patch_size
+            start_row_10m = m * (patch_size - patch_overlap) if m > 0 else m * patch_size
+            start_col_10m = n * (patch_size - patch_overlap) if n > 0 else n * patch_size
 
             end_row_10m = min(start_row_10m + patch_size * 2, s2_10m_rows)
             end_col_10m = min(start_col_10m + patch_size * 2, s2_10m_cols)
