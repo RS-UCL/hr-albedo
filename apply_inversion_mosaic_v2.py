@@ -208,8 +208,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             start_row_10m = m * (patch_size - patch_overlap) if m > 0 else m * patch_size
             start_col_10m = n * (patch_size - patch_overlap) if n > 0 else n * patch_size
 
-            end_row_10m = min(start_row_10m + patch_size * 2, s2_10m_rows)
-            end_col_10m = min(start_col_10m + patch_size * 2, s2_10m_cols)
+            end_row_10m = min(start_row_10m + patch_size, s2_10m_rows)
+            end_col_10m = min(start_col_10m + patch_size, s2_10m_cols)
 
             s2_10m_proj_ymax = geotransform_10m[3] + geotransform_10m[5] * start_row_10m
             s2_10m_proj_ymin = geotransform_10m[3] + geotransform_10m[5] * end_row_10m
