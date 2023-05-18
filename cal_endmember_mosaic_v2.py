@@ -374,7 +374,7 @@ def cal_endmember(sentinel2_directory):
     s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
     for k in range(s2_abundance_500m.shape[2]):
         s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
-        s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
+        s2_abundance_500m[:, :, k][boa_mask_500m_array > cm_threshold] = np.nan
 
     print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
     np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
