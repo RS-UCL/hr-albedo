@@ -403,7 +403,7 @@ def cal_endmember(sentinel2_directory):
     s2_500m_xmin = s2_500m_geotransform[0]
     s2_500m_xmax = s2_500m_geotransform[0] + s2_500m_geotransform[1] * s2_band02_500m.RasterXSize
 
-    for file in os.listdir(angular_dir):
+    for file in os.listdir(file_subdirectory):
         if file.endswith(("sun_zenith.tif")) | file.endswith(("sun_azimuth.tif")):
             print(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {file_subdirectory}/{file} {tbd}/{file[:-4]}_500m.tif')
             os.system(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {file_subdirectory}/{file} {tbd}/{file[:-4]}_500m.tif')
