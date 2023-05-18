@@ -155,10 +155,6 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
                 projectionRef10 = src.GetProjectionRef()
                 geotransform10  = src.GetGeoTransform()
 
-        for file in os.listdir(level2_dir):
-            if file.endswith("B8A.jp2"):
-                L1C_filename = file[0:-8]
-
         projectionRef = src.GetProjectionRef()
         geotransform  = src.GetGeoTransform()
 
