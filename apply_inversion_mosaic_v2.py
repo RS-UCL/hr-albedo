@@ -143,10 +143,6 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             else:
                 bhr_coef_a[m, i] = 0
                 bhr_coef_a[m, i] = 1.
-    quit()
-    granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
-    L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
-    level2_dir = os.path.join(L1C_dir, 'IMG_DATA')
 
     band02_20m = None
     band03_20m = None
@@ -156,60 +152,48 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     band12_20m = None
 
     for file in os.listdir(tbd_directory):
-        if file.endswith("B02_sur_20m.tif"):
-            band02_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-            band02_20m_file = '%s/%s' % (tbd_directory, file)
-        if file.endswith("B03_sur_20m.tif"):
-            band03_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-        if file.endswith("B04_sur_20m.tif"):
-            band04_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-        if file.endswith("B8A_sur_20m.tif"):
-            band8A_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-        if file.endswith("B11_sur_20m.tif"):
-            band11_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-        if file.endswith("B12_sur_20m.tif"):
-            band12_20m = gdal.Open('%s/%s' % (tbd_directory, file))
-
-    band02_10m = None
-    band03_10m = None
-    band04_10m = None
-
-    for file in os.listdir(level2_dir):
-        if file.endswith("B02_sur.tif"):
-            band02_10m = gdal.Open('%s/%s' % (level2_dir, file))
-            band02_10m_file = '%s/%s' % (level2_dir, file)
-        if file.endswith("B03_sur.tif"):
-            band03_10m = gdal.Open('%s/%s' % (level2_dir, file))
-        if file.endswith("B04_sur.tif"):
-            band04_10m = gdal.Open('%s/%s' % (level2_dir, file))
+        if file.endswith("B02.tif"):
+            band02_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+            band02_10m_file = '%s/%s' % (tbd_directory, file)
+        if file.endswith("B03.tif"):
+            band03_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B04.tif"):
+            band04_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B8A.tif"):
+            band8A_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B11.tif"):
+            band11_10m = gdal.Open('%s/%s' % (tbd_directory, file))
+        if file.endswith("B12.tif"):
+            band12_10m = gdal.Open('%s/%s' % (tbd_directory, file))
 
     # get Sentinel-2 20m and 10m proj
-    geotransform_20m = band02_20m.GetGeoTransform()
-    proj_20m = band02_20m.GetProjection()
     geotransform_10m = band02_10m.GetGeoTransform()
     proj_10m = band02_10m.GetProjection()
 
-    s2_20m_cols = band02_20m.RasterXSize
-    s2_20m_rows = band02_20m.RasterYSize
-
     s2_10m_cols = band02_10m.RasterXSize
     s2_10m_rows = band02_10m.RasterYSize
-    print(s2_20m_cols, s2_20m_rows)
+    print(s2_10m_cols, s2_10m_rows)
 
     # Sentinel-2 reflectance data scaling factor
     s2_scaling_factor = 1.e4
 
-    boa_band02_20m = band02_20m.GetRasterBand(1).ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / s2_scaling_factor
-    boa_band03_20m = band03_20m.GetRasterBand(1).ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / s2_scaling_factor
-    boa_band04_20m = band04_20m.GetRasterBand(1).ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / s2_scaling_factor
-    boa_band8A_20m = band8A_20m.GetRasterBand(1).ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / s2_scaling_factor
-    boa_band11_20m = band11_20m.GetRasterBand(1).ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / s2_scaling_factor
-    boa_band12_20m = band12_20m.GetRasterBand(1).ReadAsArray(0, 0, s2_20m_cols, s2_20m_rows) / s2_scaling_factor
+    boa_band02_10m = band02_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
+    boa_band03_10m = band03_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
+    boa_band04_10m = band04_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
+    boa_band8A_10m = band8A_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
+    boa_band11_10m = band11_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
+    boa_band12_10m = band12_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
 
     boa_band02_10m = band02_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
     boa_band03_10m = band03_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
     boa_band04_10m = band04_10m.GetRasterBand(1).ReadAsArray(0, 0, s2_10m_cols, s2_10m_rows) / s2_scaling_factor
-
+    print(np.mean(boa_band02_10m))
+    print(np.mean(boa_band03_10m))
+    print(np.mean(boa_band04_10m))
+    print(np.mean(boa_band8A_10m))
+    print(np.mean(boa_band11_10m))
+    print(np.mean(boa_band12_10m))
+    quit()
     num_row = np.floor(s2_20m_rows / (patch_size - patch_overlap)) + 1
     col_row = np.floor(s2_20m_cols / (patch_size - patch_overlap)) + 1
 
