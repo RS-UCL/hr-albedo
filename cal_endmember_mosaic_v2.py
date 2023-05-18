@@ -173,6 +173,9 @@ def cal_endmember(sentinel2_directory):
     raster_band = dataset.GetRasterBand(1)  # Assuming you want to read the first band
     raster_data = raster_band.ReadAsArray()
     print(raster_data)
+    print(np.max(raster_data))
+    print(np.min(raster_data))
+    print(np.mean(raster_data))
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
     plt.imshow(raster_data, cmap='hot', interpolation='nearest')
