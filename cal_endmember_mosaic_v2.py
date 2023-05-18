@@ -395,7 +395,7 @@ def cal_endmember(sentinel2_directory):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     # get Sentinel-2 coordinates at 500-m resolution
-    s2_band02_500m = gdal.Open('%s/B02.tif' % file_subdirectory)
+    s2_band02_500m = gdal.Open('%s/B02_500m.tif' % tbd)
     s2_500m_geotransform = s2_band02_500m.GetGeoTransform()
 
     s2_500m_ymax = s2_500m_geotransform[3]
