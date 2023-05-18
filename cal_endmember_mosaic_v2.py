@@ -368,15 +368,17 @@ def cal_endmember(sentinel2_directory):
     func_wv_500m = interpolate.interp1d(s2_eea_wavelength, s2_500m_matrix, axis=2)
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
-    CalAbundanceMap = FCLS()
-    print("-----------> Start calculating abundance on aggregated S2 scence.\n")
+    ############################
+    # CalAbundanceMap = FCLS()
+    # print("-----------> Start calculating abundance on aggregated S2 scence.\n")
     # s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
-    for k in range(s2_abundance_500m.shape[2]):
-        s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
-        s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
-
-    print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
-    np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
+    # for k in range(s2_abundance_500m.shape[2]):
+    #     s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
+    #     s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
+    #
+    # print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
+    # np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
+    ############################
 
     # plot 2d abundance figures
     for i in range(main_endmember.shape[0]):
