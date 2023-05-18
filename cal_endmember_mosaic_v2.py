@@ -174,11 +174,11 @@ def cal_endmember(sentinel2_directory):
     cloud_raster_data = cloud_raster_band.ReadAsArray()
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
-    plt.imshow(cloud_raster_data, cmap='hot', interpolation='nearest')
+    plt.imshow(cloud_raster_data, cmap='rainbow', interpolation='nearest')
     plt.colorbar(label='Cloud Confidence')
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
-
+    quit()
     # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None
@@ -384,13 +384,8 @@ def cal_endmember(sentinel2_directory):
 
         colortable_i = ascii_uppercase[i]
         _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
-
-    # load solar and sensor angular data
-    granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
-    L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
-    angular_dir = os.path.join(L1C_dir, 'ANG_DATA')
-
-    for file in os.listdir(angular_dir):
+    quit()
+    for file in os.listdir(file_subdirectory):
         if file.endswith(("Mean_VAA_VZA.tif")):
             os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
