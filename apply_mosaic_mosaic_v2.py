@@ -132,7 +132,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % product_directory)
 
-    cm_threshold = 5.  # cloud confidence threshold
+    cm_threshold = 0.  # cloud confidence threshold
     cm = np.zeros((cloud_mask.shape))
     cm[cloud_mask > cm_threshold] = 1.
     print(np.mean(cm[(cm > 0) & (cm < 1.)]))
@@ -141,7 +141,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
     plt.title('Cloud Mask - Nairobi')
     plt.savefig('%s/cm.png' % product_directory)
-    quit()
+
     s2_bands = ['02', '03', '04', '8A', 'VIS', 'NIR', 'SW', '11', '12']
 
     for i in range(len(s2_bands)):
