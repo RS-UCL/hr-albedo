@@ -169,21 +169,18 @@ def cal_endmember(sentinel2_directory):
         if file.endswith(("B02.tif", "B03.tif", "B04.tif", "B8A.tif", "B11.tif", "B12.tif", "cloud_confidence.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
 
-
+    cm_threshold = 5.  # cloud confidence threshold
     cloud_dataset = gdal.Open(file_subdirectory + '/cloud_confidence.tif')
     cloud_raster_band = cloud_dataset.GetRasterBand(1)  # Assuming you want to read the first band
     cloud_raster_data = cloud_raster_band.ReadAsArray()
     cm = np.zeros((cloud_raster_data.shape))
-    cm[cloud_raster_data > 1.] = 1.
-    a = cm[cm>0]
-    print(np.mean(a))
+    cm[cloud_raster_data > cm_threshold] = 1.
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
     plt.imshow(cm, cmap='rainbow')
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
-    quit()
     # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None
@@ -307,7 +304,7 @@ def cal_endmember(sentinel2_directory):
 
     # index to filter out cloud pixels
     valid_index = (s2_20m_matrix[:, 0, 0] > 0) & (s2_20m_matrix[:, 0, 1] > 0) & (s2_20m_matrix[:, 0, 2] > 0) & (
-                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0) & (boa_mask_array[:, 0] <= 80.)
+                s2_20m_matrix[:, 0, 3] > 0) & (s2_20m_matrix[:, 0, 4] > 0) & (s2_20m_matrix[:, 0, 5] > 0) & (boa_mask_array[:, 0] <= cm_threshold)
     s2_20m_matrix = s2_20m_matrix[valid_index, :, :]
 
     # resample over the sentinel-2 eea spetral wavelengths
