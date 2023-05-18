@@ -175,6 +175,7 @@ def cal_endmember(sentinel2_directory):
     cloud_raster_data = cloud_raster_band.ReadAsArray()
     cm = np.zeros((cloud_raster_data.shape))
     cm[cloud_raster_data > 80.] = 1.
+    print(np.mean(cm))
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
     plt.imshow(cm, cmap='rainbow', interpolation='nearest', shrink=0.7)
