@@ -802,10 +802,10 @@ def apply_uncertainty(sentinel2_directory):
     np.save(tbd_directory + '/unc_relative_BSW.npy', SW_unc_relative)
     np.save(tbd_directory + '/unc_relative_BNIR.npy', NIR_unc_relative)
 
-    print('-----------> Mean VIS albedo is: %s.' % (np.mean(boa_bandVIS_20m[boa_bandVIS_20m > 0])))
-    print('-----------> Mean VIS albedo uncertainty is: %s.' % (np.mean(boa_bandVIS_unc_20m[boa_bandVIS_unc_20m > 0])))
-    print('-----------> Mean SW albedo is: %s.' % (np.mean(boa_bandSW_20m[boa_bandSW_20m > 0])))
-    print('-----------> Mean SW albedo uncertainty is: %s.' % (np.mean(boa_bandSW_unc_20m[boa_bandSW_unc_20m > 0])))
-    print('-----------> Mean NIR albedo is: %s.' % (np.mean(boa_bandNIR_20m[boa_bandNIR_20m > 0])))
-    print('-----------> Mean NIR albedo uncertainty is: %s.' % (np.mean(boa_bandNIR_unc_20m[boa_bandNIR_unc_20m > 0])))
+    print('-----------> Mean VIS albedo is: %s.' % (np.mean(boa_bandVIS_10m[boa_bandVIS_10m > 0])))
+    print('-----------> Mean VIS albedo uncertainty is: %s.' % (np.mean(boa_bandVIS_unc_10m[boa_bandVIS_unc_10m > 0])))
+    print('-----------> Mean SW albedo is: %s.' % (np.mean(boa_bandSW_10m[boa_bandSW_10m > 0])))
+    print('-----------> Mean SW albedo uncertainty is: %s.' % (np.mean(boa_bandSW_unc_10m[boa_bandSW_unc_10m > 0])))
+    print('-----------> Mean NIR albedo is: %s.' % (np.mean(boa_bandNIR_10m[boa_bandNIR_10m > 0])))
+    print('-----------> Mean NIR albedo uncertainty is: %s.' % (np.mean(boa_bandNIR_unc_10m[boa_bandNIR_unc_10m > 0])))
 

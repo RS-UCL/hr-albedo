@@ -84,16 +84,10 @@ def _compose_rgb(band_R,band_G,band_B,cloud_mask,outputFolder,outputFilename, pr
 
 def cal_mosaic(sentinel2_directory, cloud_threshold):
 
-    file_subdirectory = os.path.join(sentinel2_directory, 'GRANULE')
-    file_subdirectory = os.path.join(file_subdirectory, os.listdir(file_subdirectory)[0])
-    file_subdirectory = os.path.join(file_subdirectory, 'IMG_DATA')
+    file_subdirectory = sentinel2_directory
 
     tbd_directory = file_subdirectory + '/tbd'  # temporal directory, to be deleted in the end.
     fig_directory = file_subdirectory + '/Figures'
-    granule_dir = os.path.join(sentinel2_directory, 'GRANULE')
-    L1C_dir = os.path.join(granule_dir, os.listdir(granule_dir)[0])
-    level2_dir = os.path.join(L1C_dir, 'IMG_DATA')
-
     product_directory = file_subdirectory + '/albedo'
     if not os.path.exists(product_directory):
         os.mkdir(product_directory)
@@ -125,23 +119,16 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         command = f"gdalbuildvrt {vrt_filename} {subdataset_pattern}"
         os.system(command)
 
-    for file in os.listdir(tbd_directory):
-        if file.endswith("_mask_20m.tif"):
-            s2_mask_data = gdal.Open('%s/%s' % (tbd_directory, file))
-            os.system(f'gdalwarp -tr 10 10 -overwrite "{tbd_directory}/{file}" "{tbd_directory}/{file.replace("20m", "10m")}"')
+    for file in os.listdir(file_subdirectory):
+        if file.endswith("cloud_confidence.tif"):
+            s2_mask_data = gdal.Open('%s/%s' % (file_subdirectory, file))
+            s2_cols = s2_mask_data.RasterXSize
+            s2_rows = s2_mask_data.RasterYSize
+            cloud_mask = s2_mask_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols, s2_rows)
 
-    for file in os.listdir(tbd_directory):
-        if file.endswith("_mask_20m.tif"):
-            s2_mask_20m_data = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_cols_20m = s2_mask_20m_data.RasterXSize
-            s2_rows_20m = s2_mask_20m_data.RasterYSize
-            cloud_mask_20m = s2_mask_20m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_20m, s2_rows_20m)
-
-        if file.endswith("_mask_10m.tif"):
-            s2_mask_10m_data = gdal.Open('%s/%s' % (tbd_directory, file))
-            s2_cols_10m = s2_mask_10m_data.RasterXSize
-            s2_rows_10m = s2_mask_10m_data.RasterYSize
-            cloud_mask_10m = s2_mask_10m_data.GetRasterBand(1).ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    cm_threshold = 5.  # cloud confidence threshold
+    cm = np.zeros((cloud_mask.shape))
+    cm[cloud_mask > cm_threshold] = 1.
 
     s2_bands = ['02', '03', '04', '8A', 'VIS', 'NIR', 'SW', '11', '12']
 
@@ -160,25 +147,13 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
         print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-        if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
-            # dhr for 10-m bands: band-02, band-03 and band-04
-            band_data[cloud_mask_10m>0.] = np.nan
-            for file in os.listdir(level2_dir):
-                if file.endswith("B02.jp2"):
-                    src = gdal.Open('%s/%s'%(level2_dir, file))
+        band_data[cm>0.] = np.nan
 
-                    projectionRef10 = src.GetProjectionRef()
-                    geotransform10  = src.GetGeoTransform()
-
-        else:
-            # dhr for other 20-m bands
-            band_data[cloud_mask_20m>0.] = np.nan
-            for file in os.listdir(level2_dir):
-                if file.endswith("B8A.jp2"):
-                    src = gdal.Open('%s/%s'%(level2_dir, file))
-
-                    projectionRef20 = src.GetProjectionRef()
-                    geotransform20  = src.GetGeoTransform()
+        for file in os.listdir(file_subdirectory):
+            if file.endswith("B02.tif"):
+                src = gdal.Open('%s/%s'%(level2_dir, file))
+                projectionRef10 = src.GetProjectionRef()
+                geotransform10  = src.GetGeoTransform()
 
         for file in os.listdir(level2_dir):
             if file.endswith("B8A.jp2"):
@@ -187,8 +162,8 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         projectionRef = src.GetProjectionRef()
         geotransform  = src.GetGeoTransform()
 
-        dhr_name = product_directory + '/%sB%s_UCL_dhr.jp2'%(L1C_filename,s2_bands[i])
-        dhr_unc_name = product_directory + '/%sB%s_UCL_dhr-unc.jp2'%(L1C_filename,s2_bands[i])
+        dhr_name = product_directory + '/B%s_UCL_dhr.jp2'%(s2_bands[i])
+        dhr_unc_name = product_directory + '/B%s_UCL_dhr-unc.jp2'%(s2_bands[i])
 
         _save_band(band_data, dhr_name, projectionRef, geotransform)
         _save_band(band_unc, dhr_unc_name, projectionRef, geotransform)
@@ -221,14 +196,14 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     dhr_band04_data = dhr_band04.GetRasterBand(1)
 
     dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    dhr_band02_data[cloud_mask_10m > 0.] = np.nan
+    dhr_band02_data[cm > 0.] = np.nan
     dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    dhr_band03_data[cloud_mask_10m > 0.] = np.nan
+    dhr_band03_data[cm > 0.] = np.nan
     dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    dhr_band04_data[cloud_mask_10m > 0.] = np.nan
+    dhr_band04_data[cm > 0.] = np.nan
 
     _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
-                 '%s_UCL_dhr_rgb'%L1C_filename, projectionRef10, geotransform10)
+                 'UCL_dhr_rgb', projectionRef10, geotransform10)
 
     for i in range(len(s2_bands)):
 
@@ -245,29 +220,17 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s bhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_unc>0])))
         print('Mean band %s bhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-        if (s2_bands[i] =='02') | (s2_bands[i] =='03') | (s2_bands[i] =='04'):
-            # bhr for 10-m bands: band-02, band-03 and band-04
-            band_data[cloud_mask_10m>0.] = np.nan
-            for file in os.listdir(level2_dir):
-                if file.endswith("B02.jp2"):
-                    src = gdal.Open('%s/%s'%(level2_dir, file))
 
-        else:
-            # bhr for other 20-m bands
-            band_data[cloud_mask_20m>0.] = np.nan
-            for file in os.listdir(level2_dir):
-                if file.endswith("B8A.jp2"):
-                    src = gdal.Open('%s/%s'%(level2_dir, file))
+        band_data[cm>0.] = np.nan
+        for file in os.listdir(level2_dir):
+            if file.endswith("B02.tif"):
+                src = gdal.Open('%s/%s'%(level2_dir, file))
 
         projectionRef = src.GetProjectionRef()
         geotransform  = src.GetGeoTransform()
 
-        for file in os.listdir(level2_dir):
-            if file.endswith("B8A.jp2"):
-                L1C_filename = file[0:-8]
-
-        bhr_name = product_directory + '/%sB%s_UCL_bhr.jp2'%(L1C_filename,s2_bands[i])
-        bhr_unc_name = product_directory + '/%sB%s_UCL_bhr-unc.jp2'%(L1C_filename,s2_bands[i])
+        bhr_name = product_directory + '/B%s_UCL_bhr.jp2'%(s2_bands[i])
+        bhr_unc_name = product_directory + '/B%s_UCL_bhr-unc.jp2'%(s2_bands[i])
 
         _save_band(band_data, bhr_name, projectionRef, geotransform)
         _save_band(band_unc, bhr_unc_name, projectionRef, geotransform)
@@ -296,15 +259,15 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     bhr_band04  = gdal.Open('%s/merge_bhr_band04.vrt'%tbd_directory)
 
     bhr_band02_data = bhr_band02.GetRasterBand(1)
-    bhr_band02_data[cloud_mask_10m > 0.] = np.nan
+    bhr_band02_data[cm > 0.] = np.nan
     bhr_band03_data = bhr_band03.GetRasterBand(1)
-    bhr_band03_data[cloud_mask_10m > 0.] = np.nan
+    bhr_band03_data[cm > 0.] = np.nan
     bhr_band04_data = bhr_band04.GetRasterBand(1)
-    bhr_band04_data[cloud_mask_10m > 0.] = np.nan
+    bhr_band04_data[cm > 0.] = np.nan
 
     bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
     bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
     bhr_band04_data  = bhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
 
-    _compose_rgb(bhr_band04_data,bhr_band03_data,bhr_band02_data,cloud_mask_10m,product_directory,'%s_UCL_bhr_rgb'%L1C_filename, projectionRef10, geotransform10)
+    _compose_rgb(bhr_band04_data,bhr_band03_data,bhr_band02_data,cloud_mask_10m,product_directory,'UCL_bhr_rgb', projectionRef10, geotransform10)
 
