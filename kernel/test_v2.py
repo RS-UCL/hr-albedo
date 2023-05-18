@@ -55,7 +55,7 @@ dst_ds.SetGeoTransform(geotransform)
 dst_ds.SetProjection(projection)
 
 temp_arrays = []
-
+print(123)
 for input_file in input_files:
     dataset = gdal.Open(input_file)
     temp_bands = []
