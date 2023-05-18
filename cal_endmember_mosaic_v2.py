@@ -168,7 +168,7 @@ def cal_endmember(sentinel2_directory):
     for file in os.listdir(file_subdirectory):
         if file.endswith(("B02.tif", "B03.tif", "B04.tif", "B8A.tif", "B11.tif", "B12.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
-    quit()
+
     # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None
@@ -236,6 +236,7 @@ def cal_endmember(sentinel2_directory):
         # handle the case where one or more variables were not assigned
         print("Error: One or more Sentinel-2 20m bands not found.")
 
+    quit()
     # get sentinel-2 500m data number of rows and cols
     s2_cols_500m = s2_band02_500m_data.RasterXSize
     s2_rows_500m = s2_band02_500m_data.RasterYSize
