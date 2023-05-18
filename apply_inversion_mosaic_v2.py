@@ -673,11 +673,11 @@ def apply_uncertainty(sentinel2_directory):
         if band in inverse_band_id:
             for file in os.listdir(f"{file_subdirectory}/"):
                 if file.endswith(f"B{band}.tif"):
-                    boa_band = gdal.Open(f"{level2_dir}/{file}")
+                    boa_band = gdal.Open(f"{file_subdirectory}/{file}")
                     cols_i, rows_i = boa_band.RasterXSize, boa_band.RasterYSize
                     boa_band_array = boa_band.GetRasterBand(1).ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
 
-                    boa_band_unc = gdal.Open(f"{level2_dir}/{file[:-4]}_unc.tif")
+                    boa_band_unc = gdal.Open(f"{file_subdirectory}/{file[:-4]}_unc.tif")
                     cols_i, rows_i = boa_band_unc.RasterXSize, boa_band_unc.RasterYSize
                     boa_band_unc_array = boa_band_unc.GetRasterBand(1).ReadAsArray(0, 0, cols_i, rows_i) / 1.e4
 
