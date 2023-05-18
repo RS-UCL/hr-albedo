@@ -224,7 +224,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             boa_band12_10m_cut = boa_band12_10m[start_row_10m:end_row_10m, start_col_10m:end_col_10m]
 
             print('This 10-m patch has the following boundary: %s %s %s %s' %
-                  (start_row_10m, end_row_10m, start_col, end_col))
+                  (start_row_10m, end_row_10m, start_col_10m, end_col_10m))
 
             os.system('gdalwarp -te %s %s %s %s -tr 10 10 -overwrite %s %s/cut_10m_h%sv%s.tiff' %
                       (s2_10m_proj_xmin, s2_10m_proj_ymin, s2_10m_proj_xmax, s2_10m_proj_ymax,
