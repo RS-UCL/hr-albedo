@@ -5,6 +5,7 @@
 # @Email:       rui.song@physics.ox.ac.uk
 # @Time:        13/04/2023 17:55
 
+from cal_endmember_mosaic_v2 import *
 import datetime
 import glob
 import yaml
@@ -16,3 +17,6 @@ sentinel2_directory = sys.argv[1]
 sample_interval = int(sys.argv[2])
 patch_size = int(sys.argv[3])
 patch_overlap = int(sys.argv[4])
+
+######## start calculating the endmembers
+cal_endmember(sentinel2_directory)
