@@ -369,15 +369,15 @@ def cal_endmember(sentinel2_directory):
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
     ############################
-    CalAbundanceMap = FCLS()
-    print("-----------> Start calculating abundance on aggregated S2 scence.\n")
-    s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
-    for k in range(s2_abundance_500m.shape[2]):
-        s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
-        s2_abundance_500m[:, :, k][boa_mask_500m_array > cm_threshold] = np.nan
-
-    print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
-    np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
+    # CalAbundanceMap = FCLS()
+    # print("-----------> Start calculating abundance on aggregated S2 scence.\n")
+    # s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
+    # for k in range(s2_abundance_500m.shape[2]):
+    #     s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
+    #     s2_abundance_500m[:, :, k][boa_mask_500m_array > cm_threshold] = np.nan
+    #
+    # print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
+    # np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
     s2_abundance_500m = np.load('%s/s2_500m_abundance.npy' % tbd)
     ############################
 
@@ -438,7 +438,7 @@ def cal_endmember(sentinel2_directory):
                              '%s/mean_vza_500m.png' % fig_directory)
 
     s2_band_id = ['02','03','04','8A','11','12']
-    quit()
+
     for i in range(len(s2_band_id)):
 
         # MODIS brdf polynomial parameter
@@ -453,34 +453,35 @@ def cal_endmember(sentinel2_directory):
 
         for m in range(len(inverse_band_id)):
 
-            sensor_data = gdal.Open('%s/Mean_VAA_VZA_500m.tif' % tbd)
-
-            vaa_data = sensor_data.GetRasterBand(1)
-            vza_data = sensor_data.GetRasterBand(2)
-            vaa_angle = vaa_data.ReadAsArray() / 100.
-            vza_angle = vza_data.ReadAsArray() / 100.
-
             phi = (saa_angle - vaa_angle) % 180.
 
             brdf1_val = brdf_f1(sza_angle, vza_angle, phi)
             brdf2_val = brdf_f2(sza_angle, vza_angle, phi)
 
             if inverse_band_id[m] == '02':
-                mcd_dataset = kernel_weights['fs'][:,0,:,:]
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B01.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B01.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B01.npy' % (file_subdirectory))
             if inverse_band_id[m] == '03':
-                mcd_dataset = kernel_weights['fs'][:,1,:,:]
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B02.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B02.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B02.npy' % (file_subdirectory))
             if inverse_band_id[m] == '04':
-                mcd_dataset = kernel_weights['fs'][:,2,:,:]
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B03.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B03.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B03.npy' % (file_subdirectory))
             if inverse_band_id[m] == '8A':
-                mcd_dataset = kernel_weights['fs'][:,3,:,:]
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B04.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B04.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B04.npy' % (file_subdirectory))
             if inverse_band_id[m] == '11':
-                mcd_dataset = kernel_weights['fs'][:,4,:,:]
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B05.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B05.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B05.npy' % (file_subdirectory))
             if inverse_band_id[m] == '12':
-                mcd_dataset = kernel_weights['fs'][:,5,:,:]
-
-            mcd_k0 = mcd_dataset[0,:,:]
-            mcd_k1 = mcd_dataset[1,:,:]
-            mcd_k2 = mcd_dataset[2,:,:]
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B06.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B06.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B06.npy' % (file_subdirectory))
 
             _plot_kernel(mcd_k0, 'k0', fig_directory + '/k0_band%s.png' % inverse_band_id[m])
             _plot_kernel(mcd_k1, 'k1', fig_directory + '/k1_band%s.png' % inverse_band_id[m])
