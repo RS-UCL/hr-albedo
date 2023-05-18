@@ -178,7 +178,7 @@ def cal_endmember(sentinel2_directory):
     print(np.mean(cm))
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
-    plt.imshow(cm, cmap='rainbow', vmin=0., vmax=1.)
+    plt.imshow(cloud_raster_data, cmap='rainbow')
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
