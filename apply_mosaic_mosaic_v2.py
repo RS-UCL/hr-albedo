@@ -132,10 +132,9 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % product_directory)
 
-    cm_threshold = 0.  # cloud confidence threshold
+    cm_threshold = 5.  # cloud confidence threshold
     cm = np.zeros((cloud_mask.shape))
     cm[cloud_mask > cm_threshold] = 1.
-    print(np.mean(cm[(cm > 0) & (cm < 1.)]))
     plt.figure(figsize=(10, 10))
     plt.imshow(cm, cmap='rainbow')
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
@@ -159,7 +158,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s dhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_data>0])))
         print('Mean band %s dhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-        band_data[cm>0.] = np.nan
+        # band_data[cm>0.] = np.nan
 
         for file in os.listdir(file_subdirectory):
             if file.endswith("B02.tif"):
@@ -204,11 +203,11 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     dhr_band04_data = dhr_band04.GetRasterBand(1)
 
     dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    dhr_band02_data[cm > 0.] = np.nan
+    # dhr_band02_data[cm > 0.] = np.nan
     dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    dhr_band03_data[cm > 0.] = np.nan
+    # dhr_band03_data[cm > 0.] = np.nan
     dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    dhr_band04_data[cm > 0.] = np.nan
+    # dhr_band04_data[cm > 0.] = np.nan
 
     _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
                  'UCL_dhr_rgb', projectionRef10, geotransform10)
@@ -228,8 +227,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s bhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_unc>0])))
         print('Mean band %s bhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-
-        band_data[cm>0.] = np.nan
+        # band_data[cm>0.] = np.nan
         for file in os.listdir(level2_dir):
             if file.endswith("B02.tif"):
                 src = gdal.Open('%s/%s'%(level2_dir, file))
@@ -267,11 +265,11 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     bhr_band04  = gdal.Open('%s/merge_bhr_band04.vrt'%tbd_directory)
 
     bhr_band02_data = bhr_band02.GetRasterBand(1)
-    bhr_band02_data[cm > 0.] = np.nan
+    # bhr_band02_data[cm > 0.] = np.nan
     bhr_band03_data = bhr_band03.GetRasterBand(1)
-    bhr_band03_data[cm > 0.] = np.nan
+    # bhr_band03_data[cm > 0.] = np.nan
     bhr_band04_data = bhr_band04.GetRasterBand(1)
-    bhr_band04_data[cm > 0.] = np.nan
+    # bhr_band04_data[cm > 0.] = np.nan
 
     bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
     bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
