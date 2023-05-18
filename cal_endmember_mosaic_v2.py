@@ -369,15 +369,15 @@ def cal_endmember(sentinel2_directory):
     s2_resampled_matrix_filtered_interp_500m = func_wv_500m(s2_wv_resampled)
 
     ############################
-    # CalAbundanceMap = FCLS()
-    # print("-----------> Start calculating abundance on aggregated S2 scence.\n")
-    # s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
-    # for k in range(s2_abundance_500m.shape[2]):
-    #     s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
-    #     s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
-    #
-    # print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
-    # np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
+    CalAbundanceMap = FCLS()
+    print("-----------> Start calculating abundance on aggregated S2 scence.\n")
+    s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
+    for k in range(s2_abundance_500m.shape[2]):
+        s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
+        s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
+
+    print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
+    np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
     s2_abundance_500m = np.load('%s/s2_500m_abundance.npy' % tbd)
     ############################
 
@@ -422,27 +422,25 @@ def cal_endmember(sentinel2_directory):
     sza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
     _plot_solar_angluar(sza_angle, fig_directory + '/sza_angle.png')
 
-    s2_band_id = ['02','03','04','8A','11','12']
+    view_azimuth_data = gdal.Open('%s/view_azimuth_mean_500m.tif' % tbd)
+    view_zenith_data = gdal.Open('%s/view_zenith_mean_500m.tif' % tbd)
 
+    vaa_data = view_azimuth_data.GetRasterBand(1)
+    vza_data = view_zenith_data.GetRasterBand(1)
+    vaa_angle = vaa_data.ReadAsArray() / 100.
+    vza_angle = vza_data.ReadAsArray() / 100.
+
+    vaa_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
+    _plot_instrument_angluar(vaa_angle, 'VAA mean',
+                             '%s/mean_vaa_500m.png' % fig_directory)
+    vza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
+    _plot_instrument_angluar(vza_angle, 'VZA mean',
+                             '%s/mean_vza_500m.png' % fig_directory)
+
+    s2_band_id = ['02','03','04','8A','11','12']
+    quit()
     for i in range(len(s2_band_id)):
 
-        view_azimuth_data = gdal.Open('%s/view_azimuth_mean_500m.tif' % tbd)
-        view_zenith_data = gdal.Open('%s/view_zenith_mean_500m.tif' % tbd)
-
-        vaa_data = view_azimuth_data.GetRasterBand(1)
-        vza_data = view_zenith_data.GetRasterBand(1)
-        vaa_angle = vaa_data.ReadAsArray() / 100.
-        vza_angle = vza_data.ReadAsArray() / 100.
-
-        fig, ax = plt.subplots(figsize=(16, 16))
-        vaa_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
-        _plot_instrument_angluar(vaa_angle, 'VAA Band %s' % s2_band_id[i],
-                                 '%s/mean_vaa_500m.png' %fig_directory)
-        vza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
-        _plot_instrument_angluar(vza_angle, 'VZA Band %s' % s2_band_id[i],
-                                 '%s/mean_vza_500m.png' %fig_directory)
-
-        quit()
         # MODIS brdf polynomial parameter
         # please refer to https://modis.gsfc.nasa.gov/data/atbd/atbd_mod09.pdf on page-16
         g_iso = [1, 0, 0]
