@@ -146,7 +146,7 @@ def cal_endmember(sentinel2_directory):
 
     sample_interval = 30
     # file subdirectory in the format of sentinel2_directory/GRANULE/L1C****/IMG_DATA
-    file_subdirectory = np.copy(sentinel2_directory)
+    file_subdirectory = sentinel2_directory
 
     # kernel_weights = np.load(file_subdirectory + '/kernel_weights.npz')
     # print(kernel_weights.files)
