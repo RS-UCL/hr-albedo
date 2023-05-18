@@ -378,6 +378,7 @@ def cal_endmember(sentinel2_directory):
     #
     # print("-----------> Complete calculating abundance on aggregated S2 scence.\n")
     # np.save('%s/s2_500m_abundance.npy' % tbd, s2_abundance_500m)
+    s2_abundance_500m = np.load('%s/s2_500m_abundance.npy' % tbd)
     ############################
 
     # plot 2d abundance figures
