@@ -172,7 +172,7 @@ def cal_endmember(sentinel2_directory):
     dataset = gdal.Open(file_subdirectory + '/cloud_confidence.tif')
     raster_band = dataset.GetRasterBand(1)  # Assuming you want to read the first band
     raster_data = raster_band.ReadAsArray()
-
+    print(raster_data)
     # Create a plot using matplotlib
     plt.figure(figsize=(10, 10))
     plt.imshow(raster_data, cmap='hot', interpolation='nearest')
