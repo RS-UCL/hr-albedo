@@ -46,7 +46,7 @@ input_file = gdal.Open(input_files[0])
 rows, cols = input_file.RasterYSize, input_file.RasterXSize
 geotransform = input_file.GetGeoTransform()
 projection = input_file.GetProjection()
-
+print(456)
 output_file = "./new_file.tif"
 driver = gdal.GetDriverByName("GTiff")
 dst_ds = driver.Create(output_file, cols, rows, 36, gdal.GDT_Float32)
