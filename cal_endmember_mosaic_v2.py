@@ -370,7 +370,7 @@ def cal_endmember(sentinel2_directory):
 
     CalAbundanceMap = FCLS()
     print("-----------> Start calculating abundance on aggregated S2 scence.\n")
-    s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
+    # s2_abundance_500m = CalAbundanceMap.map(s2_resampled_matrix_filtered_interp_500m, main_endmember)
     for k in range(s2_abundance_500m.shape[2]):
         s2_abundance_500m[:, :, k][boa_band02_500m_array < 0] = np.nan
         s2_abundance_500m[:, :, k][boa_mask_500m_array > 0.] = np.nan
@@ -386,13 +386,13 @@ def cal_endmember(sentinel2_directory):
 
         colortable_i = ascii_uppercase[i]
         _plot_2d_abundance(abundane_i, fig_directory, colortable_i)
-    quit()
+
     for file in os.listdir(file_subdirectory):
-        if file.endswith(("Mean_VAA_VZA.tif")):
+        if file.endswith(("view_azimuth_mean.tif")) | file.endswith(("view_zenith_mean.tif")):
             os.system(f'gdalwarp -tr 500 500 "{angular_dir}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     # get Sentinel-2 coordinates at 500-m resolution
-    s2_band02_500m = gdal.Open('%s/Mean_VAA_VZA_500m.tif' % tbd)
+    s2_band02_500m = gdal.Open('%s/B02.tif' % tbd)
     s2_500m_geotransform = s2_band02_500m.GetGeoTransform()
 
     s2_500m_ymax = s2_500m_geotransform[3]
@@ -401,13 +401,15 @@ def cal_endmember(sentinel2_directory):
     s2_500m_xmax = s2_500m_geotransform[0] + s2_500m_geotransform[1] * s2_band02_500m.RasterXSize
 
     for file in os.listdir(angular_dir):
-        if file.endswith(("SAA_SZA.tif")):
+        if file.endswith(("sun_zenith.tif")) | file.endswith(("sun_azimuth.tif")):
             print(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {angular_dir}/{file} {tbd}/{file[:-4]}_500m.tif')
             os.system(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {angular_dir}/{file} {tbd}/{file[:-4]}_500m.tif')
 
-    solar_500_data = gdal.Open('%s/SAA_SZA_500m.tif' % tbd)
-    saa_data = solar_500_data.GetRasterBand(1)
-    sza_data = solar_500_data.GetRasterBand(2)
+    sun_zenith_data = gdal.Open('%s/sun_zenith.tif' % tbd)
+    sun_azimuth_data = gdal.Open('%s/sun_azimuth.tif' % tbd)
+
+    saa_data = sun_azimuth_data.GetRasterBand(1)
+    sza_data = sun_zenith_data.GetRasterBand(1)
     saa_angle = saa_data.ReadAsArray() / 100.
     sza_angle = sza_data.ReadAsArray() / 100.
 
@@ -416,7 +418,7 @@ def cal_endmember(sentinel2_directory):
 
     sza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
     _plot_solar_angluar(sza_angle, fig_directory + '/sza_angle.png')
-
+    quit()
     s2_band_id = ['02','03','04','8A','11','12']
 
     for i in range(len(s2_band_id)):
