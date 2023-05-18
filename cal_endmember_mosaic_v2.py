@@ -421,14 +421,16 @@ def cal_endmember(sentinel2_directory):
 
     sza_angle[boa_band02_500m.reshape((s2_rows_500m, s2_cols_500m)) < 0] = np.nan
     _plot_solar_angluar(sza_angle, fig_directory + '/sza_angle.png')
-    quit()
+
     s2_band_id = ['02','03','04','8A','11','12']
 
     for i in range(len(s2_band_id)):
 
-        sensor_500_data = gdal.Open('%s/Mean_VAA_VZA_500m.tif' %tbd)
-        vaa_data = sensor_500_data.GetRasterBand(1)
-        vza_data = sensor_500_data.GetRasterBand(2)
+        view_azimuth_data = gdal.Open('%s/view_azimuth_mean_500m.tif' % tbd)
+        view_zenith_data = gdal.Open('%s/view_zenith_mean_500m.tif' % tbd)
+
+        vaa_data = view_azimuth_data.GetRasterBand(1)
+        vza_data = view_zenith_data.GetRasterBand(1)
         vaa_angle = vaa_data.ReadAsArray() / 100.
         vza_angle = vza_data.ReadAsArray() / 100.
 
@@ -440,6 +442,7 @@ def cal_endmember(sentinel2_directory):
         _plot_instrument_angluar(vza_angle, 'VZA Band %s' % s2_band_id[i],
                                  '%s/Mean_VAA_500m.png' %fig_directory)
 
+        quit()
         # MODIS brdf polynomial parameter
         # please refer to https://modis.gsfc.nasa.gov/data/atbd/atbd_mod09.pdf on page-16
         g_iso = [1, 0, 0]
