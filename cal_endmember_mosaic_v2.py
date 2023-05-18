@@ -226,7 +226,7 @@ def cal_endmember(sentinel2_directory):
             s2_band11_20m_data = gdal.Open('%s/%s' % (tbd, file))
         if file.endswith("B12_20m.tif"):
             s2_band12_20m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("cloud_confidence_500m.tif"):
+        if file.endswith("cloud_confidence_20m.tif"):
             s2_mask_data = gdal.Open('%s/%s' % (tbd, file))
 
     # check if variables were assigned
