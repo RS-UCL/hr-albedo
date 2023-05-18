@@ -408,8 +408,8 @@ def cal_endmember(sentinel2_directory):
             print(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {file_subdirectory}/{file} {tbd}/{file[:-4]}_500m.tif')
             os.system(f'gdalwarp -tr 500 500 -te {s2_500m_xmin} {s2_500m_ymin} {s2_500m_xmax} {s2_500m_ymax} {file_subdirectory}/{file} {tbd}/{file[:-4]}_500m.tif')
 
-    sun_zenith_data = gdal.Open('%s/sun_zenith.tif' % file_subdirectory)
-    sun_azimuth_data = gdal.Open('%s/sun_azimuth.tif' % file_subdirectory)
+    sun_zenith_data = gdal.Open('%s/sun_zenith_500m.tif' % tbd)
+    sun_azimuth_data = gdal.Open('%s/sun_azimuth_500m.tif' % tbd)
 
     saa_data = sun_azimuth_data.GetRasterBand(1)
     sza_data = sun_zenith_data.GetRasterBand(1)
