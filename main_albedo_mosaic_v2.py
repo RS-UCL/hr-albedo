@@ -5,6 +5,7 @@
 # @Email:       rui.song@physics.ox.ac.uk
 # @Time:        13/04/2023 17:55
 
+from apply_inversion_mosaic_v2 import *
 from cal_endmember_mosaic_v2 import *
 import datetime
 import glob
@@ -19,5 +20,10 @@ import sys
 # patch_overlap = int(sys.argv[4])
 
 sentinel2_directory = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0'
+patch_size = 1000
+patch_overlap = 100
+
 ######## start calculating the endmembers
-cal_endmember(sentinel2_directory)
+# cal_endmember(sentinel2_directory)
+######## start retrieval process
+apply_inversion(sentinel2_directory, patch_size, patch_overlap)
