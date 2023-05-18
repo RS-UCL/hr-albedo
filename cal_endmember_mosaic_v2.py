@@ -162,11 +162,11 @@ def cal_endmember(sentinel2_directory):
 
     # use gdalwarp from os.system() to process a file in the subdirectory
     for file in os.listdir(file_subdirectory):
-        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif", "_mask.tif")):
+        if file.endswith(("B02.tif", "B03.tif", "B04.tif", "B8A.tif", "B11.tif", "B12.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 500 500 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_500m.tif"')
 
     for file in os.listdir(file_subdirectory):
-        if file.endswith(("B02_sur.tif", "B03_sur.tif", "B04_sur.tif", "B8A_sur.tif", "B11_sur.tif", "B12_sur.tif", "_mask.tif")):
+        if file.endswith(("B02.tif", "B03.tif", "B04.tif", "B8A.tif", "B11.tif", "B12.tif", "_mask.tif")):
             os.system(f'gdalwarp -tr 20 20 "{file_subdirectory}/{file}" "{tbd}/{file[:-4]}_20m.tif"')
     quit()
     # initialize variables with None for 500-m data
