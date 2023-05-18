@@ -188,33 +188,33 @@ def cal_endmember(sentinel2_directory):
     s2_mask_data = None
 
     for file in os.listdir(tbd):
-        if file.endswith("B02_sur_500m.tif"):
+        if file.endswith("B02_500m.tif"):
             s2_band02_500m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B03_sur_500m.tif"):
+        if file.endswith("B03_500m.tif"):
             s2_band03_500m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B04_sur_500m.tif"):
+        if file.endswith("B04_500m.tif"):
             s2_band04_500m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B8A_sur_500m.tif"):
+        if file.endswith("B8A_500m.tif"):
             s2_band8A_500m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B11_sur_500m.tif"):
+        if file.endswith("B11_500m.tif"):
             s2_band11_500m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B12_sur_500m.tif"):
+        if file.endswith("B12_500m.tif"):
             s2_band12_500m_data = gdal.Open('%s/%s' % (tbd, file))
         if file.endswith("_mask_500m.tif"):
             s2_mask_500m_data = gdal.Open('%s/%s' % (tbd, file))
 
     for file in os.listdir(tbd):
-        if file.endswith("B02_sur_20m.tif"):
+        if file.endswith("B02_20m.tif"):
             s2_band02_20m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B03_sur_20m.tif"):
+        if file.endswith("B03_20m.tif"):
             s2_band03_20m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B04_sur_20m.tif"):
+        if file.endswith("B04_20m.tif"):
             s2_band04_20m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B8A_sur_20m.tif"):
+        if file.endswith("B8A_20m.tif"):
             s2_band8A_20m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B11_sur_20m.tif"):
+        if file.endswith("B11_20m.tif"):
             s2_band11_20m_data = gdal.Open('%s/%s' % (tbd, file))
-        if file.endswith("B12_sur_20m.tif"):
+        if file.endswith("B12_20m.tif"):
             s2_band12_20m_data = gdal.Open('%s/%s' % (tbd, file))
         if file.endswith("_mask_20m.tif"):
             s2_mask_data = gdal.Open('%s/%s' % (tbd, file))
