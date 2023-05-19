@@ -21,11 +21,16 @@ import sys
 # patch_overlap = int(sys.argv[4])
 
 sentinel2_directory = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0'
+prior_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0/VIIRS_prior/'
+index_file = sentinel2_directory + 'Nairobi_validation_source_index_resampling_mode_ovr_none.tif'
+
 patch_size = 1000
 patch_overlap = 100
 
+######## start preprocessing the kernels
+preprocess_kernels(prior_dir, index_file)
 ######## start calculating the endmembers
-# cal_endmember(sentinel2_directory)
+cal_endmember(sentinel2_directory)
 ######## start retrieval process
 apply_inversion(sentinel2_directory, patch_size, patch_overlap)
 ######## add uncertainties to albedo
