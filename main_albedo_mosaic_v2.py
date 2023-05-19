@@ -23,7 +23,7 @@ import sys
 
 sentinel2_directory = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0'
 prior_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0/VIIRS_prior/'
-index_file = sentinel2_directory + 'Nairobi_validation_source_index_resampling_mode_ovr_none.tif'
+index_file = sentinel2_directory + '/Nairobi_validation_source_index_resampling_mode_ovr_none.tif'
 
 patch_size = 1000
 patch_overlap = 100
