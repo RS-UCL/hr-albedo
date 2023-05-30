@@ -202,11 +202,11 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     dhr_band03_data = dhr_band03.GetRasterBand(1)
     dhr_band04_data = dhr_band04.GetRasterBand(1)
 
-    dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band02_data  = dhr_band02_data.ReadAsArray(0, 0, s2_cols, s2_rows)
     # dhr_band02_data[cm > 0.] = np.nan
-    dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band03_data  = dhr_band03_data.ReadAsArray(0, 0, s2_cols, s2_rows)
     # dhr_band03_data[cm > 0.] = np.nan
-    dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols, s2_rows)
     # dhr_band04_data[cm > 0.] = np.nan
 
     _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
@@ -271,9 +271,9 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     bhr_band04_data = bhr_band04.GetRasterBand(1)
     # bhr_band04_data[cm > 0.] = np.nan
 
-    bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
-    bhr_band04_data  = bhr_band04_data.ReadAsArray(0, 0, s2_cols_10m, s2_rows_10m)
+    bhr_band02_data  = bhr_band02_data.ReadAsArray(0, 0, s2_cols, s2_rows)
+    bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols, s2_rows)
+    bhr_band04_data  = bhr_band04_data.ReadAsArray(0, 0, s2_cols, s2_rows)
 
     _compose_rgb(bhr_band04_data,bhr_band03_data,bhr_band02_data,cloud_mask_10m,product_directory,'UCL_bhr_rgb', projectionRef10, geotransform10)
 
