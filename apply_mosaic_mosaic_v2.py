@@ -216,7 +216,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
 
         merged_data  = gdal.Open('%s/merge_bhr_band%s.vrt'%(tbd_directory,s2_bands[i]))
         band_data = merged_data.GetRasterBand(1)
-        print('1')
+
         cols = merged_data.RasterXSize
         rows = merged_data.RasterYSize
         band_data  = band_data.ReadAsArray(0, 0, cols, rows)
