@@ -209,7 +209,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     dhr_band04_data  = dhr_band04_data.ReadAsArray(0, 0, s2_cols, s2_rows)
     # dhr_band04_data[cm > 0.] = np.nan
 
-    _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask_10m,product_directory,
+    _compose_rgb(dhr_band04_data,dhr_band03_data,dhr_band02_data,cloud_mask,product_directory,
                  'UCL_dhr_rgb', projectionRef10, geotransform10)
 
     for i in range(len(s2_bands)):
@@ -275,5 +275,5 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
     bhr_band03_data  = bhr_band03_data.ReadAsArray(0, 0, s2_cols, s2_rows)
     bhr_band04_data  = bhr_band04_data.ReadAsArray(0, 0, s2_cols, s2_rows)
 
-    _compose_rgb(bhr_band04_data,bhr_band03_data,bhr_band02_data,cloud_mask_10m,product_directory,'UCL_bhr_rgb', projectionRef10, geotransform10)
+    _compose_rgb(bhr_band04_data,bhr_band03_data,bhr_band02_data,cloud_mask,product_directory,'UCL_bhr_rgb', projectionRef10, geotransform10)
 
