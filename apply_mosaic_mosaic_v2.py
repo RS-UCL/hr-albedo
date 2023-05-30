@@ -227,10 +227,11 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
         print('Mean band %s bhr is: %s -------'%(s2_bands[i], np.nanmean(band_data[band_unc>0])))
         print('Mean band %s bhr uncertainty is: %s -------'%(s2_bands[i], np.nanmean(band_unc[band_unc>0])))
 
-        # band_data[cm>0.] = np.nan
-        for file in os.listdir(level2_dir):
+        for file in os.listdir(file_subdirectory):
             if file.endswith("B02.tif"):
-                src = gdal.Open('%s/%s'%(level2_dir, file))
+                src = gdal.Open('%s/%s'%(file_subdirectory, file))
+                projectionRef10 = src.GetProjectionRef()
+                geotransform10  = src.GetGeoTransform()
 
         projectionRef = src.GetProjectionRef()
         geotransform  = src.GetGeoTransform()
