@@ -112,7 +112,7 @@ def cal_mosaic(sentinel2_directory, cloud_threshold):
              ('bhr_bandSW', 'sub_bhr_bandSW_*.tiff'),
              ('bhr_bandVIS', 'sub_bhr_bandVIS_*.tiff')]
 
-    # loop through the list of tuples and build the vrt file for each band
+    # loop through the list of tuples and build the vrt file for each band ()
     for band in bands:
         vrt_filename = f"{tbd_directory}/merge_{band[0]}.vrt"
         subdataset_pattern = f"{tbd_directory}/{band[1]}"
