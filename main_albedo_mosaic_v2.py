@@ -16,20 +16,25 @@ import sys
 
 # Create a custom logger
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-# Create handlers
+# Add handlers to the logger
+logger.addHandler(c_handler)
+logger.addHandler(f_handler)
+
 c_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('./albedo_process.log')  # change the path to the log file as needed
-c_handler.setLevel(logging.WARNING)
-f_handler.setLevel(logging.ERROR)
+f_handler = logging.FileHandler('albedo_process.log')
 
-# Create formatters and add it to handlers
+# Set level for handlers
+c_handler.setLevel(logging.WARNING)
+f_handler.setLevel(logging.DEBUG) # This is the change, it will log all messages to file
+
 c_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
 f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 c_handler.setFormatter(c_format)
 f_handler.setFormatter(f_format)
 
-# Add handlers to the logger
 logger.addHandler(c_handler)
 logger.addHandler(f_handler)
 
