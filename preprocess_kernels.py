@@ -63,6 +63,7 @@ index_file = index_dir + 'Nairobi_validation_source_index_resampling_mode_ovr_no
 
 def preprocess_kernels(input_dir, index_file):
 
+    logger.info('Entered preprocess_kernels function')
     try:
         index_dataset = gdal.Open(index_file)
         index_data_array = index_dataset.GetRasterBand(1).ReadAsArray()
@@ -120,6 +121,7 @@ def preprocess_kernels(input_dir, index_file):
                         logger.error(
                             f"Index error at row {i}, col {j}, index {index}, band_num {band_num}. Error: {str(ie)}")
 
+            logger.info('Completed preprocess kernels for mosaic band %s'%band_description)
             np.save(input_dir + f"mosaic_band_{band_description}.npy", output_data_array)
             create_plot(output_data_array, band_description, 'rainbow', input_dir)
 
