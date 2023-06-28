@@ -48,7 +48,7 @@ patch_size = 1000
 patch_overlap = 100
 
 ######## start preprocessing the kernels
-preprocess_kernels(prior_dir, index_file)
+preprocess_kernels(prior_dir, index_file, logger)
 ######## start calculating the endmembers
 cal_endmember(sentinel2_directory)
 ######## start retrieval process

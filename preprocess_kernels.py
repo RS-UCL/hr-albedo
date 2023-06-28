@@ -61,7 +61,7 @@ input_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_
 index_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0/'
 index_file = index_dir + 'Nairobi_validation_source_index_resampling_mode_ovr_none.tif'
 
-def preprocess_kernels(input_dir, index_file):
+def preprocess_kernels(input_dir, index_file, logger):
 
     logger.info('Entered preprocess_kernels function')
     try:
