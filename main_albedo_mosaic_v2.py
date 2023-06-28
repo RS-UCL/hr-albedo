@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 # Create handlers
 c_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('/absolute/path/to/file.log')  # change the path to the log file as needed
+f_handler = logging.FileHandler('./albedo_process.log')  # change the path to the log file as needed
 c_handler.setLevel(logging.WARNING)
 f_handler.setLevel(logging.ERROR)
 
