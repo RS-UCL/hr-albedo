@@ -20,6 +20,9 @@ def process_tile(args):
 
     m, n, tbd_directory = args
 
+    patch_size = 1000
+    patch_overlap = 100
+
     num_row_str = f"{'0' if m < 10 else ''}{m}"
     num_col_str = f"{'0' if n < 10 else ''}{n}"
     tiff_file = f"{tbd_directory}/sub_abundance_10m_h{num_row_str}v{num_col_str}.tiff"
