@@ -67,6 +67,7 @@ def preprocess_kernels(input_dir, index_file, logger):
     try:
         index_dataset = gdal.Open(index_file)
         index_data_array = index_dataset.GetRasterBand(1).ReadAsArray()
+        print('index_data_array is in shape of:', index_data_array.shape)
         input_files = sorted([os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith(".tif")], key=lambda x: int(os.path.basename(x).split('_')[0]))
 
         input_file = gdal.Open(input_files[0])
