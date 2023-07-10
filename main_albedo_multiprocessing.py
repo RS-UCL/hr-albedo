@@ -52,13 +52,31 @@ index_file = sentinel2_directory + '/Nairobi_validation_source_index_resampling_
 patch_size = 1000
 patch_overlap = 100
 
+# Start the timer
+start_time = time.time()
 ######## start preprocessing the kernels
 preprocess_kernels(prior_dir, index_file, logger)
+preprocessing_time = time.time() - start_time
+print('preprocessing time: ', preprocessing_time)
 ######## start calculating the endmembers
 cal_endmember(sentinel2_directory)
+endmember_time = time.time() - preprocessing_time - start_time
 ######## start retrieval process
 apply_inversion(sentinel2_directory, patch_size, patch_overlap)
+inversion_time = time.time() - preprocessing_time - endmember_time - start_time
 ######## add uncertainties to albedo
 apply_uncertainty(sentinel2_directory)
+uncertainty_time = time.time() - preprocessing_time - endmember_time - inversion_time - start_time
 ######## mosaic the albedo from subpatches
 cal_mosaic(sentinel2_directory, 0.95)
+mosaic_time = time.time() - preprocessing_time - endmember_time - inversion_time - uncertainty_time - start_time
+
+# End the timer
+end_time = time.time()
+total_time = end_time - start_time
+print('preprocessing time: ', preprocessing_time)
+print('endmember time: ', endmember_time)
+print('inversion time: ', inversion_time)
+print('uncertainty time: ', uncertainty_time)
+print('mosaic time: ', mosaic_time)
+print('total time: ', total_time)
