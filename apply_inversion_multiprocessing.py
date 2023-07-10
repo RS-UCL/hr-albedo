@@ -13,6 +13,8 @@ from osgeo import gdal
 import numpy as np
 import glob
 import os
+import multiprocessing
+from multiprocessing import Pool
 
 def process_tile(args):
 
