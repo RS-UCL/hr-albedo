@@ -19,7 +19,7 @@ from multiprocessing import Pool
 def process_tile(args):
 
     m, n, tbd_directory, patch_size, patch_overlap, s2_10m_rows, s2_10m_cols, geotransform_10m, \
-    boa_band02_10m, boa_band03_10m, boa_band04_10m, boa_band8A_10m, boa_band11_10m, boa_band12_10m = args
+    boa_band02_10m, boa_band03_10m, boa_band04_10m, boa_band8A_10m, boa_band11_10m, boa_band12_10m, band02_10m_file = args
 
     num_row_str = f"{'0' if m < 10 else ''}{m}"
     num_col_str = f"{'0' if n < 10 else ''}{n}"
@@ -467,10 +467,10 @@ def process_tile(args):
             dst_ds.FlushCache()
             dst_ds = None
 
-def parallel_process(num_row, col_row, pool_size, tbd_directory, patch_size, patch_overlap, s2_10m_rows, s2_10m_cols, geotransform_10m, boa_band02_10m, boa_band03_10m, boa_band04_10m, boa_band8A_10m, boa_band11_10m, boa_band12_10m):
+def parallel_process(num_row, col_row, pool_size, tbd_directory, patch_size, patch_overlap, s2_10m_rows, s2_10m_cols, geotransform_10m, boa_band02_10m, boa_band03_10m, boa_band04_10m, boa_band8A_10m, boa_band11_10m, boa_band12_10m, band02_10m_file):
     # The pool_size parameter represents the number of worker processes to use; typically, this is set to the number of CPUs.
     with Pool(pool_size) as p:
-        p.map(process_tile, [(m, n, tbd_directory, patch_size, patch_overlap, s2_10m_rows, s2_10m_cols, geotransform_10m, boa_band02_10m, boa_band03_10m, boa_band04_10m, boa_band8A_10m, boa_band11_10m, boa_band12_10m) for m in range(num_row) for n in range(col_row)])
+        p.map(process_tile, [(m, n, tbd_directory, patch_size, patch_overlap, s2_10m_rows, s2_10m_cols, geotransform_10m, boa_band02_10m, boa_band03_10m, boa_band04_10m, boa_band8A_10m, boa_band11_10m, boa_band12_10m, band02_10m_file) for m in range(num_row) for n in range(col_row)])
 
 def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     """
@@ -653,7 +653,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                      tbd_directory = tbd_directory, patch_size = patch_size, patch_overlap = patch_overlap,
                      s2_10m_rows = s2_10m_rows, s2_10m_cols = s2_10m_cols, geotransform_10m = geotransform_10m,
                      boa_band02_10m = boa_band02_10m, boa_band03_10m = boa_band03_10m, boa_band04_10m = boa_band04_10m,
-                     boa_band8A_10m = boa_band8A_10m, boa_band11_10m = boa_band11_10m, boa_band12_10m = boa_band12_10m)
+                     boa_band8A_10m = boa_band8A_10m, boa_band11_10m = boa_band11_10m, boa_band12_10m = boa_band12_10m,
+                     band02_10m_file = band02_10m_file)
 
 def apply_uncertainty(sentinel2_directory):
     """
