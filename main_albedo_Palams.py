@@ -57,8 +57,8 @@ sentinel2_directory = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Palmas_M10_
 prior_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Palmas_M10_May_2022_UTM_CM_SIAC_VIIRS_NEW/S2GM_M10_20220501_20220530_Palmas_STD_v2.0.1/tile_0/VIIRS_prior/'
 index_file = sentinel2_directory + '/validation_source_index.tif'
 
-patch_size = 1000
-patch_overlap = 100
+patch_size = 500
+patch_overlap = 50
 
 # Start the timer
 start_time = time.time()
