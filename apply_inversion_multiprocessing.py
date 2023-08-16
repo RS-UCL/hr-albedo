@@ -650,6 +650,11 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     num_row = np.floor(s2_10m_rows / (patch_size - patch_overlap)) + 1
     col_row = np.floor(s2_10m_cols / (patch_size - patch_overlap)) + 1
 
+    # mcrw 20230816
+    n_pools = multiprocessing.cpu_count()
+    # n_pools = int(multiprocessing.cpu_count() / 2)
+    print(f'Using {n_pools} pools')
+
     parallel_process(num_row=int(num_row), col_row=int(col_row), pool_size=multiprocessing.cpu_count(),
                      tbd_directory = tbd_directory, patch_size = patch_size, patch_overlap = patch_overlap,
                      s2_10m_rows = s2_10m_rows, s2_10m_cols = s2_10m_cols, geotransform_10m = geotransform_10m,
