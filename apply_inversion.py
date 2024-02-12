@@ -92,22 +92,29 @@ def apply_inversion(sentinel2_file, mcd43a1_file, patch_size, patch_overlap):
                 dhr_coef_a[m, i] = 0
                 dhr_coef_b[m, i] = 0
 
+
         for i in range(4):
             # loop for bhr regressions.
             threshold = 0.5
+            min_threshold = 0.1
 
-            endmember_brf = modis_brf[s2_500m_abundance[:, :, i].reshape(modis_brf.shape) > threshold]
-            endmember_bhr = modis_bhr[s2_500m_abundance[:, :, i].reshape(modis_bhr.shape) > threshold]
-
-            x1 = endmember_brf.reshape(endmember_brf.size, 1)
-            y1 = endmember_bhr.reshape(endmember_bhr.size, 1)
-            x1_filter = x1[(x1 > 0) & (y1 > 0)]
-            y1_filter = y1[(x1 > 0) & (y1 > 0)]
-
-            x1_filter = x1_filter.reshape((x1_filter.size, 1))
-            y1_filter = y1_filter.reshape((y1_filter.size, 1))
-
-            if x1_filter.size > 0:
+            while threshold >= min_threshold:
+                
+                endmember_brf = modis_brf[s2_500m_abundance[:, :, i].reshape(modis_brf.shape) > threshold]
+                endmember_bhr = modis_bhr[s2_500m_abundance[:, :, i].reshape(modis_bhr.shape) > threshold]
+        
+                x1 = endmember_brf.reshape(endmember_brf.size, 1)
+                y1 = endmember_bhr.reshape(endmember_bhr.size, 1)
+                
+                filter_mask = (x1 > 0) & (y1 > 0)
+                
+                x1_filter = x1[filter_mask]
+                y1_filter = y1[filter_mask]
+        
+                if x1_filter.size < 5:
+                    threshold -= 0.05  # Decrease threshold if fewer than 5 points
+                    continue  # Reevaluate with the new threshold
+                    
                 model_a1 = LinearRegression()
                 model_a1.fit(x1_filter, y1_filter)
                 x1_new = np.linspace(0, 0.35, 20)
@@ -135,7 +142,8 @@ def apply_inversion(sentinel2_file, mcd43a1_file, patch_size, patch_overlap):
                 plt.xlabel('BRF', fontsize=26)
                 plt.ylabel('BHR', fontsize=26)
                 plt.savefig('%s/bhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
-            else:
+                
+            if threshold < min_threshold:
                 dhr_coef_a[m, i] = 0
                 dhr_coef_b[m, i] = 0
 
