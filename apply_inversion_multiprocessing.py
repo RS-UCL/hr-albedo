@@ -573,42 +573,48 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 
                 x1_filter = x1[filter_mask]
                 y1_filter = y1[filter_mask]
-        
+
+                x1_filter = x1_filter.reshape((x1_filter.size, 1))
+                y1_filter = y1_filter.reshape((y1_filter.size, 1))
+
                 if x1_filter.size < 5:
                     threshold -= 0.05  # Decrease threshold if fewer than 5 points
                     continue  # Reevaluate with the new threshold
-                    
-                model_a1 = LinearRegression()
-                model_a1.fit(x1_filter, y1_filter)
-                x1_new = np.linspace(0, 0.35, 20)
-                y1_new = model_a1.predict(x1_new[:, np.newaxis])
+                else:
+                    model_a1 = LinearRegression()
+                    model_a1.fit(x1_filter, y1_filter)
+                    x1_new = np.linspace(0, 0.35, 20)
+                    y1_new = model_a1.predict(x1_new[:, np.newaxis])
 
-                bhr_coef_a[m, i] = model_a1.intercept_[0]
-                bhr_coef_b[m, i] = model_a1.coef_[0][0]
+                    bhr_coef_a[m, i] = model_a1.intercept_[0]
+                    bhr_coef_b[m, i] = model_a1.coef_[0][0]
 
-                colors = ['blue', 'green', 'red', 'black']
-                fig, ax = plt.subplots(figsize=(16, 16))
+                    colors = ['blue', 'green', 'red', 'black']
+                    fig, ax = plt.subplots(figsize=(16, 16))
 
-                plt.scatter(endmember_brf.reshape(endmember_brf.size, 1), endmember_bhr.reshape(endmember_bhr.size, 1),
-                            color=colors[i], alpha=0.3)
-                plt.plot(x1_new, y1_new, lw=2, color=colors[i])
-                plt.text(0.025, 0.175, r'$albedo = %.3f$ + %.3f*BRF' % (model_a1.intercept_[0], model_a1.coef_[0][0]),
-                         fontsize=26)
+                    plt.scatter(endmember_brf.reshape(endmember_brf.size, 1), endmember_bhr.reshape(endmember_bhr.size, 1),
+                                color=colors[i], alpha=0.3)
+                    plt.plot(x1_new, y1_new, lw=2, color=colors[i])
+                    plt.text(0.025, 0.175, r'$albedo = %.3f$ + %.3f*BRF' % (model_a1.intercept_[0], model_a1.coef_[0][0]),
+                             fontsize=26)
 
-                plt.xlim([0., .8])
-                plt.ylim([0., .8])
-                for tick in ax.xaxis.get_major_ticks():
-                    tick.label.set_fontsize(22)
-                for tick in ax.yaxis.get_major_ticks():
-                    tick.label.set_fontsize(22)
+                    plt.xlim([0., .8])
+                    plt.ylim([0., .8])
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(22)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(22)
 
-                plt.xlabel('BRF', fontsize=26)
-                plt.ylabel('BHR', fontsize=26)
-                plt.savefig('%s/bhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
-                
+                    plt.xlabel('BRF', fontsize=26)
+                    plt.ylabel('BHR', fontsize=26)
+                    plt.savefig('%s/bhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
+                    plt.close()
+
+                    break
+
             if threshold < min_threshold:
-                dhr_coef_a[m, i] = 0
-                dhr_coef_b[m, i] = 0
+                bhr_coef_a[m, i] = 0
+                bhr_coef_b[m, i] = 0
 
     band02_20m = None
     band03_20m = None
