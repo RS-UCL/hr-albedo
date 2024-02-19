@@ -507,56 +507,70 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
 
         ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' # colorbar settings
         for i in range(4):
+            
             # loop for dhr regressions.
             threshold = 0.5
+            min_threshold = 0.1
 
-            endmember_brf = modis_brf[s2_500m_abundance[:, :, i].reshape(modis_brf.shape) > threshold]
-            endmember_dhr = modis_dhr[s2_500m_abundance[:, :, i].reshape(modis_dhr.shape) > threshold]
+            while threshold >= min_threshold:
+                
+                endmember_brf = modis_brf[s2_500m_abundance[:, :, i].reshape(modis_brf.shape) > threshold]
+                endmember_dhr = modis_dhr[s2_500m_abundance[:, :, i].reshape(modis_dhr.shape) > threshold]
+    
+                x1 = endmember_brf.reshape(endmember_brf.size, 1)
+                y1 = endmember_dhr.reshape(endmember_dhr.size, 1)
+    
+                x1_filter = x1[(x1 > 0) & (y1 > 0)]
+                y1_filter = y1[(x1 > 0) & (y1 > 0)]
 
-            x1 = endmember_brf.reshape(endmember_brf.size, 1)
-            y1 = endmember_dhr.reshape(endmember_dhr.size, 1)
-
-            x1_filter = x1[(x1 > 0) & (y1 > 0)]
-            y1_filter = y1[(x1 > 0) & (y1 > 0)]
-
-            if x1_filter.size > 0:
                 x1_filter = x1_filter.reshape((x1_filter.size, 1))
                 y1_filter = y1_filter.reshape((y1_filter.size, 1))
 
-                model_a1 = LinearRegression()
-                model_a1.fit(x1_filter, y1_filter)
-                x1_new = np.linspace(0, 0.8, 20)
-                y1_new = model_a1.predict(x1_new[:, np.newaxis])
+                if x1_filter.size < 5:
+                    threshold -= 0.05  # Decrease threshold if fewer than 5 points
+                    continue  # Reevaluate with the new threshold
+                else:
+                    model_a1 = LinearRegression()
+                    model_a1.fit(x1_filter, y1_filter)
+                    x1_new = np.linspace(0, 0.8, 20)
+                    y1_new = model_a1.predict(x1_new[:, np.newaxis])
+    
+                    dhr_coef_a[m, i] = model_a1.intercept_[0]
+                    dhr_coef_b[m, i] = model_a1.coef_[0][0]
+    
+                    colors = ['blue', 'green', 'red', 'black']
+                    fig, ax = plt.subplots(figsize=(16, 16))
+    
+                    plt.scatter(endmember_brf.reshape(endmember_brf.size, 1), endmember_dhr.reshape(endmember_dhr.size, 1),
+                                color=colors[i], alpha=0.3)
+                    plt.plot(x1_new, y1_new, lw=2, color=colors[i])
+                    plt.text(0.025, 0.175, r'$albedo = %.3f$ + %.3f*BRF' % (model_a1.intercept_[0], model_a1.coef_[0][0]),
+                             fontsize=26)
+    
+                    plt.xlim([0., .8])
+                    plt.ylim([0., .8])
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(22)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(22)
+    
+                    plt.xlabel('BRF', fontsize=26)
+                    plt.ylabel('DHR', fontsize=26)
+                    plt.savefig('%s/dhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
+                    plt.close()
+                    break
+    
+            if threshold < min_threshold:
+                bhr_coef_a[m, i] = -np.nan
+                bhr_coef_b[m, i] = -np.nan
 
-                dhr_coef_a[m, i] = model_a1.intercept_[0]
-                dhr_coef_b[m, i] = model_a1.coef_[0][0]
-
-                colors = ['blue', 'green', 'red', 'black']
-                fig, ax = plt.subplots(figsize=(16, 16))
-
-                plt.scatter(endmember_brf.reshape(endmember_brf.size, 1), endmember_dhr.reshape(endmember_dhr.size, 1),
-                            color=colors[i], alpha=0.3)
-                plt.plot(x1_new, y1_new, lw=2, color=colors[i])
-                plt.text(0.025, 0.175, r'$albedo = %.3f$ + %.3f*BRF' % (model_a1.intercept_[0], model_a1.coef_[0][0]),
-                         fontsize=26)
-
-                plt.xlim([0., .8])
-                plt.ylim([0., .8])
-                for tick in ax.xaxis.get_major_ticks():
-                    tick.label.set_fontsize(22)
-                for tick in ax.yaxis.get_major_ticks():
-                    tick.label.set_fontsize(22)
-
-                plt.xlabel('BRF', fontsize=26)
-                plt.ylabel('DHR', fontsize=26)
-                plt.savefig('%s/dhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
-                plt.close()
-
-            else:
-                dhr_coef_a[m, i] = 0
-                dhr_coef_b[m, i] = 1.
+            if np.size(x1_filter) / np.size(x1) < 0.2:
+                bhr_coef_a[m, i] = -np.nan
+                bhr_coef_b[m, i] = -np.nan
+                print('Less than 20%% cloud-free pixels available for albedo retrieval.')
 
         for i in range(4):
+            
             # loop for bhr regressions.
             threshold = 0.5
             min_threshold = 0.1
@@ -613,8 +627,13 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     break
 
             if threshold < min_threshold:
-                bhr_coef_a[m, i] = 0
-                bhr_coef_b[m, i] = 0
+                bhr_coef_a[m, i] = -np.nan
+                bhr_coef_b[m, i] = -np.nan
+
+            if np.size(x1_filter) / np.size(x1) < 0.2:
+                bhr_coef_a[m, i] = -np.nan
+                bhr_coef_b[m, i] = -np.nan
+                print('Less than 20%% cloud-free pixels available for albedo retrieval.')
 
     band02_20m = None
     band03_20m = None
