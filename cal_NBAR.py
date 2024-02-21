@@ -180,7 +180,7 @@ def cal_Sentinel2_NBAR(Sentinel2_file, MODIS_brdf_file, Sentinel2_band_ID):
     cbar = plt.colorbar(im)
     plt.axis('off')
     plt.savefig('./NBAR/sentinel_NBAR_band%s.png' % Sentinel2_band_ID, dpi=400)
-    plt.close
+    plt.close()
 
 
 

@@ -181,6 +181,7 @@ def cal_endmember(sentinel2_directory):
     plt.colorbar(label='Cloud Confidence', shrink=0.5)
     plt.title('Cloud Confidence Map - Nairobi')
     plt.savefig('%s/cloud_confidence.png' % fig_directory)
+    plt.close()
     # initialize variables with None for 500-m data
     s2_band02_500m_data = None
     s2_band03_500m_data = None

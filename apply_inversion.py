@@ -142,7 +142,7 @@ def apply_inversion(sentinel2_file, mcd43a1_file, patch_size, patch_overlap):
                 plt.xlabel('BRF', fontsize=26)
                 plt.ylabel('BHR', fontsize=26)
                 plt.savefig('%s/bhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
-                
+                plt.close()
             if threshold < min_threshold:
                 dhr_coef_a[m, i] = 0
                 dhr_coef_b[m, i] = 0

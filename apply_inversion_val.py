@@ -143,6 +143,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 plt.xlabel('BRF', fontsize=26)
                 plt.ylabel('BHR', fontsize=26)
                 plt.savefig('%s/bhr_to_brf_band%s_type%s.png' % (fig_directory, inverse_band_id[m], ascii_uppercase[i]))
+                plt.close()
             else:
                 bhr_coef_a[m, i] = 0
                 bhr_coef_a[m, i] = 1.

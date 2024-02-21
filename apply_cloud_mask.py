@@ -111,7 +111,7 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/cloud_mask.png'%fig_dir)
-
+    plt.close()
     geotransform_20m = band02.GetGeoTransform()
     proj_20m = band02.GetProjection()
 
@@ -234,7 +234,7 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/masked_boa_band02.png'%fig_dir)
-
+    plt.close()
     #####################################################
     # plot masked boa
     masked_boa_band03[masked_boa_band03 < 0.] = np.nan
@@ -254,7 +254,7 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/masked_boa_band03.png'%fig_dir)
-
+    plt.close()
     #####################################################
     # plot masked boa
     masked_boa_band04[masked_boa_band04 < 0.] = np.nan
@@ -274,7 +274,7 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/masked_boa_band04.png'%fig_dir)
-
+    plt.close()
     #####################################################
     # plot masked boa
     masked_boa_band8A[masked_boa_band8A < 0.] = np.nan
@@ -294,7 +294,7 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/masked_boa_band8A.png'%fig_dir)
-
+    plt.close()
     #####################################################
     # plot masked boa
     masked_boa_band11[masked_boa_band11 < 0.] = np.nan
@@ -314,7 +314,7 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/masked_boa_band11.png'%fig_dir)
-
+    plt.close()
     #####################################################
     # plot masked boa
     masked_boa_band12[masked_boa_band12 < 0.] = np.nan
@@ -334,5 +334,5 @@ def add_cloud_mask(data_dir, cloud_threshold):
     plt.xlabel('Pixels', fontsize = 26)
     plt.ylabel('Pixels', fontsize = 26)
     plt.savefig('%s/masked_boa_band12.png'%fig_dir)
-
+    plt.close()
     return sensing_cover_rate, cloud_cover_rate
