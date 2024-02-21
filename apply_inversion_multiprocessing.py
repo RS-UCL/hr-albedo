@@ -564,10 +564,10 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 bhr_coef_a[m, i] = -np.nan
                 bhr_coef_b[m, i] = -np.nan
 
-            if np.size(x1_filter) / np.size(x1) < 0.2:
-                bhr_coef_a[m, i] = -np.nan
-                bhr_coef_b[m, i] = -np.nan
-                print('Less than 20%% cloud-free pixels available for albedo retrieval.')
+            #if np.size(x1_filter) / np.size(x1) < 0.2:
+            #    bhr_coef_a[m, i] = -np.nan
+            #    bhr_coef_b[m, i] = -np.nan
+            #    print('Less than 20%% cloud-free pixels available for albedo retrieval.')
 
         for i in range(4):
             
@@ -630,10 +630,10 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 bhr_coef_a[m, i] = -np.nan
                 bhr_coef_b[m, i] = -np.nan
 
-            if np.size(x1_filter) / np.size(x1) < 0.2:
-                bhr_coef_a[m, i] = -np.nan
-                bhr_coef_b[m, i] = -np.nan
-                print('Less than 20%% cloud-free pixels available for albedo retrieval.')
+            #if np.size(x1_filter) / np.size(x1) < 0.2:
+            #    bhr_coef_a[m, i] = -np.nan
+            #    bhr_coef_b[m, i] = -np.nan
+            #    print('Less than 20%% cloud-free pixels available for albedo retrieval.')
 
     band02_20m = None
     band03_20m = None

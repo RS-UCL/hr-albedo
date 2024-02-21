@@ -46,9 +46,9 @@ logger.addHandler(f_handler)
 # patch_size = int(sys.argv[3])
 # patch_overlap = int(sys.argv[4])
 
-sentinel2_directory = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0'
-prior_dir = '/gws/nopw/j04/qa4ecv_vol3/S2GM/hr-albedo/data/Nairobi_M10_February_2022_UTM_CM_SIAC/S2GM_M10_20220201_20220228_Nairobi_STD_v2.0.1/tile_0/VIIRS_prior/'
-index_file = sentinel2_directory + '/Nairobi_validation_source_index_resampling_mode_ovr_none.tif'
+sentinel2_directory = sys.argv[1]
+prior_dir = sentinel2_directory+'/VIIRS_prior/'
+index_file = sentinel2_directory + '/validation_source_index_500.tif'
 
 patch_size = 500
 patch_overlap = 50
