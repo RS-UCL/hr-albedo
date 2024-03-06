@@ -505,6 +505,17 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
         modis_bhr = np.load('%s/bhr_band%s.npy' % (tbd_directory, inverse_band_id[m]))
         modis_bhr[modis_bhr < 0] = 0
 
+        # New threshold check for positive VIIRS/MODIS values
+        
+        if np.sum(modis_brf > 0) < 50:
+            # Set coefficients to NaN and skip this band's regression calculation
+            dhr_coef_a[m, :] = np.nan
+            dhr_coef_b[m, :] = np.nan
+            bhr_coef_a[m, :] = np.nan
+            bhr_coef_b[m, :] = np.nan
+            print('Not enough cloud-free VIIRS pixels, skip to the next process without performing regressions')
+            continue  # Skip to the next band without performing regressions
+            
         ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' # colorbar settings
         for i in range(4):
             
