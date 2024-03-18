@@ -103,6 +103,30 @@ def process_tile(args):
     geotransform_10m_patch = patch_10m.GetGeoTransform()
     proj_10m_patch = patch_10m.GetProjection()
 
+    for row in dhr_coef_a:
+        if not np.all(np.isnan(row)):  # Check if not all values are NaN
+            nan_mask = np.isnan(row)
+            row_mean = np.nanmean(row)
+            row[nan_mask] = row_mean
+
+    for row in dhr_coef_b:
+        if not np.all(np.isnan(row)):  # Check if not all values are NaN
+            nan_mask = np.isnan(row)
+            row_mean = np.nanmean(row)
+            row[nan_mask] = row_mean
+
+    for row in bhr_coef_b:
+        if not np.all(np.isnan(row)):  # Check if not all values are NaN
+            nan_mask = np.isnan(row)
+            row_mean = np.nanmean(row)
+            row[nan_mask] = row_mean
+
+    for row in bhr_coef_a:
+        if not np.all(np.isnan(row)):  # Check if not all values are NaN
+            nan_mask = np.isnan(row)
+            row_mean = np.nanmean(row)
+            row[nan_mask] = row_mean
+        
     # dhr coefficients
     dhr_coefficient_band02_k = [dhr_coef_b[0, 0], dhr_coef_b[0, 1], dhr_coef_b[0, 2], dhr_coef_b[0, 3]]
     dhr_coefficient_band02_a = [dhr_coef_a[0, 0], dhr_coef_a[0, 1], dhr_coef_a[0, 2], dhr_coef_a[0, 3]]
@@ -563,8 +587,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             if threshold < min_threshold:
 
                 print('Not enough cloud-free VIIRS pixels, skip to the next process without performing regressions')
-                bhr_coef_a[m, i] = 0
-                bhr_coef_b[m, i] = 0
+                bhr_coef_a[m, i] = np.nan
+                bhr_coef_b[m, i] = np.nan
             
             #if np.size(x1_filter) / np.size(x1) < 0.2:
             #    bhr_coef_a[m, i] = -np.nan
@@ -629,8 +653,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     break
 
             if threshold < min_threshold:
-                bhr_coef_a[m, i] = 0
-                bhr_coef_b[m, i] = 0
+                bhr_coef_a[m, i] = np.nan
+                bhr_coef_b[m, i] = np.nan
 
             #if np.size(x1_filter) / np.size(x1) < 0.2:
             #    bhr_coef_a[m, i] = -np.nan
