@@ -507,6 +507,9 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
     file_subdirectory = sentinel2_directory
     tbd_directory = file_subdirectory + '/tbd'  # temporal directory, to be deleted in the end.
     fig_directory = file_subdirectory + '/Figures'  # temporal directory, to be deleted in the end.
+    readme = os.path.join(os.path.dirname(file_subdirectory), "ReadMe.txt")
+
+    failed_retrievals = []
 
     s2_500m_abundance = np.load('%s/s2_500m_abundance.npy' % tbd_directory)
 
@@ -530,8 +533,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
         modis_bhr[modis_bhr < 0] = 0
             
         ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' # colorbar settings
+        N_BHRendmembers_failed = 0
         for i in range(4):
-            
             # loop for dhr regressions.
             threshold = 0.5
             min_threshold = 0.1
@@ -551,7 +554,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                 y1_filter = y1_filter.reshape((y1_filter.size, 1))
 
                 if x1_filter.size < 50:
-                    threshold -= 0.05  # Decrease threshold if fewer than 5 points
+                    threshold -= 0.05  # Decrease threshold if fewer than 50 points
                     continue  # Reevaluate with the new threshold
                 else:
                     model_a1 = LinearRegression()
@@ -585,8 +588,7 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     break
     
             if threshold < min_threshold:
-
-                print('Not enough cloud-free VIIRS pixels, skip to the next process without performing regressions')
+                print('Not enough cloud-free VIIRS pixels in B{} endmembers {}, skip to the next BHR endmember'.format(inverse_band_id[m], i+1))
                 bhr_coef_a[m, i] = np.nan
                 bhr_coef_b[m, i] = np.nan
             
@@ -595,8 +597,10 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
             #    bhr_coef_b[m, i] = -np.nan
             #    print('Less than 20%% cloud-free pixels available for albedo retrieval.')
 
+                N_BHRendmembers_failed += 1
+
+        N_DHRendmembers_failed = 0
         for i in range(4):
-            
             # loop for bhr regressions.
             threshold = 0.5
             min_threshold = 0.1
@@ -653,14 +657,28 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                     break
 
             if threshold < min_threshold:
-                bhr_coef_a[m, i] = np.nan
-                bhr_coef_b[m, i] = np.nan
+                print('Not enough cloud-free VIIRS pixels in B{} endmembers {}, skip to the next DHR endmember'.format(inverse_band_id[m], i+1))
+                dhr_coef_a[m, i] = np.nan
+                dhr_coef_b[m, i] = np.nan
+                N_DHRendmembers_failed += 1
 
-            #if np.size(x1_filter) / np.size(x1) < 0.2:
-            #    bhr_coef_a[m, i] = -np.nan
-            #    bhr_coef_b[m, i] = -np.nan
-            #    print('Less than 20%% cloud-free pixels available for albedo retrieval.')
+        if N_BHRendmembers_failed == 4 or N_DHRendmembers_failed == 4:
+            failed_retrievals.append('B'+inverse_band_id[m])
 
+    if len(failed_retrievals) > 0:
+        failed_retrievals.append("BVIS")
+        failed_retrievals.append("BNIR")
+        failed_retrievals.append("BSW")
+        failed_message = ('\nNot enough cloud-free pixels, unable to provide {} BHR & DHR products.'
+                          '\nWe suggest to enlarge the AOI and/or the Temporal Period to provide reliable Albedo retrieval.').format(', '.join(failed_retrievals))
+        with open(readme, 'a') as file:
+            file.write(failed_message)
+
+    # Stop Albedo procedure if all bands are not available
+    if len(failed_retrievals) == 9:
+        return failed_retrievals
+
+    # Append new content to the existing content
     band02_20m = None
     band03_20m = None
     band04_20m = None
@@ -720,6 +738,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
                      boa_band8A_10m = boa_band8A_10m, boa_band11_10m = boa_band11_10m, boa_band12_10m = boa_band12_10m,
                      band02_10m_file = band02_10m_file, dhr_coef_b = dhr_coef_b,
                      dhr_coef_a = dhr_coef_a, bhr_coef_b = bhr_coef_b, bhr_coef_a = bhr_coef_a)
+
+    return failed_retrievals
 
 def apply_uncertainty(sentinel2_directory):
     """

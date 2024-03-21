@@ -438,7 +438,7 @@ def cal_endmember(sentinel2_directory):
     _plot_instrument_angluar(vza_angle, 'VZA mean',
                              '%s/mean_vza_500m.png' % fig_directory)
 
-    s2_band_id = ['02','03','04','8A','11','12']
+    s2_band_id = ['02', '03', '04', '8A', '11', '12']
 
     for i in range(len(s2_band_id)):
 
@@ -460,29 +460,29 @@ def cal_endmember(sentinel2_directory):
             brdf2_val = brdf_f2(sza_angle, vza_angle, phi)
 
             if inverse_band_id[m] == '02':
-                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B01.npy' % (file_subdirectory))
-                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B01.npy' % (file_subdirectory))
-                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B01.npy' % (file_subdirectory))
-            if inverse_band_id[m] == '03':
                 mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B02.npy' % (file_subdirectory))
                 mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B02.npy' % (file_subdirectory))
                 mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B02.npy' % (file_subdirectory))
-            if inverse_band_id[m] == '04':
+            if inverse_band_id[m] == '03':
                 mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B03.npy' % (file_subdirectory))
                 mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B03.npy' % (file_subdirectory))
                 mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B03.npy' % (file_subdirectory))
-            if inverse_band_id[m] == '8A':
+            if inverse_band_id[m] == '04':
                 mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B04.npy' % (file_subdirectory))
                 mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B04.npy' % (file_subdirectory))
                 mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B04.npy' % (file_subdirectory))
+            if inverse_band_id[m] == '8A':
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B8A.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B8A.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B8A.npy' % (file_subdirectory))
             if inverse_band_id[m] == '11':
-                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B05.npy' % (file_subdirectory))
-                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B05.npy' % (file_subdirectory))
-                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B05.npy' % (file_subdirectory))
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B11.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B11.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B11.npy' % (file_subdirectory))
             if inverse_band_id[m] == '12':
-                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B06.npy' % (file_subdirectory))
-                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B06.npy' % (file_subdirectory))
-                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B06.npy' % (file_subdirectory))
+                mcd_k0 = np.load('%s/VIIRS_prior/mosaic_band_w_iso_B12.npy' % (file_subdirectory))
+                mcd_k1 = np.load('%s/VIIRS_prior/mosaic_band_w_vol_B12.npy' % (file_subdirectory))
+                mcd_k2 = np.load('%s/VIIRS_prior/mosaic_band_w_geo_B12.npy' % (file_subdirectory))
 
             _plot_kernel(mcd_k0, 'k0', fig_directory + '/k0_band%s.png' % inverse_band_id[m])
             _plot_kernel(mcd_k1, 'k1', fig_directory + '/k1_band%s.png' % inverse_band_id[m])

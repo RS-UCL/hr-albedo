@@ -93,6 +93,13 @@ def preprocess_kernels(input_dir, index_file, logger):
                 band_descriptions.append(band_description)
             temp_arrays.append(temp_bands)
 
+        for index, band in enumerate(band_descriptions):
+            band_value = "0"+str(int(band[-2:])+1)
+            if band_value == "05": band_descriptions[index] = band[:-2] + "8A"
+            elif band_value == "06": band_descriptions[index] = band[:-2] + "11"
+            elif band_value == "07": band_descriptions[index] = band[:-2] + "12"
+            else: band_descriptions[index] = band[:-2] + band_value
+
         for band_num in range(1, 37):
             output_data_array = np.zeros((rows, cols), dtype=np.float32)
             band_description = band_descriptions[band_num - 1]
