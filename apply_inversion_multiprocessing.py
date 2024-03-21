@@ -669,8 +669,8 @@ def apply_inversion(sentinel2_directory, patch_size, patch_overlap):
         failed_retrievals.append("BVIS")
         failed_retrievals.append("BNIR")
         failed_retrievals.append("BSW")
-        failed_message = ('\nNot enough cloud-free pixels, unable to provide {} BHR & DHR products.'
-                          '\nWe suggest to enlarge the AOI and/or the Temporal Period to provide reliable Albedo retrieval.').format(', '.join(failed_retrievals))
+        failed_message = ('\nNot enough cloud-free pixels, unable to provide {} BHR & DHR products for {}.'
+                          '\nWe suggest to enlarge the AOI and/or the Temporal Period to provide reliable Albedo retrieval.').format(', '.join(failed_retrievals), os.path.basename(file_subdirectory))
         with open(readme, 'a') as file:
             file.write(failed_message)
 
